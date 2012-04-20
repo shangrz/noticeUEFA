@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayoutManage"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/match_listitem_bg"
+     android:descendantFocusability="blocksDescendants">
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" >
+
+        <LinearLayout
+            android:id="@+id/tag_linearLayout"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:background="@color/taggray"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:id="@+id/teamA_flag_imageView"
+                style="@style/team_flag_imageview"
+                android:src="@android:drawable/stat_notify_sync_noanim" />
+
+            <ImageView
+                android:id="@+id/teamB_flag_imageView"
+                style="@style/team_flag_imageview"
+                android:src="@android:drawable/stat_notify_sync_noanim" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:paddingLeft="5dp"
+            android:paddingRight="10dp" >
+
+            <TextView
+                android:id="@+id/teamA_name_textView"
+                style="@style/team_name_textview"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TeamA11111111111111111111111111111111111 " />
+              <TextView
+                android:id="@+id/teamB_name_textView"
+                style="@style/team_name_textview"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TeamB11111111111111111111111111111111111 "  />
+
+            
+        </LinearLayout>
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/notice_checkBox"
+        style="@style/mycheckbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" />
+
+    <TextView
+        android:id="@+id/match_datetime_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="5dp"
+        android:layout_toLeftOf="@+id/notice_checkBox"
+        android:layout_toRightOf="@+id/linearLayout1"
+        android:gravity="center"
+        android:text="2012 6-9 00:00"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/black" />
+
+</RelativeLayout>

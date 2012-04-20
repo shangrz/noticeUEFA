@@ -1,0 +1,19 @@
+<resources>
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="blacktran">#80000000</color>
+    <color name="grepblack">#FF565656</color>
+    <color name="gray">#FFAAAAAA</color>
+    <color name="gray2">#FF6C6C6C</color>
+    <color name="lightgray">#FFF7F7F7</color>
+    <color name="lightgray2">#FFE0E0E0</color>
+    <color name="darkgray">#FF111111</color>
+    <color name="darkblue">#FF000099</color>
+   <color name="taggray">#FF585858</color>
+   
+    <color name="barblue">#FF0099CC</color> 
+    <color name="tagblue">#FF33B5E5</color> 
+    <color name="match_listitem_bg_color_start">#FFF7F7F7</color> 
+    <color name="match_listitem_bg_color_end">#FFCFCFCF</color> 
+    
+</resources>
