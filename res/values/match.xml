@@ -5,7 +5,7 @@
         <item name = "matchIntro">@string/intro1</item> 
         <item name = "teamA">cro</item> 
         <item name = "teamB">cze</item> 
-        <item name = "matchType">1</item>
+        <item name = "matchType">A1</item>
         <item name = "matchDatetime">2012 06-19 00:00</item> 
   </array> 
 </resources>

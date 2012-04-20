@@ -10,7 +10,7 @@ public class Match {
     public Team teamA;
     public Team teamB;
     public int matchId;
-    public int matchType;
+    public String matchType;
     public String matchIntro;
     protected String matchDatetime;
     
@@ -18,7 +18,7 @@ public class Match {
         return TimeTools.handleTimeWithTimezone(matchDatetime);
     }
 
-    public void setMatchDatetime(String matchDatetime) {
+    public void setMatchDatetimeGMT8(String matchDatetime) {
         this.matchDatetime = matchDatetime;
     }
     
@@ -33,14 +33,14 @@ public class Match {
         String matchIntro = array.getString(1);
         Team teamA = Team.creatFromTeamTagName(array.getString(2), context);
         Team teamB = Team.creatFromTeamTagName(array.getString(3), context);
-        int matchType = array.getInt(4, 0);
+        String matchType = array.getString(4);
         String matchDatetime = array.getString(5);
         array.recycle();
         return new Match(  matchId,matchType,   teamA,   teamB,      matchIntro,   matchDatetime);
 
     }
 
-    private Match(int matchId,int matchType, Team teamA, Team teamB,  String matchIntro, String matchDatetime) {
+    private Match(int matchId,String matchType, Team teamA, Team teamB,  String matchIntro, String matchDatetime) {
         this.matchId = matchId;
         this.teamA  = teamA;
         this.teamB = teamB;
