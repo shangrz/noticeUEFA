@@ -12,6 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
  
 import com.shang.noticeuefa.MatchListViewAdapter.ViewHolder;
+import com.shang.noticeuefa.util.TimeTools;
  
 import greendroid.app.GDActivity;
 import greendroid.widget.ActionBarItem;
@@ -209,27 +210,14 @@ class MatchListViewAdapter   extends ArrayAdapter< Map<String, Object> > {
         holder.teamB_Name_TextView.setText((String) listItem.get(position).get(ViewHolder.TEAM_B_NAME));
         
         
-        
-        holder.matchdatetimeTextView.setText(handleTimeWithTimezone((String) listItem.get(position).get(ViewHolder.MATCHDATETIME)));
+       // 时间输入时均为GMT+8的时间，输出时按手机local时区
+        holder.matchdatetimeTextView.setText(TimeTools.handleTimeWithTimezone((String) listItem.get(position).get(ViewHolder.MATCHDATETIME)));
         holder.checkBox.setOnCheckedChangeListener( new MyOnCheckedChangeListener(holder, position));
         holder.checkBox.setChecked((Boolean) listItem.get(position).get(ViewHolder.CHECKED)); 
         holder.highlightView.setBackgroundColor(getContext().getResources().getColor(holder.checkBox.isChecked()?R.color.tagblue:R.color.taggray));
         return convertView;
     }
-    public static String handleTimeWithTimezone(String timeString) {
-      //  System.out.println(timeString);
-        SimpleDateFormat df = new SimpleDateFormat("yyyy MM-dd HH:mm");
-        df.setTimeZone(TimeZone.getTimeZone("GMT+8"));
-        try {
-            Date date = df.parse(timeString);
-            df.setTimeZone(TimeZone.getDefault());
-            return df.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }  
-        
-    }
+ 
     public static class ViewHolder  {
         public final static String TEAM_A_NAME ="TEAM_A_NAME";
         public final static String TEAM_B_NAME ="TEAM_B_NAME";

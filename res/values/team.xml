@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   <array name="cro"> 
+       <item name = "teamid">1</item> 
+        <item name = "teamname">@string/cro</item> 
+        <item name = "teamflag">cro</item> 
+  </array> 
+  <array name="cze"> 
+      <item name = "teamid">2</item>
+        <item name = "teamname">@string/cze</item> 
+        <item name = "teamflag">cze</item> 
+  </array> 
+ 
+
+</resources>

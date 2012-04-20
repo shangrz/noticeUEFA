@@ -63,7 +63,7 @@
         android:id="@+id/match_datetime_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Medium Text"
+        android:text="time"
         android:textAppearance="?android:attr/textAppearanceSmall" android:layout_gravity="center"
         android:textColor="@color/white"
        android:textStyle="bold"/>

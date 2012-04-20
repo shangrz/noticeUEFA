@@ -1,7 +1,11 @@
 package com.shang.noticeuefa.test;
 
   
+import java.util.regex.Matcher;
+
 import com.shang.noticeuefa.R;
+import com.shang.noticeuefa.model.Match;
+import com.shang.noticeuefa.model.Team;
 
 import android.R.anim;
 import android.app.Activity;
@@ -46,7 +50,7 @@ public class testNoticeActivity extends Activity {
 
     @Override
     protected void onStop() {
-        // TODO Auto-generated method stub
+        System.out.println("onStop"); 
         super.onStop();
     }
 
@@ -101,21 +105,21 @@ public class testNoticeActivity extends Activity {
         PendingIntent contentIntent = PendingIntent.getActivity(testNoticeActivity.this, 0, notificationIntent,   0);  
         notification.contentIntent = contentIntent;  
         notification.flags = Notification.FLAG_AUTO_CANCEL;     
-        notification.defaults = Notification.DEFAULT_SOUND;
-  //      getResources().getDrawable(android.R.drawable.status_bar_item_background)
-       
+        notification.defaults = Notification.DEFAULT_SOUND; 
         nm.notify(theid, notification);  
         isss =true;
         
         
     }
     public RemoteViews adapterNoticeView() {
+        Match match = Match.creatFromResId(R.array.e1,  getApplicationContext());
+        
         RemoteViews contentView = new RemoteViews(getPackageName(),R.layout.noticeitem);  
-        contentView.setImageViewResource(R.id.teamA_flag_imageView, R.drawable.cro);
-        contentView.setImageViewResource(R.id.teamB_flag_imageView, R.drawable.den);
-        contentView.setTextViewText(R.id.teamA_name_textView, "cro");
-        contentView.setTextViewText(R.id.teamB_name_textView, "den");
-         
+        contentView.setImageViewResource(R.id.teamA_flag_imageView, match.teamA.getTeamFlagResId());
+        contentView.setImageViewResource(R.id.teamB_flag_imageView, match.teamB.getTeamFlagResId());
+        contentView.setTextViewText(R.id.teamA_name_textView, match.teamA.getTeamName());
+        contentView.setTextViewText(R.id.teamB_name_textView, match.teamB.getTeamName());
+        contentView.setTextViewText(R.id.match_datetime_textView, match.getMatchDatetimeLocal()) ;
         return contentView;
         
     }
