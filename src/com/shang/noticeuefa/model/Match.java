@@ -21,6 +21,11 @@ public class Match {
     public void setMatchDatetime(String matchDatetime) {
         this.matchDatetime = matchDatetime;
     }
+    
+    public static Match creatFromMatchTagName(String tagname, Context context) {
+        return creatFromResId(context.getResources().getIdentifier(tagname, "array", context.getPackageName()),context);
+        
+    }
 
     public static Match creatFromResId(int resId, Context context) {
         TypedArray array = context.getResources().obtainTypedArray(resId);
