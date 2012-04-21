@@ -31,8 +31,8 @@ public class Match {
         TypedArray array = context.getResources().obtainTypedArray(resId);
         int matchId = array.getInt(0, 0);
         String matchIntro = array.getString(1);
-        Team teamA = Team.creatFromTeamTagName(array.getString(2), context);
-        Team teamB = Team.creatFromTeamTagName(array.getString(3), context);
+        Team teamA = Team.creatFromTeamId(array.getString(2), context);
+        Team teamB = Team.creatFromTeamId(array.getString(3), context);
         String matchType = array.getString(4);
         String matchDatetime = array.getString(5);
         array.recycle();

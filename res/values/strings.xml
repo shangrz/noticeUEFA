@@ -6,6 +6,10 @@
     <string name="matchname">欧洲杯</string>
     <string name="cro">克罗地亚</string>
     <string name="cze">捷克</string>
+    <string name="pol">波兰</string>
+    <string name="gre">希腊</string>
+    <string name="rus">俄罗斯</string>
+ 
     
      <string name="intro1">欧洲杯小组赛A1</string>
 </resources>
