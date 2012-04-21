@@ -4,11 +4,25 @@
     <string name="hello">Hello World, MainActivity!</string>
     <string name="app_name">NoticeUEFA</string>
     <string name="matchname">欧洲杯</string>
+    
+    
     <string name="cro">克罗地亚</string>
     <string name="cze">捷克</string>
     <string name="pol">波兰</string>
     <string name="gre">希腊</string>
     <string name="rus">俄罗斯</string>
+    
+    <string name="den">丹麦</string>
+    <string name="eng">英格兰</string>
+    <string name="esp">西班牙</string>
+    <string name="ger">德国</string>
+    <string name="irl">爱尔兰</string>
+    <string name="ita">意大利</string>
+    <string name="ned">荷兰</string>
+    <string name="por">葡萄牙</string>
+    <string name="swe">瑞典</string>
+    <string name="ukr">乌克兰</string>
+    <string name="fra">法国</string>
  
     
      <string name="intro1">欧洲杯小组赛A1</string>

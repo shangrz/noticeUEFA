@@ -113,7 +113,7 @@ public class testNoticeActivity extends Activity {
     }
     public RemoteViews adapterNoticeView() {
         //Match match = Match.creatFromResId(R.array.e1,  getApplicationContext());
-        Match match = Match.creatFromMatchTagName("e1", getApplicationContext());
+        Match match = Match.creatFromTagName("e1", getApplicationContext());
         RemoteViews contentView = new RemoteViews(getPackageName(),R.layout.noticeitem);  
         contentView.setImageViewResource(R.id.teamA_flag_imageView, match.teamA.getTeamFlagResId());
         contentView.setImageViewResource(R.id.teamB_flag_imageView, match.teamB.getTeamFlagResId());

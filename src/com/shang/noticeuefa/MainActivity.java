@@ -3,6 +3,7 @@ package com.shang.noticeuefa;
 import java.security.PublicKey;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +13,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
  
 import com.shang.noticeuefa.MatchListViewAdapter.ViewHolder;
+import com.shang.noticeuefa.model.Match;
+import com.shang.noticeuefa.model.Tour;
 import com.shang.noticeuefa.util.TimeTools;
  
 import greendroid.app.GDActivity;
@@ -21,10 +24,10 @@ import greendroid.widget.NormalActionBarItem;
  
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
+
+import android.text.Spannable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,19 +36,20 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton; 
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.AdapterView;
-import android.widget.Button;
+
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-import greendroid.widget.ActionBarItem.Type;
+
 public class MainActivity extends     GDActivity {
+     
     private final int ACTION_BAR_ALARM_MAIN = 0;
     private final int ACTION_BAR_ALARM_SETTING = 1;
     private boolean ISMUTE = false;
     private ListView listView;
-    List<Map<String, Object>> listItems = new CopyOnWriteArrayList<Map<String, Object>>();
+    //List<Map<String, Object>> listItems = new CopyOnWriteArrayList<Map<String, Object>>();
+    Tour tour;
      
 //    public MainActivity() {
 //        super(greendroid.widget.ActionBar.Type.Empty);
@@ -61,12 +65,13 @@ public class MainActivity extends     GDActivity {
                 ACTION_BAR_ALARM_SETTING);
         this.setTitle(R.string.matchname);
         this.getActionBar().setBackgroundColor(getResources().getColor(R.color.barblue));
+        tour =Tour.creatFromTagName("euro", getApplicationContext()); 
          
         
-        testload();
+       // testload();
         listView = (ListView) findViewById(R.id.listView1); 
          
-        MatchListViewAdapter adapter = new MatchListViewAdapter(MainActivity.this, listItems); 
+        MatchListViewAdapter adapter = new MatchListViewAdapter(MainActivity.this, tour); 
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -91,16 +96,16 @@ public class MainActivity extends     GDActivity {
         });
     }
     
-    private void testload( ) {
-        for (int i= 0; i<10;i++) {
-        final Map<String, Object> map = new HashMap<String, Object>(); 
-        map.put(ViewHolder.TEAM_A_NAME,"teamA"+String.valueOf(i));
-        map.put(ViewHolder.TEAM_B_NAME,"teamB"+String.valueOf(i));
-        map.put(ViewHolder.CHECKED,i%2 ==0?true:false);
-        map.put(ViewHolder.MATCHDATETIME,"2012 06-19 00:00");
-        listItems.add(map);
-        }
-    }
+//    private void testload( ) {
+//        for (int i= 0; i<10;i++) {
+//        final Map<String, Object> map = new HashMap<String, Object>(); 
+//        map.put(ViewHolder.TEAM_A_NAME,"teamA"+String.valueOf(i));
+//        map.put(ViewHolder.TEAM_B_NAME,"teamB"+String.valueOf(i));
+//        map.put(ViewHolder.CHECKED,i%2 ==0?true:false);
+//        map.put(ViewHolder.MATCHDATETIME,"2012 06-19 00:00");
+//        listItems.add(map);
+//        }
+//    }
     
     @Override
     public boolean onHandleActionBarItemClick(ActionBarItem item, int position) {
@@ -124,7 +129,7 @@ public class MainActivity extends     GDActivity {
     }
 }
 
-class MatchListViewAdapter   extends ArrayAdapter< Map<String, Object> > {
+class MatchListViewAdapter   extends ArrayAdapter< Match> {
     @Override
     public int getCount() {
         
@@ -132,7 +137,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Map<String, Object> > {
     }
 
     @Override
-    public Map<String, Object> getItem(int position) {
+    public Match getItem(int position) {
         
         return super.getItem(position);
     }
@@ -144,41 +149,45 @@ class MatchListViewAdapter   extends ArrayAdapter< Map<String, Object> > {
     }
 
     @Override
-    public int getPosition(Map<String, Object> item) {
+    public int getPosition(Match item) {
         
         return super.getPosition(item);
     }
+ 
+ 
+
+ 
 
     private ListView listView;
     private LayoutInflater mInflater;
-    List<Map<String, Object>> listItem ;
+    Tour tour ;
     private int listItemViewResourceId = R.layout.match_listitem;
-    public MatchListViewAdapter(Context context, int textViewResourceId) {
-        super(context, textViewResourceId);
-        // TODO Auto-generated constructor stub
-    }
-    
-    public MatchListViewAdapter(Activity activity, List<Map<String, Object>> listItem ) {
-        super(activity, 0,listItem);
+ 
+   
+    public MatchListViewAdapter(Activity activity, Tour  tour) {
+          
+        super(activity, 0,tour );
         this.mInflater = LayoutInflater.from(activity.getBaseContext());
-        this.listItem =listItem;
         
-  
+        this.tour =tour;
      
     }
 
     class MyOnCheckedChangeListener implements OnCheckedChangeListener  {
         ViewHolder holder;
         int position;
-        public MyOnCheckedChangeListener(ViewHolder holder,int position){
+        Match match;
+        public MyOnCheckedChangeListener(ViewHolder holder,int position,Match match){
             this.holder = holder;
             this.position = position;
+            this.match = match;
         }
         @Override
         public void onCheckedChanged(CompoundButton buttonView,
                 boolean isChecked) {
             holder.highlightView.setBackgroundColor(getContext().getResources().getColor(isChecked?R.color.tagblue:R.color.taggray));
-            listItem.get(position).put(ViewHolder.CHECKED, isChecked);
+          //  listItem.get(position).put(ViewHolder.CHECKED, isChecked);
+            match.setNotice(isChecked);
         }
     };
     
@@ -205,15 +214,22 @@ class MatchListViewAdapter   extends ArrayAdapter< Map<String, Object> > {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-       
-        holder.teamA_Name_TextView.setText((String) listItem.get(position).get(ViewHolder.TEAM_A_NAME));
-        holder.teamB_Name_TextView.setText((String) listItem.get(position).get(ViewHolder.TEAM_B_NAME));
+        
+        Match match = tour.get(position); 
+        holder.teamA_Name_TextView.setText(match.teamA.getTeamName());
+        holder.teamB_Name_TextView.setText(match.teamB.getTeamName());
+        holder.teamA_ImageView.setImageResource(match.teamA.getTeamFlagResId());
+        holder.teamB_ImageView.setImageResource(match.teamB.getTeamFlagResId());
         
         
        // 时间输入时均为GMT+8的时间，输出时按手机local时区
-        holder.matchdatetimeTextView.setText(TimeTools.handleTimeWithTimezone((String) listItem.get(position).get(ViewHolder.MATCHDATETIME)));
-        holder.checkBox.setOnCheckedChangeListener( new MyOnCheckedChangeListener(holder, position));
-        holder.checkBox.setChecked((Boolean) listItem.get(position).get(ViewHolder.CHECKED)); 
+        holder.matchdatetimeTextView.setText(match.getMatchDatetimeLocal());
+        
+        holder.checkBox.setOnCheckedChangeListener( new MyOnCheckedChangeListener(holder, position,match));
+        
+        holder.checkBox.setChecked(match.isNotice()); 
+        
+        
         holder.highlightView.setBackgroundColor(getContext().getResources().getColor(holder.checkBox.isChecked()?R.color.tagblue:R.color.taggray));
         return convertView;
     }

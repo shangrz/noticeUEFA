@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <array name="euro">
+      <item>e1</item>
+      <item>e2</item>
+  </array>  
+    
   <array name="e1"> 
-        <item name = "matchID">1</item> 
         <item name = "matchIntro">@string/intro1</item> 
         <item name = "teamA">pol</item> 
         <item name = "teamB">cze</item> 
@@ -10,7 +14,7 @@
   </array> 
   
     <array name="e2"> 
-        <item name = "matchID">2</item> 
+       
         <item name = "matchIntro">@string/intro1</item> 
         <item name = "teamA">rus</item> 
         <item name = "teamB">gre</item> 
