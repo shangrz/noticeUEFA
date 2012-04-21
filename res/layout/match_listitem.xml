@@ -3,7 +3,7 @@
     android:id="@+id/RelativeLayoutManage"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/match_listitem_bg"
+    android:background="#ff111111"
      android:descendantFocusability="blocksDescendants">
 
     <LinearLayout
@@ -76,6 +76,6 @@
         android:gravity="center"
         android:text="2012 6-9 00:00"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/black" />
+        android:textColor="@color/white" />
 
 </RelativeLayout>

@@ -1,21 +1,12 @@
 package com.shang.noticeuefa;
  
-import java.security.PublicKey;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.concurrent.CopyOnWriteArrayList;
-
+ 
  
 import com.shang.noticeuefa.MatchListViewAdapter.ViewHolder;
 import com.shang.noticeuefa.model.Match;
 import com.shang.noticeuefa.model.Tour;
-import com.shang.noticeuefa.util.TimeTools;
+import com.shang.noticeuefa.util.Constants;
+ 
  
 import greendroid.app.GDActivity;
 import greendroid.widget.ActionBarItem;
@@ -23,11 +14,10 @@ import greendroid.widget.ActionBarItem;
 import greendroid.widget.NormalActionBarItem;
  
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
+ 
 import android.os.Bundle;
 
-import android.text.Spannable;
+ 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,8 +50,8 @@ public class MainActivity extends     GDActivity {
         super.onCreate(savedInstanceState);
         setActionBarContentView(R.layout.main);
         setHomwButton();
-     
-        addActionBarItem(getActionBar().newActionBarItem(NormalActionBarItem.class).setDrawable(R.drawable.sound).setContentDescription(R.string.gd_export),
+        int drawResId = getSharedPreferences(Constants.SHAREDPREFERENCESNAME, 0).getBoolean("ISMUTE", false)?R.drawable.mute : R.drawable.sound;
+        addActionBarItem(getActionBar().newActionBarItem(NormalActionBarItem.class).setDrawable( drawResId).setContentDescription(R.string.gd_export),
                 ACTION_BAR_ALARM_SETTING);
         this.setTitle(R.string.matchname);
         this.getActionBar().setBackgroundColor(getResources().getColor(R.color.barblue));
@@ -87,6 +77,7 @@ public class MainActivity extends     GDActivity {
     
     protected void setHomwButton() {
         ((ImageButton)getActionBar().getChildAt(0)).setImageResource(R.drawable.eurologo);
+        
         ((ImageButton)getActionBar().getChildAt(0)).setOnClickListener(new ImageButton.OnClickListener() {
 
             @Override
@@ -116,11 +107,10 @@ public class MainActivity extends     GDActivity {
             ISMUTE = !ISMUTE;
             if(ISMUTE) {
                 item.setDrawable(R.drawable.mute); 
-                
             }else {
                 item.setDrawable(R.drawable.sound);
-                
             }
+            getSharedPreferences(Constants.SHAREDPREFERENCESNAME, 0).edit().putBoolean("ISMUTE", ISMUTE).commit();;
             break;
         default:
             return super.onHandleActionBarItemClick(item, position);

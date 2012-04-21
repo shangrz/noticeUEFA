@@ -3,9 +3,7 @@ package com.shang.noticeuefa.model;
 import com.shang.noticeuefa.util.ResTools;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
+
 
 public class Team {
     protected String teamId;

@@ -1,13 +1,15 @@
 package com.shang.noticeuefa.model;
 
+import com.shang.noticeuefa.util.Constants;
 import com.shang.noticeuefa.util.TimeTools;
 
 import android.content.Context;
  
 import android.content.res.TypedArray;
+import android.graphics.Bitmap.Config;
 
 public class Match {
-    private static final String SHAREDPREFERENCESNAME= "notice_list";
+    
     private static Context context ;
      
     public Team teamA;
@@ -24,7 +26,7 @@ public class Match {
 
     public void setNotice(boolean isNotice) {
         this.isNotice = isNotice;
-        context.getSharedPreferences(SHAREDPREFERENCESNAME, 0).edit().putBoolean(this.matchId, this.isNotice).commit();
+        context.getSharedPreferences(Constants.SHAREDPREFERENCESNAME, 0).edit().putBoolean(this.matchId, this.isNotice).commit();
     }
     
     public String getMatchDatetimeLocal() {
@@ -50,7 +52,7 @@ public class Match {
         Team teamB = Team.creatFromTeamId(array.getString(2), context);
         String matchType = array.getString(3);
         String matchDatetime = array.getString(4);
-        boolean isNotice = context.getSharedPreferences(SHAREDPREFERENCESNAME, 0).getBoolean(tagname, false);
+        boolean isNotice = context.getSharedPreferences(Constants.SHAREDPREFERENCESNAME, 0).getBoolean(tagname, false);
         array.recycle();
         return new Match(  matchId,matchType,   teamA,   teamB,      matchIntro,   matchDatetime,isNotice);
 
