@@ -54,7 +54,7 @@ public class Match {
         String matchDatetime = array.getString(4);
         boolean isNotice = context.getSharedPreferences(Constants.SHAREDPREFERENCESNAME, 0).getBoolean(tagname, false);
         array.recycle();
-        return new Match(  matchId,matchType,   teamA,   teamB,      matchIntro,   matchDatetime,isNotice);
+        return new Match(matchId, matchType, teamA, teamB, matchIntro, matchDatetime, isNotice);
 
     }
 

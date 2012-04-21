@@ -15,5 +15,6 @@
     <color name="tagblue">#FF33B5E5</color> 
     <color name="match_listitem_bg_color_start">#FFF7F7F7</color> 
     <color name="match_listitem_bg_color_end">#FFCFCFCF</color> 
+    <color name="listviewtext_color">@color/white</color> 
     
 </resources>

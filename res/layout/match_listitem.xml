@@ -41,14 +41,15 @@
             <TextView
                 android:id="@+id/teamA_name_textView"
                 style="@style/team_name_textview"
-                android:layout_width="120dp"
+                android:layout_width="110dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="TeamA11111111111111111111111111111111111 " />
+                android:text="TeamA11111111111111111111111111111111111 " 
+                 />
               <TextView
                 android:id="@+id/teamB_name_textView"
                 style="@style/team_name_textview"
-                android:layout_width="120dp"
+                android:layout_width="110dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="TeamB11111111111111111111111111111111111 "  />
@@ -71,11 +72,12 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="5dp"
+        android:layout_marginRight="10dp"
         android:layout_toLeftOf="@+id/notice_checkBox"
         android:layout_toRightOf="@+id/linearLayout1"
         android:gravity="center"
         android:text="2012 6-9 00:00"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/white" />
+        android:textColor="@color/listviewtext_color" />
 
 </RelativeLayout>
