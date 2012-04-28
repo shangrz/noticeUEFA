@@ -54,7 +54,7 @@ public class MainActivity extends     GDActivity {
         addActionBarItem(getActionBar().newActionBarItem(NormalActionBarItem.class).setDrawable( drawResId).setContentDescription(R.string.gd_export),
                 ACTION_BAR_ALARM_SETTING);
         this.setTitle(R.string.matchname);
-        this.getActionBar().setBackgroundColor(getResources().getColor(R.color.barblue));
+        this.getActionBar().setBackgroundColor(getResources().getColor(R.color.actionbar_color));
         tour =Tour.creatFromTagName("euro", getApplicationContext()); 
          
         
