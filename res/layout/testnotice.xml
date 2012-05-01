@@ -17,4 +17,12 @@
         android:layout_height="wrap_content"
         android:text="clear"
         android:onClick="TestClearButtonOnClick"  />
+        
+        
+            <Button
+        android:id="@+id/testAlarmClock_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TestAlarmClock"
+        android:onClick="TestAlarmClockButtonOnClick"  />
 </LinearLayout>

@@ -118,6 +118,10 @@ public class testNoticeActivity extends Activity {
         
     }
     
+    public void TestAlarmClockButtonOnClick(View v) {
+        
+    }
+    
     @Override  
     protected void onActivityResult(int requestCode, int resultCode, Intent data)  
     {  
