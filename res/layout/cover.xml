@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              style="@style/cover_bg">
+    <TextView style="@style/cover_main_text"
+               android:text="@string/cover_main_text"
+            ></TextView>
+    <TextView style="@style/cover_subtitle_text"
+              android:text="@string/cover_subtitle_text"
+            ></TextView>
+</RelativeLayout>

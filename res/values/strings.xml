@@ -2,9 +2,13 @@
 <resources>
 
     <string name="hello">Hello World, MainActivity!</string>
-    <string name="app_name">NoticeUEFA</string>
+    <string name="app_name">开场哨</string>
     <string name="matchname">欧洲杯</string>
-    
+    <string name="next">开始</string>
+    <string name="empty"> </string>
+    <string name="plsselect">选择我要关注的球队</string>
+    <string name="nselect">(#已选择)</string>
+
     
     <string name="cro">克罗地亚</string>
     <string name="cze">捷克</string>
@@ -26,4 +30,6 @@
  
     
      <string name="intro1">欧洲杯小组赛A1</string>
+    <string name="cover_main_text">不错过一场必看比赛</string>
+    <string name="cover_subtitle_text">开场哨根据您所喜爱的球队，及时推荐、提醒球赛。</string>
 </resources>
