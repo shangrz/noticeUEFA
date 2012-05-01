@@ -1,0 +1,92 @@
+ tourjson
+ 此json 下载好后 以tourname 命名单个放
+ {
+	 ”created_at“： "Tue May 31 17:46:55 +0800 2011",
+     “tourname”："primera",
+   	“tourteams”：“barca，rma”，
+	 
+    "matchcount":100;
+	 "matchs":[{
+     			match_teamA_name:
+				match_teamB_name:
+				match_datetime:
+				match_id:	
+				match_hasContent：//不需要  ，去查网络 ，返回错误和空的话就是组合 队名 当中加vs ， 
+				match_hasPic://不需要，去查网络比如 http://www.xx.com/img?match_id=match_id， 
+						//返回是空 就去查 teamAname teamBname相应的大图 ，还是空就用联赛的大图
+			}
+			...
+				]
+
+
+ }
+
+修正json：每次下载：用chage内容去修正相应的 tourjson，”created_at“：就为修正的”created_at“：
+每次修正一个文件按照created_at排序，用户就下载他所缺的
+
+
+{
+	 ”created_at“： "Tue May 31 17:46:55 +0800 2011",
+	“change”：【
+
+	 {
+	 
+     “tourname”："primera", //必须有
+   	“tourteams”：“barca，rma”， //没有就是不修正
+	 
+    "matchcount":100; //没有就是不修正
+	 "matchs":[{
+	 match_id:必须有 
+     			match_teamA_name: //没有就是不修正
+				match_teamB_name: //没有就是不修正
+				match_datetime: //没有就是不修正
+				 
+			}
+			...
+				]
+
+	。。。。
+ }
+
+
+
+	
+	】
+	 
+
+}
+
+
+
+
+
+此json 下载好后 按照lanuage添加到对应的language总的json文件中比如叫contents_zh_cn.json
+
+ {	“language”：”zh_cn“
+	
+	"tourcontens"：{”primera“：”。。。。“，
+	”seria“：”。。。。“
+	。。。。
+ 
+	}
+	"teamname"{
+	”rma“：”皇家马德里“
+	"barca":"巴塞罗那"
+	....
+	}
+ }
+
+
+队name 就是英文缩写
+
+要是用户更新联赛再带一个队name英文缩写对应显示名字的json就行了
+ 
+然后 再一个json就是缩写对应string恶
+比如显示队名 就是换 mygetString（"barca"）类似这种
+
+先找R.string.barca,空的就找下载过的json缩写对应string的(contents_zh_cn.json中找)
+
+图片就是getdrawable（”barca“）类似
+先找R.drawable.barca,空的话就 用barca组个url 去下载，此urlstring作为图片名，先查询缓存中有没有，没有再下载
+
+ 

@@ -8,6 +8,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -95,8 +96,10 @@ public class testNoticeActivity extends Activity {
             .putExtras(bundle) ;
         PendingIntent contentIntent = PendingIntent.getActivity(testNoticeActivity.this, 0, notificationIntent,   0);  
         notification.contentIntent = contentIntent;  
-        notification.flags = Notification.FLAG_AUTO_CANCEL;     
-        notification.defaults = Notification.DEFAULT_SOUND; 
+        notification.flags = Notification.FLAG_AUTO_CANCEL;   
+        
+      //  notification.defaults = Notification.DEFAULT_SOUND; 
+        notification.sound = Uri.parse("android.resource://" + getPackageName() + "/" +R.raw.customsound); 
         nm.notify(theid, notification);  
         isss =true;
         
