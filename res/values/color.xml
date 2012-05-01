@@ -11,13 +11,16 @@
     <color name="darkblue">#FF000099</color>
    <color name="taggray">#FF585858</color>
    <color name="red">#FFCC0000</color>
-
+    <color name="red2">#FFF83A3A</color>
+ 
     <color name="barblue">#FF0099CC</color> 
     <color name="tagblue">#FF33B5E5</color> 
     <color name="match_listitem_bg_color_start">#FFF7F7F7</color> 
     <color name="match_listitem_bg_color_end">#FFCFCFCF</color> 
     <color name="listviewtext_color">@color/white</color>
-    <color name="actionbar_color">@color/barblue</color>
+    <color name="actionbar_color">@color/red</color>
 
     <color name="cover_subtitle_text">#999999</color>
+    <color name="matchpic_desc_color">#FFFFFF</color>
+     <color name="matchpic_desc_bg">#96000000</color>
 </resources>

@@ -64,7 +64,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         @Override
         public void onCheckedChanged(CompoundButton buttonView,
                 boolean isChecked) {
-            holder.highlightView.setBackgroundColor(getContext().getResources().getColor(isChecked?R.color.tagblue:R.color.taggray));
+         //   holder.highlightView.setBackgroundColor(getContext().getResources().getColor(isChecked?R.color.red:R.color.taggray));
           //  listItem.get(position).put(ViewHolder.CHECKED, isChecked);
             match.setNotice(isChecked);
         }
@@ -109,7 +109,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         holder.checkBox.setChecked(match.isNotice()); 
         
         
-        holder.highlightView.setBackgroundColor(getContext().getResources().getColor(holder.checkBox.isChecked()?R.color.tagblue:R.color.taggray));
+    //    holder.highlightView.setBackgroundColor(getContext().getResources().getColor(holder.checkBox.isChecked()?R.color.red:R.color.taggray));
         return convertView;
     }
  

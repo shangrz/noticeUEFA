@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:weightSum="100"
+        android:background="@color/black">
+    <FrameLayout android:layout_weight="40"
+                 android:layout_width="match_parent"
+                 android:layout_height="0dip">
+        <android.support.v4.view.ViewPager
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:id="@+id/image_gallery"/>
+
+        <TextView android:layout_gravity="center|bottom"
+            android:id="@+id/textView1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" 
+            android:paddingTop="2dp" 
+            android:paddingBottom="2dp" 
+            android:maxLines = "1"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/matchpic_desc_color" 
+            android:gravity="center" android:background="@color/matchpic_desc_bg"/>
+        
+    </FrameLayout>
+
+
+    <LinearLayout android:id="@+id/index_container" android:orientation="vertical" android:layout_weight="60"
+                  android:layout_width="match_parent"
+                  android:layout_height="0dip" android:weightSum="100">
+<ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+         android:dividerHeight="1dip"
+         android:divider="@color/black"
+         android:listSelector="@color/red2">
+    </ListView>
+    </LinearLayout>
+</LinearLayout>

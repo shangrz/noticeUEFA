@@ -3,7 +3,7 @@
     android:id="@+id/RelativeLayoutManage"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="#ff111111"
+     
      android:descendantFocusability="blocksDescendants">
 
     <LinearLayout
@@ -17,7 +17,7 @@
             android:id="@+id/tag_linearLayout"
             android:layout_width="45dp"
             android:layout_height="wrap_content"
-            android:background="@color/taggray"
+          
             android:orientation="vertical" >
 
             <ImageView

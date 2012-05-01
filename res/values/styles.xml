@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="team_flag_imageview">
         <item name="android:layout_width">48dp</item>
         <item name="android:layout_height">48dp</item>
         <item name="android:padding">8dip</item>
     </style>
-    
+
     <style name="team_flag_imageview_notice">
         <item name="android:layout_width">32dp</item>
         <item name="android:layout_height">32dp</item>
         <item name="android:padding">6dip</item>
     </style>
-    
-  
-    
+
     <style name="team_name_textview" parent="android:Widget.TextView">
         <item name="android:ellipsize">end</item>
         <item name="android:gravity">left|center_vertical</item>
-         <item name="android:paddingLeft">5dp</item>
-         
+        <item name="android:paddingLeft">5dp</item>
         <item name="android:maxLines">1</item>
         <item name="android:maxWidth">120dp</item>
         <item name="android:scrollHorizontally">true</item>
@@ -26,11 +24,11 @@
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
         <item name="android:textColor">@color/listviewtext_color</item>
     </style>
-    
-    
+
     <style name="mycheckbox" parent="@android:style/Widget.CompoundButton.CheckBox">
         <item name="android:button">@drawable/mycheckbox</item>
     </style>
+
     <style name="team_name_textview_notice" parent="android:Widget.TextView">
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
         <item name="android:textColor">@color/white</item>
@@ -38,14 +36,13 @@
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxWidth">80dp</item>
-         
     </style>
+
     <style name="noticeitem_style">
         <item name="android:background">#FF111111</item>
         <item name="android:paddingLeft">5dp</item>
         <item name="android:paddingRight">5dp</item>
     </style>
-
 
     <style name="fw">
         <item name="android:layout_width">fill_parent</item>
@@ -76,4 +73,28 @@
         <item name="android:gravity">center</item>
         <item name="android:layout_marginBottom">15dip</item>
     </style>
+
+    <style name="Theme.MyStyle" parent="Theme.Sherlock.ForceOverflow">
+    
+  
+        <item name="actionBarStyle">@style/Widget.MyStyle.ActionBar</item>
+        <item name="android:actionBarStyle">@style/Widget.MyStyle.ActionBar</item> 
+    </style>
+    <style name="Widget.MyStyle.ActionBar" parent="Widget.Sherlock.ActionBar">
+      
+        <item name="background">@drawable/my_abs__ab_transparent_dark_holo</item>
+        <item name="backgroundStacked">@drawable/my_abs__ab_stacked_transparent_dark_holo</item>
+        <item name="backgroundSplit">@drawable/my_abs__ab_bottom_transparent_dark_holo</item>
+        
+        
+         <item name="android:background">@drawable/my_abs__ab_transparent_dark_holo</item>
+        <item name="android:backgroundStacked">@drawable/my_abs__ab_stacked_transparent_dark_holo</item>
+        <item name="android:backgroundSplit">@drawable/my_abs__ab_bottom_transparent_dark_holo</item>
+     
+         
+    </style>
+ 
+    
+    
+
 </resources>
