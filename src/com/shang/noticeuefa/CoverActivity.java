@@ -22,14 +22,14 @@ import com.srz.androidtools.util.PreferenceUtil;
  */
 public class CoverActivity extends SherlockActivity {
     private ProgressDialog dialog;
-    public static final String DATABASE_NAME = "notice";
+    public static final String DATABASE_NAME = "notice.sqlite";
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return new OptionMenuCreator().onCreateOptionsMenu(menu, new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent();
+                Intent intent = new Intent(CoverActivity.this, FollowActivity.class);
                 startActivity(intent);
                 return true;
             }
@@ -38,6 +38,7 @@ public class CoverActivity extends SherlockActivity {
 
     private static final int PROMPT_INPROGRESS = 1;
     private Handler handler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_MyStyle); //Used for theme switching in samples
@@ -46,10 +47,15 @@ public class CoverActivity extends SherlockActivity {
         if (!DBManager.initialized(this, DATABASE_NAME))
 
         {
-            showDialog(PROMPT_INPROGRESS);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            showDialog(PROMPT_INPROGRESS);
+                        }
+                    });
                     DBManager.initialize(new DBInitializedListener() {
 
                         public void onInitialized() {
@@ -77,7 +83,7 @@ public class CoverActivity extends SherlockActivity {
                             });
 
                         }
-                    }, CoverActivity.this,R.raw.notice,DATABASE_NAME);
+                    }, CoverActivity.this, R.raw.notice, DATABASE_NAME);
                 }
             }).start();
         }
