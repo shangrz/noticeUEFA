@@ -4,7 +4,8 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:weightSum="100"
-        android:background="@color/black">
+        android:background="@color/black"
+        android:id="@+id/main1">
     <FrameLayout android:layout_weight="40"
                  android:layout_width="match_parent"
                  android:layout_height="0dip">

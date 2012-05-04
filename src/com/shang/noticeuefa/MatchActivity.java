@@ -32,7 +32,7 @@ import android.widget.Toast;
  
  
 
-public class MatchActivity extends SherlockActivity implements OnTouchListener, OnGestureListener {
+public class MatchActivity extends SherlockActivity   {
     
     GestureDetector mGestureDetector;    
     Context mContext;
@@ -80,18 +80,15 @@ public class MatchActivity extends SherlockActivity implements OnTouchListener, 
         setContentView(R.layout.match);
        // this.getWindow().setBackgroundDrawableResource(R.color.red);
         getSupportActionBar().setTitle(R.string.today_push_match);
+        
+        
+        
         pager = (ViewPager) findViewById(R.id.image_gallery);
         adapter = new MatchGalleryAdapter(this);
         pager.setAdapter(adapter);
         pager.setCurrentItem(0);
-        
-        
-      
+       
         this.setTitle(R.string.matchname);
-      
-         
-        
-      
         listView = (ListView) findViewById(R.id.listView1); 
         tour =Tour.creatFromTagName("euro", getApplicationContext());
         MatchListViewAdapter adapter2 = new MatchListViewAdapter(MatchActivity.this, tour); 
@@ -133,70 +130,77 @@ public class MatchActivity extends SherlockActivity implements OnTouchListener, 
             }
         });
         
+       mGestureDetector = new GestureDetector(new GestureListener());  
+       listView.setOnTouchListener(new TouhListener());  
+   
         
 
     }
-
-    @Override
-    public boolean onDown(MotionEvent arg0) {
-        // TODO Auto-generated method stub
-        return false;
+ 
+    class TouhListener implements OnTouchListener{  
+        @Override  
+        public boolean onTouch(View v, MotionEvent event) {  
+            return mGestureDetector.onTouchEvent(event);  
+        }  
+          
     }
-    
-    private int verticalMinDistance = 20;
-    private int minVelocity         = 0;
-
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-            float velocityY) {
-        if (e1.getX() - e2.getX() > verticalMinDistance && Math.abs(velocityX) > minVelocity) {
-            Intent nextIntent = new Intent();
-            nextIntent.setClass(getApplicationContext(),  FollowActivity.class);
-            startActivity(nextIntent);    
-            overridePendingTransition(R.anim.infromleft,R.anim.out2right); 
-             
-            Toast.makeText(this, "向左手势", Toast.LENGTH_SHORT).show();
+    class GestureListener implements OnGestureListener{
+        private int verticalMinDistance = 60;
+        private int minVelocity         = 0;
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return false;
         }
-//        else if (e2.getX() - e1.getX() > verticalMinDistance && Math.abs(velocityX) > minVelocity) {
-//            Intent nextIntent = new Intent();
-//            nextIntent.setClass(ViewShowActivity.this,  NextActivity.class);
-//            startActivity(nextIntent);   
-//            overridePendingTransition(  R.anim.infromright,R.anim.out2left);  
-//          
-//            Toast.makeText(this, "向右手势", Toast.LENGTH_SHORT).show();
-//        }
-        return false;
-    }
 
-    @Override
-    public void onLongPress(MotionEvent e) {
-        // TODO Auto-generated method stub
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+                float velocityY) {
+            if (e1.getX() - e2.getX() > verticalMinDistance && Math.abs(velocityX) > minVelocity) {
+//                Intent nextIntent = new Intent();
+//                nextIntent.setClass(getApplicationContext(),  FollowActivity.class);
+//                startActivity(nextIntent);    
+ 
+//                overridePendingTransition(  R.anim.infromright,R.anim.out2left);  
+            }
+            else if (e2.getX() - e1.getX() > verticalMinDistance && Math.abs(velocityX) > minVelocity) {
+                Intent nextIntent = new Intent();
+                nextIntent.setClass(getApplicationContext(),  FollowActivity.class);
+                startActivity(nextIntent);   
+             //   overridePendingTransition(  R.anim.infromright,R.anim.out2left);  
+                overridePendingTransition(R.anim.infromleft,R.anim.out2right); 
+ 
+            }
+            return false;
+             
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2,
+                float distanceX, float distanceY) {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent e) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            // TODO Auto-generated method stub
+            return false;
+        }  
         
     }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-            float distanceY) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent e) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        return mGestureDetector.onTouchEvent(event);
-    }
+ 
         
      
 }
@@ -233,8 +237,7 @@ class MatchGalleryAdapter extends PagerAdapter {
 
     }
     
-    private int verticalMinDistance = 20;
-    private int minVelocity         = 0;
+   
      
     
    
