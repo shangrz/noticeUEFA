@@ -1,7 +1,9 @@
 package com.shang.noticeuefa.model2;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
@@ -13,6 +15,7 @@ import java.util.Date;
  * Time: 下午4:14
  * To change this template use File | Settings | File Templates.
  */
+
 @DatabaseTable(tableName = "team")
 public class Team {
     public int getId() {
@@ -65,4 +68,16 @@ public class Team {
     private Date lastModified;//纪录最近一次该球队信息更新时间，用于当服务器有更新，减少update操作的次数，如果modified时间早于server才需要更新
     @DatabaseField
     private boolean followed;//是否为喜爱球队
+
+    @ForeignCollectionField(eager = true)
+    ForeignCollection<TeamGroup> teamGroups;
+
+
+    public ForeignCollection<TeamGroup> getTeamGroups() {
+        return teamGroups;
+    }
+
+    public void setTeamGroups(ForeignCollection<TeamGroup> teamGroups) {
+        this.teamGroups = teamGroups;
+    }
 }

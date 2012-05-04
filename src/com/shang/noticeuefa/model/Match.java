@@ -1,7 +1,7 @@
 package com.shang.noticeuefa.model;
 
 import com.shang.noticeuefa.util.Constants;
-import com.shang.noticeuefa.util.TimeTools;
+import com.srz.androidtools.util.TimeTools;
 
 import android.content.Context;
  

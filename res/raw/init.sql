@@ -1,5 +1,5 @@
 BEGIN TRANSACTION;
-CREATE TABLE match (overtime NUMERIC, scoreB TEXT, scoreA TEXT, id integer PRIMARY KEY autoincrement, teamA text, teamB text, matchTime datetime, lastModified datetime, desc text, tourid text, info text, comment text, follow Boolean, alarm Boolean, alarmId int);
+CREATE TABLE match (scoreB TEXT, scoreA TEXT, id integer PRIMARY KEY autoincrement, teamA text, teamB text, matchTime datetime, lastModified datetime, desc text, tourid text, info text, comment text, follow Boolean, alarm Boolean, alarmId int);
 INSERT INTO match VALUES(NULL,NULL,NULL,1,'波兰','希腊','2012-6-8 16:00','2012-5-1 20:19','揭幕战非常垃圾',1,'A组小组赛',NULL,'FALSE','FALSE',NULL);
 INSERT INTO match VALUES(NULL,NULL,NULL,2,'俄罗斯','捷克','2012-6-8 18:45','2012-5-1 20:19','沙皇虐杀捷克',1,'A组小组赛',NULL,'FALSE','FALSE',NULL);
 INSERT INTO match VALUES(NULL,NULL,NULL,3,'荷兰','丹麦','2012-6-9 16:00','2012-5-1 20:19','半神出场！',1,'B组小组赛',NULL,'FALSE','FALSE',NULL);
@@ -57,3 +57,4 @@ CREATE TABLE "tour"(
 );
 INSERT INTO tour VALUES(1,'欧锦赛','euro');
 COMMIT;
+T;

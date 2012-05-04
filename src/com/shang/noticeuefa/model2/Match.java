@@ -1,8 +1,10 @@
 package com.shang.noticeuefa.model2;
 
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
@@ -18,9 +20,9 @@ import java.util.Date;
 public class Match {
     @DatabaseField(generatedId = true)
     private int id;
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true,columnName = "teamA")
     private Team teamA;
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true,columnName = "teamB")
     private Team teamB;
     @DatabaseField(format="yyyy-MM-dd HH:mm",dataType= DataType.DATE_STRING)
     private Date matchTime;//比赛时间
@@ -83,30 +85,6 @@ public class Match {
         this.desc = desc;
     }
 
-    public boolean isFollow() {
-        return follow;
-    }
-
-    public void setFollow(boolean follow) {
-        this.follow = follow;
-    }
-
-    public boolean isAlarm() {
-        return alarm;
-    }
-
-    public void setAlarm(boolean alarm) {
-        this.alarm = alarm;
-    }
-
-    public long getAlarmId() {
-        return alarmId;
-    }
-
-    public void setAlarmId(long alarmId) {
-        this.alarmId = alarmId;
-    }
-
     public String getInfo() {
         return info;
     }
@@ -123,52 +101,49 @@ public class Match {
         this.tour = tour;
     }
 
-    public long getScoreA() {
+    public String getScoreA() {
         return scoreA;
     }
 
-    public void setScoreA(long scoreA) {
+    public void setScoreA(String scoreA) {
         this.scoreA = scoreA;
     }
 
-    public long getScoreB() {
+    public String getScoreB() {
         return scoreB;
     }
 
-    public void setScoreB(long scoreB) {
+    public void setScoreB(String scoreB) {
         this.scoreB = scoreB;
     }
 
-    public boolean isOvertime() {
-        return overtime;
-    }
 
-    public void setOvertime(boolean overtime) {
-        this.overtime = overtime;
-    }
 
     @DatabaseField(format="yyyy-MM-dd HH:mm",dataType= DataType.DATE_STRING)
     private Date lastModified;//纪录最近一次该比赛场次信息更新时间，用于当服务器有更新，减少update操作的次数，如果modified时间早于server才需要更新
     @DatabaseField
     private String desc;//比赛描述栏，对该场次比赛的前瞻性报道
 
-    @DatabaseField
-    private boolean follow;//是否为关注比赛
-    @DatabaseField
-    private boolean alarm;//是否需要提醒
-    @DatabaseField
-    private long alarmId;//和系统关联的alarmID,如果需要取消，可以用该id找到设定的闹铃id
+
     @DatabaseField
     private String info;//比赛阶段信息，比如a组小组赛
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true,columnName = "tourid")
     private Tour tour;
 
     @DatabaseField
-    private long scoreA;
+    private String scoreA;
 
     @DatabaseField
-    private long scoreB;
+    private String scoreB;
 
-    @DatabaseField
-    private boolean overtime;
+    public ForeignCollection<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(ForeignCollection<Notification> notifications) {
+        this.notifications = notifications;
+    }
+
+    @ForeignCollectionField(eager = true)
+    ForeignCollection<Notification> notifications;
 }
