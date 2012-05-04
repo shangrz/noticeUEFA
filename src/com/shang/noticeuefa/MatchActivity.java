@@ -8,23 +8,34 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.shang.noticeuefa.model.Tour;
  
+ 
+ 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.GestureDetector.OnGestureListener;
+import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
+ 
 
  
  
 
-public class MatchActivity extends SherlockActivity{
+public class MatchActivity extends SherlockActivity implements OnTouchListener, OnGestureListener {
+    
+    GestureDetector mGestureDetector;    
+    Context mContext;
     private ViewPager pager;
     private Handler handler = new Handler();
     private MatchGalleryAdapter adapter;
@@ -125,6 +136,67 @@ public class MatchActivity extends SherlockActivity{
         
 
     }
+
+    @Override
+    public boolean onDown(MotionEvent arg0) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    
+    private int verticalMinDistance = 20;
+    private int minVelocity         = 0;
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+            float velocityY) {
+        if (e1.getX() - e2.getX() > verticalMinDistance && Math.abs(velocityX) > minVelocity) {
+            Intent nextIntent = new Intent();
+            nextIntent.setClass(getApplicationContext(),  FollowActivity.class);
+            startActivity(nextIntent);    
+            overridePendingTransition(R.anim.infromleft,R.anim.out2right); 
+             
+            Toast.makeText(this, "向左手势", Toast.LENGTH_SHORT).show();
+        }
+//        else if (e2.getX() - e1.getX() > verticalMinDistance && Math.abs(velocityX) > minVelocity) {
+//            Intent nextIntent = new Intent();
+//            nextIntent.setClass(ViewShowActivity.this,  NextActivity.class);
+//            startActivity(nextIntent);   
+//            overridePendingTransition(  R.anim.infromright,R.anim.out2left);  
+//          
+//            Toast.makeText(this, "向右手势", Toast.LENGTH_SHORT).show();
+//        }
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+            float distanceY) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        return mGestureDetector.onTouchEvent(event);
+    }
         
      
 }
@@ -160,4 +232,10 @@ class MatchGalleryAdapter extends PagerAdapter {
         (container).removeView((View) object);
 
     }
+    
+    private int verticalMinDistance = 20;
+    private int minVelocity         = 0;
+     
+    
+   
 }
