@@ -2,9 +2,16 @@
 <resources>
 
     <style name="team_flag_imageview">
-        <item name="android:layout_width">48dp</item>
-        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_width">64dip</item>
+        <item name="android:layout_height">64dip</item>
         <item name="android:padding">8dip</item>
+    </style>
+    <style name="team_name">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">3dip</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="team_flag_imageview_notice">

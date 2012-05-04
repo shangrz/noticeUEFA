@@ -2,19 +2,24 @@ package com.shang.noticeuefa;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
+import android.widget.GridView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.androidquery.AQuery;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.shang.noticeuefa.database.DatabaseHelper;
 import com.shang.noticeuefa.model2.Team;
-import com.shang.noticeuefa.model2.Tour;
 import com.shang.noticeuefa.view.OptionMenuCreator;
 import com.shang.noticeuefa.view.TeamFollowedListener;
+import com.shang.noticeuefa.view.TeamGridAdapter;
+import com.shang.noticeuefa.view.TeamPagerViewAdapter;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,38 +49,22 @@ public class FollowActivity extends SherlockActivity implements TeamFollowedList
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_MyStyle); //Used for theme switching in samples
         DatabaseHelper helper = getHelper();
-
-
-        try {
-            Dao<Tour, Integer> dao = helper.getTourDao();
-            Dao<Team, Integer> dao2 = helper.getTeamDao();
-            List<Team> teams = dao2.queryForAll();
-            System.out.println(teams.size());
-            long millis = System.currentTimeMillis();
-
-            Team a = new Team();
-//            a.setId(111);
-//            a.setFollowed(true);
-//            a.setLastModified(new Date());
-            a.setTeamName("申花队");
-            a.setTeamShortName("FC-shenhua");
-
-            dao2.create(a);
-            // create some entries in the onCreate
-//            Tour simple = new Tour();
-//            simple.setName("假A");
-//            simple.setShortName("A");
-//            dao.create(simple);
-
-
-            Log.i(DatabaseHelper.class.getName(), "created new entries in onCreate: " + millis);
-        } catch (SQLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
         super.onCreate(savedInstanceState);
         setTitle(numberOfSelected);
         setContentView(R.layout.follow);
+
+        GridView gridView = (GridView) LayoutInflater.from(this).inflate(R.layout.teamgridview, null);
+        try {
+            Dao<Team, Integer> dao2 = helper.getDao(Team.class);
+            List<Team> teams = dao2.queryForAll();
+            TeamGridAdapter tga = new TeamGridAdapter(this, R.layout.team, teams);
+            new AQuery(gridView).find(R.id.grid).adapter(tga);
+        } catch (SQLException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        List<GridView> gridViews = new ArrayList<GridView>();
+        gridViews.add(gridView);
+        ((ViewPager)findViewById(R.id.teampager)).setAdapter((new TeamPagerViewAdapter(gridViews)));
 
 
 //        ViewPager mViewPager = (ViewPager) findViewById(R.id.teampager);
@@ -106,7 +95,7 @@ public class FollowActivity extends SherlockActivity implements TeamFollowedList
     public void setTitle(int numberOfSelected) {
         String prefix = getString(R.string.plsselect);
         String suffix = getString(R.string.nselect);
-        suffix = suffix.replace("#", ""+numberOfSelected);
+        suffix = suffix.replace("#", "" + numberOfSelected);
         getSupportActionBar().setTitle(prefix + suffix);
     }
 

@@ -1,18 +1,20 @@
 package com.shang.noticeuefa.model2;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * Created with IntelliJ IDEA.
  * User: jleo
- * Date: 12-5-2
- * Time: 上午4:27
+ * Date: 12-5-3
+ * Time: 下午11:47
  * To change this template use File | Settings | File Templates.
  */
-@DatabaseTable(tableName = "tour")
-public class Tour {
-    public static final String TOUR_NAME = "name";
+@DatabaseTable(tableName = "grp")
+public class Group {
+    public static final String GROUP_NAME = "name";
 
     @DatabaseField(generatedId = true)
     private int id;
@@ -20,16 +22,8 @@ public class Tour {
     @DatabaseField
     private String name;
 
-    public String getShortName() {
-        return shortName;
-    }
-
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
-    }
-
-    @DatabaseField
-    private String shortName;
+    @ForeignCollectionField(eager = true)
+    ForeignCollection<TeamGroup> teamGroups;
 
     public int getId() {
         return id;
@@ -45,5 +39,13 @@ public class Tour {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public ForeignCollection<TeamGroup> getTeamGroups() {
+        return teamGroups;
+    }
+
+    public void setTeamGroups(ForeignCollection<TeamGroup> teamGroups) {
+        this.teamGroups = teamGroups;
     }
 }

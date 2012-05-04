@@ -1,6 +1,6 @@
 package com.shang.noticeuefa.model;
 
-import com.shang.noticeuefa.util.ResTools;
+import com.srz.androidtools.util.ResTools;
 
 import android.content.Context;
 
