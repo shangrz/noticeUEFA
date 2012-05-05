@@ -124,6 +124,8 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             holder.teamB_Name_TextView = (TextView)convertView.findViewById(R.id.teamB_name_textView);
             holder.matchdatetimeTextView = (TextView)convertView.findViewById(R.id.match_datetime_textView); 
             holder.checkBox = (CheckBox)convertView.findViewById(R.id.notice_checkBox);
+            
+            holder.checkBox.setClickable(false);
             holder.highlightView = convertView.findViewById(R.id.tag_linearLayout);
        
             convertView.setTag(holder);
@@ -175,5 +177,23 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         public TextView matchdatetimeTextView;
         public CheckBox checkBox;
         public View highlightView;
+    }
+
+    public void setAllSelectedNotice(boolean isNotice) {
+       for(int i = 0;i<m_selects.size();i++) {
+           if(m_selects.get(i) ) {
+               tour.get(i).setNotice(isNotice);
+           }
+       }
+    }
+
+    public void selectAll(boolean b) {
+        if(b) {
+            MULTI_MODE = b;
+            for(int i=0; i<tour.size(); i++) 
+                m_selects.setElementAt(true,i);
+            notifyDataSetChanged();   
+        }
+        
     }
 }

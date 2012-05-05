@@ -52,7 +52,7 @@ public class MatchActivity extends SherlockActivity   {
     public boolean onCreateOptionsMenu(Menu menu) {
         
  
-         menu.add("SelectAll")
+         menu.add(0,1,0,"SelectAll")
          .setIcon(  R.drawable.content_select_all)
          .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT); 
          
@@ -154,7 +154,27 @@ public class MatchActivity extends SherlockActivity   {
 
     }
     
-   
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        
+        switch(item.getItemId()) {
+        case 1:
+            
+            mMode = startActionMode(new AnActionModeOfEpicProportions());
+            
+            adapter2.selectAll( true);
+            if(adapter2.getSelectedCount() == 0)
+                mMode.finish();
+            mMode.setTitle(adapter2.getSelectedCount()+" 已选择");
+            break;
+        case 2:
+           
+            break;
+       
+        
+        }
+        return false;
+    }
  
     class TouhListener implements OnTouchListener{  
         @Override  
@@ -225,18 +245,18 @@ public class MatchActivity extends SherlockActivity   {
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MODE_NOW = true;
               
-            menu.add(0,1,0,"Follow")
-            .setIcon(R.drawable.rating_important)
-            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+//            menu.add(0,1,0,"Follow")
+//            .setIcon(R.drawable.rating_important)
+//            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
             
             menu.add(0,2,0,"Alarm")
             .setIcon(R.drawable.device_access_add_alarm)
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-//            
-//            menu.add(0,3,0,"Del")
-//            .setIcon(R.drawable.content_discard)
-//            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-//           
+             
+             menu.add(0,3,0,"Del")
+             .setIcon(R.drawable.content_discard)
+             .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+           
 
          
 
@@ -256,8 +276,10 @@ public class MatchActivity extends SherlockActivity   {
                 case 1:
                     break;
                 case 2:
+                    adapter2.setAllSelectedNotice(true);
                     break;
                 case 3:
+                    adapter2.setAllSelectedNotice(false);
                     break;
                 
             }
