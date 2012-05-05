@@ -1,5 +1,8 @@
 package com.shang.noticeuefa;
 
+import java.util.Vector;
+
+import android.R.integer;
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +12,7 @@ import com.shang.noticeuefa.model.Match;
 import com.shang.noticeuefa.model.Tour;
 
 class MatchListViewAdapter   extends ArrayAdapter< Match> {
+    
     @Override
     public int getCount() {
         
@@ -32,8 +36,39 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         
         return super.getPosition(item);
     }
+    
+    private Vector<Boolean> m_selects = new Vector<Boolean>(); 
+    public void changeState(int position,boolean  multiChoose){ 
+        // 多选时 
+        if(multiChoose == true){     
+            m_selects.setElementAt(!m_selects.elementAt(position), position);   //直接取反即可     
+        } 
+        MULTI_MODE = multiChoose;
+        
+        notifyDataSetChanged();     //通知适配器进行更新 
+    } 
+    
+    public void endActionMode(){ 
+        
+        
+        MULTI_MODE = false;
+        for(int i=0; i<tour.size(); i++) 
+            m_selects.setElementAt(false,i);
+        
+        notifyDataSetChanged();     //通知适配器进行更新 
+    } 
+    
+    public int getSelectedCount() {
+        int i = 0;
+        for (boolean isSelected:m_selects) {
+            if(isSelected) i+=1;
+        }
+       
+        return i;
+    }
+
  
- 
+   public static boolean MULTI_MODE = false;
 
  
 
@@ -49,6 +84,10 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         this.mInflater = LayoutInflater.from(activity.getBaseContext());
         
         this.tour =tour;
+         
+        
+        for(int i=0; i<tour.size(); i++) 
+            m_selects.add(false); 
      
     }
 
@@ -107,7 +146,18 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         holder.checkBox.setOnCheckedChangeListener( new MyOnCheckedChangeListener(holder, position,match));
         
         holder.checkBox.setChecked(match.isNotice()); 
-        
+        if (MULTI_MODE)
+            if(m_selects.get(position)){
+                convertView.setBackgroundResource(R.color.red2);
+           // convertView.setSelected(m_selects.get(position));
+            }
+            else {
+                convertView.setBackgroundResource(R.color.black);
+            }
+        else {
+            convertView.setBackgroundResource(R.color.black);
+        }
+          
         
     //    holder.highlightView.setBackgroundColor(getContext().getResources().getColor(holder.checkBox.isChecked()?R.color.red:R.color.taggray));
         return convertView;
