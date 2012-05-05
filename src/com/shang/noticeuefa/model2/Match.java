@@ -1,10 +1,8 @@
 package com.shang.noticeuefa.model2;
 
 
-import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
@@ -136,14 +134,14 @@ public class Match {
     @DatabaseField
     private String scoreB;
 
-    public ForeignCollection<Notification> getNotifications() {
+    public Notification getNotifications() {
         return notifications;
     }
 
-    public void setNotifications(ForeignCollection<Notification> notifications) {
+    public void setNotifications(Notification notifications) {
         this.notifications = notifications;
     }
 
-    @ForeignCollectionField(eager = true)
-    ForeignCollection<Notification> notifications;
+    @DatabaseField(foreign = true,foreignAutoRefresh=true)
+    Notification notifications;
 }

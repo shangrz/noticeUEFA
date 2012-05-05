@@ -44,7 +44,7 @@ public class FollowActivity extends SherlockActivity implements TeamFollowedList
         return new OptionMenuCreator().onCreateOptionsMenu(menu, new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent();
+                Intent intent = new Intent(FollowActivity.this, MatchActivity.class);
                 startActivity(intent);
                 return true;
             }
