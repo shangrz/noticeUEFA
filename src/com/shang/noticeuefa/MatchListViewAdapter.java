@@ -124,6 +124,8 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             holder.teamB_Name_TextView = (TextView)convertView.findViewById(R.id.teamB_name_textView);
             holder.matchdatetimeTextView = (TextView)convertView.findViewById(R.id.match_datetime_textView); 
             holder.checkBox = (CheckBox)convertView.findViewById(R.id.notice_checkBox);
+            
+            holder.checkBox.setClickable(false);
             holder.highlightView = convertView.findViewById(R.id.tag_linearLayout);
        
             convertView.setTag(holder);
