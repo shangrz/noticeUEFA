@@ -8,23 +8,34 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.shang.noticeuefa.model.Tour;
  
+ 
+ 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.GestureDetector.OnGestureListener;
+import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
+ 
 
  
  
 
-public class MatchActivity extends SherlockActivity{
+public class MatchActivity extends SherlockActivity   {
+    
+    GestureDetector mGestureDetector;    
+    Context mContext;
     private ViewPager pager;
     private Handler handler = new Handler();
     private MatchGalleryAdapter adapter;
@@ -69,18 +80,15 @@ public class MatchActivity extends SherlockActivity{
         setContentView(R.layout.match);
        // this.getWindow().setBackgroundDrawableResource(R.color.red);
         getSupportActionBar().setTitle(R.string.today_push_match);
+        
+        
+        
         pager = (ViewPager) findViewById(R.id.image_gallery);
         adapter = new MatchGalleryAdapter(this);
         pager.setAdapter(adapter);
         pager.setCurrentItem(0);
-        
-        
-      
+       
         this.setTitle(R.string.matchname);
-      
-         
-        
-      
         listView = (ListView) findViewById(R.id.listView1); 
         tour =Tour.creatFromTagName("euro", getApplicationContext());
         MatchListViewAdapter adapter2 = new MatchListViewAdapter(MatchActivity.this, tour); 
@@ -122,9 +130,77 @@ public class MatchActivity extends SherlockActivity{
             }
         });
         
+       mGestureDetector = new GestureDetector(new GestureListener());  
+       listView.setOnTouchListener(new TouhListener());  
+   
         
 
     }
+ 
+    class TouhListener implements OnTouchListener{  
+        @Override  
+        public boolean onTouch(View v, MotionEvent event) {  
+            return mGestureDetector.onTouchEvent(event);  
+        }  
+          
+    }
+    class GestureListener implements OnGestureListener{
+        private int verticalMinDistance = 60;
+        private int minVelocity         = 0;
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+                float velocityY) {
+            if (e1.getX() - e2.getX() > verticalMinDistance && Math.abs(velocityX) > minVelocity) {
+//                Intent nextIntent = new Intent();
+//                nextIntent.setClass(getApplicationContext(),  FollowActivity.class);
+//                startActivity(nextIntent);    
+ 
+//                overridePendingTransition(  R.anim.infromright,R.anim.out2left);  
+            }
+            else if (e2.getX() - e1.getX() > verticalMinDistance && Math.abs(velocityX) > minVelocity) {
+                Intent nextIntent = new Intent();
+                nextIntent.setClass(getApplicationContext(),  FollowActivity.class);
+                startActivity(nextIntent);   
+             //   overridePendingTransition(  R.anim.infromright,R.anim.out2left);  
+                overridePendingTransition(R.anim.infromleft,R.anim.out2right); 
+ 
+            }
+            return false;
+             
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2,
+                float distanceX, float distanceY) {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent e) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            // TODO Auto-generated method stub
+            return false;
+        }  
+        
+    }
+ 
         
      
 }
@@ -160,4 +236,9 @@ class MatchGalleryAdapter extends PagerAdapter {
         (container).removeView((View) object);
 
     }
+    
+   
+     
+    
+   
 }

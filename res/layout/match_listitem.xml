@@ -3,7 +3,7 @@
     android:id="@+id/RelativeLayoutManage"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-     
+     android:paddingRight="5dp"
      android:descendantFocusability="blocksDescendants">
 
     <LinearLayout
@@ -41,7 +41,7 @@
             <TextView
                 android:id="@+id/teamA_name_textView"
                 style="@style/team_name_textview"
-                android:layout_width="110dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="TeamA11111111111111111111111111111111111 " 
@@ -49,7 +49,7 @@
               <TextView
                 android:id="@+id/teamB_name_textView"
                 style="@style/team_name_textview"
-                android:layout_width="110dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="TeamB11111111111111111111111111111111111 "  />
@@ -64,7 +64,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true" 
+          
+        />
 
     <TextView
         android:id="@+id/match_datetime_textView"
@@ -77,6 +79,7 @@
         android:layout_toRightOf="@+id/linearLayout1"
         android:gravity="center"
         android:text="2012 6-9 00:00"
+         
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/listviewtext_color" />
 
