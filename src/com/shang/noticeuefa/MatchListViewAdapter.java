@@ -184,4 +184,14 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
            }
        }
     }
+
+    public void selectAll(boolean b) {
+        if(b) {
+            MULTI_MODE = b;
+            for(int i=0; i<tour.size(); i++) 
+                m_selects.setElementAt(true,i);
+            notifyDataSetChanged();   
+        }
+        
+    }
 }

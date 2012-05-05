@@ -52,7 +52,7 @@ public class MatchActivity extends SherlockActivity   {
     public boolean onCreateOptionsMenu(Menu menu) {
         
  
-         menu.add("SelectAll")
+         menu.add(0,1,0,"SelectAll")
          .setIcon(  R.drawable.content_select_all)
          .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT); 
          
@@ -154,7 +154,27 @@ public class MatchActivity extends SherlockActivity   {
 
     }
     
-   
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        
+        switch(item.getItemId()) {
+        case 1:
+            
+            mMode = startActionMode(new AnActionModeOfEpicProportions());
+            
+            adapter2.selectAll( true);
+            if(adapter2.getSelectedCount() == 0)
+                mMode.finish();
+            mMode.setTitle(adapter2.getSelectedCount()+" 已选择");
+            break;
+        case 2:
+           
+            break;
+       
+        
+        }
+        return false;
+    }
  
     class TouhListener implements OnTouchListener{  
         @Override  
