@@ -36,4 +36,5 @@
     <string name="todayandafter">明后天</string>
     <string name="thisweek">本周</string>
     <string name="nextweek">下周</string>
+    <string name="umeng_kanqiu_key">kanqiu</string>
 </resources>
