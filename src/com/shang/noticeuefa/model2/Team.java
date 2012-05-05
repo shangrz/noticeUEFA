@@ -18,6 +18,7 @@ import java.util.Date;
 
 @DatabaseTable(tableName = "team")
 public class Team {
+    public static final String FOLLOWED = "followed";
     public int getId() {
         return id;
     }
@@ -62,6 +63,9 @@ public class Team {
     private int id;
     @DatabaseField
     private String teamName;
+
+
+
     @DatabaseField
     private String teamShortName;//英语字母代替，用于和资源关联
     @DatabaseField(format="yyyy-MM-dd HH:mm",dataType= DataType.DATE_STRING)

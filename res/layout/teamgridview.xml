@@ -5,7 +5,7 @@
           android:layout_height="match_parent"
           android:padding="10dp"
           android:verticalSpacing="10dp"
-
+          android:listSelector="@android:color/transparent"
           android:horizontalSpacing="10dp"
           android:numColumns="auto_fit"
           android:columnWidth="60dp"

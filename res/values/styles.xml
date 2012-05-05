@@ -2,6 +2,11 @@
 <resources>
 
     <style name="team_flag_imageview">
+        <item name="android:layout_width">48dip</item>
+        <item name="android:layout_height">48dip</item>
+        <item name="android:padding">8dip</item>
+    </style>
+    <style name="team_flag_selection">
         <item name="android:layout_width">64dip</item>
         <item name="android:layout_height">64dip</item>
         <item name="android:padding">8dip</item>

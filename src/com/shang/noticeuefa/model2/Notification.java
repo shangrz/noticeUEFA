@@ -12,7 +12,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = "notification")
 public class Notification {
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true,foreignAutoRefresh=true)
     private Match match;
 
     @DatabaseField(generatedId = true)

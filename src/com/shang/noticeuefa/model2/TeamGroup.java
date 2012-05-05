@@ -14,9 +14,9 @@ import com.j256.ormlite.table.DatabaseTable;
 public class TeamGroup {
     @DatabaseField(generatedId = true)
     public int id;
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true,foreignAutoRefresh=true)
     private Team team;
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true,foreignAutoRefresh = true)
     private Group group;
 
     public int getId() {

@@ -7,7 +7,7 @@
     <string name="next">开始</string>
     <string name="empty"> </string>
     <string name="plsselect">选择我要关注的球队</string>
-    <string name="nselect">(#已选择)</string>
+    <string name="nselect">(#已关注)</string>
 
     
     <string name="cro">克罗地亚</string>

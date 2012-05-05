@@ -10,6 +10,7 @@ import com.j256.ormlite.table.TableUtils;
 import com.shang.noticeuefa.model2.*;
 
 import java.sql.SQLException;
+import java.util.Collection;
 
 /**
  * Database helper class used to manage the creation and upgrading of your database. This class also usually provides
@@ -45,8 +46,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Tour.class);
             TableUtils.createTable(connectionSource, TeamGroup.class);
             TableUtils.createTable(connectionSource, Notification.class);
-
-
 //			// here we try inserting data in the on-create as a test
 //
         } catch (SQLException e) {
@@ -98,5 +97,29 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         teamDao = null;
         tourDao = null;
         matchDao = null;
+    }
+
+    public void truncate(Class clz) {
+        try {
+            Dao dao = getDao(clz);
+            dao.delete(dao.queryForAll());
+        } catch (SQLException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    public void createAll(Collection c) {
+        if (c.size() == 0)
+            return;
+
+        Class clz = c.iterator().next().getClass();
+        try {
+            Dao dao = getDao(clz);
+            for (Object obj : c) {
+                dao.create(obj);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 }
