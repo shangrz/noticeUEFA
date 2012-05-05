@@ -8,8 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import com.shang.noticeuefa.model.Match;
-import com.shang.noticeuefa.model.Tour;
+import com.shang.noticeuefa.model2.Match;
+import com.shang.noticeuefa.model2.Tour;
+import com.srz.androidtools.util.TimeTools;
 
 class MatchListViewAdapter   extends ArrayAdapter< Match> {
     
@@ -77,14 +78,14 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
     Tour tour ;
     private int listItemViewResourceId = R.layout.match_listitem;
  
-   
+    Activity activity ;
     public MatchListViewAdapter(Activity activity, Tour tour) {
           
         super(activity, 0,tour );
         this.mInflater = LayoutInflater.from(activity.getBaseContext());
         
         this.tour =tour;
-         
+        this.activity= activity;
         
         for(int i=0; i<tour.size(); i++) 
             m_selects.add(false); 
@@ -136,18 +137,23 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         }
         
         Match match = tour.get(position); 
-        holder.teamA_Name_TextView.setText(match.teamA.getTeamName());
-        holder.teamB_Name_TextView.setText(match.teamB.getTeamName());
-        holder.teamA_ImageView.setImageResource(match.teamA.getTeamFlagResId());
-        holder.teamB_ImageView.setImageResource(match.teamB.getTeamFlagResId());
+        holder.teamA_Name_TextView.setText(match.getTeamA().getTeamName());
+        holder.teamB_Name_TextView.setText(match.getTeamB().getTeamName());
+        
+        int teamFlagResId =this.activity.getResources().getIdentifier(match.getTeamA().getTeamShortName(), "drawable",this.activity.getPackageName());
+        holder.teamA_ImageView.setImageResource(teamFlagResId);
+        
+        teamFlagResId =this.activity.getResources().getIdentifier(match.getTeamB().getTeamShortName(), "drawable",this.activity.getPackageName());
+        holder.teamB_ImageView.setImageResource(teamFlagResId);
         
         
        // 时间输入时均为GMT+8的时间，输出时按手机local时区
-        holder.matchdatetimeTextView.setText(match.getMatchDatetimeLocal());
+         
+        holder.matchdatetimeTextView.setText(match.getMatchTime().toString());
         
         holder.checkBox.setOnCheckedChangeListener( new MyOnCheckedChangeListener(holder, position,match));
         
-        holder.checkBox.setChecked(match.isNotice()); 
+        holder.checkBox.setChecked(match.getNotifications()); 
         if (MULTI_MODE)
             if(m_selects.get(position)){
                 convertView.setBackgroundResource(R.color.red2);
