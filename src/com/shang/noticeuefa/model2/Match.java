@@ -18,9 +18,9 @@ import java.util.Date;
 public class Match {
     @DatabaseField(generatedId = true)
     private int id;
-    @DatabaseField(canBeNull = false, foreign = true,columnName = "teamA")
+    @DatabaseField(canBeNull = false, foreign = true,columnName = "teamA",foreignAutoRefresh = true)
     private Team teamA;
-    @DatabaseField(canBeNull = false, foreign = true,columnName = "teamB")
+    @DatabaseField(canBeNull = false, foreign = true,columnName = "teamB",foreignAutoRefresh = true)
     private Team teamB;
     @DatabaseField(format="yyyy-MM-dd HH:mm",dataType= DataType.DATE_STRING)
     private Date matchTime;//比赛时间
@@ -125,7 +125,7 @@ public class Match {
 
     @DatabaseField
     private String info;//比赛阶段信息，比如a组小组赛
-    @DatabaseField(canBeNull = false, foreign = true,columnName = "tourid")
+    @DatabaseField(canBeNull = false, foreign = true,columnName = "tourid",foreignAutoRefresh = true)
     private Tour tour;
 
     @DatabaseField
@@ -142,6 +142,6 @@ public class Match {
         this.notifications = notifications;
     }
 
-    @DatabaseField(foreign = true,foreignAutoRefresh=true)
+    @DatabaseField(foreign = true,foreignAutoRefresh=true,columnName = "notifications")
     Notification notifications;
 }

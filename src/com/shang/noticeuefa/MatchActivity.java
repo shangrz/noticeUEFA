@@ -1,13 +1,27 @@
 package com.shang.noticeuefa;
  
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import com.actionbarsherlock.app.SherlockActivity;
    
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
-import com.shang.noticeuefa.model.Tour;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
+import com.shang.noticeuefa.database.DatabaseHelper;
+import com.shang.noticeuefa.model2.Group;
+import com.shang.noticeuefa.model2.Match;
+import com.shang.noticeuefa.model2.Notification;
+import com.shang.noticeuefa.model2.Tour;
  
  
  
@@ -78,6 +92,24 @@ public class MatchActivity extends SherlockActivity   {
     }
     
     
+    
+    private DatabaseHelper databaseHelper = null;
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (databaseHelper != null) {
+            OpenHelperManager.releaseHelper();
+            databaseHelper = null;
+        }
+    }
+    
+    private DatabaseHelper getHelper() {
+        if (databaseHelper == null) {
+            databaseHelper =
+                    OpenHelperManager.getHelper(this, DatabaseHelper.class);
+        }
+        return databaseHelper;
+    }
  
     
     @Override
@@ -97,8 +129,30 @@ public class MatchActivity extends SherlockActivity   {
        
         this.setTitle(R.string.matchname);
         listView = (ListView) findViewById(R.id.listView1); 
-        tour =Tour.creatFromTagName("euro", getApplicationContext());
-        adapter2 = new MatchListViewAdapter(MatchActivity.this, tour); 
+    //    tour =Tour.creatFromTagName("euro", getApplicationContext());
+       
+        DatabaseHelper helper = getHelper();
+         
+        List<Match> matchs = new ArrayList<Match>();
+        
+        
+  
+     QueryBuilder<Match, Integer> queryBuilder;
+     QueryBuilder<Notification, Integer> queryBuilder2;
+    try {
+        queryBuilder = helper.getMatchDao().queryBuilder();   
+        queryBuilder.where().in("notifications", helper.getDao(Notification.class).queryForEq("follow", true));
+         
+        PreparedQuery<Match> preparedQuery = queryBuilder.prepare();
+        matchs = helper.getMatchDao().query(preparedQuery);
+    } catch (SQLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }
+     
+    
+        
+        adapter2 = new MatchListViewAdapter(MatchActivity.this, matchs,helper); 
         listView.setAdapter(adapter2);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -277,9 +331,11 @@ public class MatchActivity extends SherlockActivity   {
                     break;
                 case 2:
                     adapter2.setAllSelectedNotice(true);
+                     
                     break;
                 case 3:
                     adapter2.setAllSelectedNotice(false);
+                    
                     break;
                 
             }
