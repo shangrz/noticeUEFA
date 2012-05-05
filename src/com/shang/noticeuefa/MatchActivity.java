@@ -2,7 +2,8 @@ package com.shang.noticeuefa;
  
 
 import com.actionbarsherlock.app.SherlockActivity;
-  
+   
+import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
@@ -17,6 +18,7 @@ import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,6 +36,8 @@ import android.widget.Toast;
 
 public class MatchActivity extends SherlockActivity   {
     
+    
+    ActionMode mMode;
     GestureDetector mGestureDetector;    
     Context mContext;
     private ViewPager pager;
@@ -41,9 +45,9 @@ public class MatchActivity extends SherlockActivity   {
     private MatchGalleryAdapter adapter;
     private int index = 0;
     private ListView listView;
-    
+    public static boolean MODE_NOW =false;
     Tour tour ;
-    
+    MatchListViewAdapter adapter2;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         
@@ -73,6 +77,9 @@ public class MatchActivity extends SherlockActivity   {
         return true;
     }
     
+    
+ 
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_MyStyle); //Used for theme switching in samples
@@ -91,11 +98,21 @@ public class MatchActivity extends SherlockActivity   {
         this.setTitle(R.string.matchname);
         listView = (ListView) findViewById(R.id.listView1); 
         tour =Tour.creatFromTagName("euro", getApplicationContext());
-        MatchListViewAdapter adapter2 = new MatchListViewAdapter(MatchActivity.this, tour); 
+        adapter2 = new MatchListViewAdapter(MatchActivity.this, tour); 
         listView.setAdapter(adapter2);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if(MODE_NOW == false)  
+                   mMode = startActionMode(new AnActionModeOfEpicProportions());
+                   
+                adapter2.changeState(i, true);
+                if(adapter2.getSelectedCount() == 0)
+                    mMode.finish();
+                mMode.setTitle(adapter2.getSelectedCount()+" 已选择");
+                
+                
+              //     view.setBackgroundResource(R.color.red2);
              //   ((ViewHolder)view.getTag()).checkBox.setChecked( !((ViewHolder)view.getTag()).checkBox.isChecked());
              //   ((ViewHolder)view.getTag()).checkBox.toggle();
             }
@@ -136,6 +153,8 @@ public class MatchActivity extends SherlockActivity   {
         
 
     }
+    
+   
  
     class TouhListener implements OnTouchListener{  
         @Override  
@@ -201,7 +220,59 @@ public class MatchActivity extends SherlockActivity   {
         
     }
  
-        
+    private final class AnActionModeOfEpicProportions implements ActionMode.Callback {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MODE_NOW = true;
+              
+            menu.add(0,1,0,"Follow")
+            .setIcon(R.drawable.rating_important)
+            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            
+            menu.add(0,2,0,"Alarm")
+            .setIcon(R.drawable.device_access_add_alarm)
+            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+//            
+//            menu.add(0,3,0,"Del")
+//            .setIcon(R.drawable.content_discard)
+//            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+//           
+
+         
+
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            Toast.makeText(getApplicationContext(), "" +  item.getItemId() , Toast.LENGTH_SHORT).show();
+            
+            switch(item.getItemId()) {
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                
+            }
+            
+            mode.finish();
+            
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            MODE_NOW = false;
+            adapter2.endActionMode();
+        }
+    }    
      
 }
 
@@ -237,7 +308,7 @@ class MatchGalleryAdapter extends PagerAdapter {
 
     }
     
-   
+  
      
     
    
