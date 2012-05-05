@@ -225,18 +225,18 @@ public class MatchActivity extends SherlockActivity   {
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MODE_NOW = true;
               
-            menu.add(0,1,0,"Follow")
-            .setIcon(R.drawable.rating_important)
-            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+//            menu.add(0,1,0,"Follow")
+//            .setIcon(R.drawable.rating_important)
+//            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
             
             menu.add(0,2,0,"Alarm")
             .setIcon(R.drawable.device_access_add_alarm)
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-//            
-//            menu.add(0,3,0,"Del")
-//            .setIcon(R.drawable.content_discard)
-//            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-//           
+             
+             menu.add(0,3,0,"Del")
+             .setIcon(R.drawable.content_discard)
+             .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+           
 
          
 
@@ -256,8 +256,10 @@ public class MatchActivity extends SherlockActivity   {
                 case 1:
                     break;
                 case 2:
+                    adapter2.setAllSelectedNotice(true);
                     break;
                 case 3:
+                    adapter2.setAllSelectedNotice(false);
                     break;
                 
             }

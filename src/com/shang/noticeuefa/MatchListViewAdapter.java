@@ -176,4 +176,12 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         public CheckBox checkBox;
         public View highlightView;
     }
+
+    public void setAllSelectedNotice(boolean isNotice) {
+       for(int i = 0;i<m_selects.size();i++) {
+           if(m_selects.get(i) ) {
+               tour.get(i).setNotice(isNotice);
+           }
+       }
+    }
 }
