@@ -56,6 +56,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <uses-permission android:name="android.permission.INTERNET" />
+
+        <meta-data android:value="4fa4f80c52701543ff00005d" android:name="UMENG_APPKEY"/>
+        <meta-data android:value="DEV" android:name="UMENG_CHANNEL"/>
+
     </application>
 
 </manifest>
