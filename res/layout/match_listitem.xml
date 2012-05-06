@@ -5,14 +5,25 @@
     android:layout_height="wrap_content"
      android:paddingRight="5dp"
      android:descendantFocusability="blocksDescendants">
+<ProgressBar                
+        style="@style/team_flag_imageview"
+        android:id="@+id/progress1" 
+          
+        />
 
+<ProgressBar                
+        style="@style/team_flag_imageview"
+        android:id="@+id/progress2" 
+        android:layout_below="@id/progress1"
+      
+         
+        />
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true" >
-
         <LinearLayout
             android:id="@+id/tag_linearLayout"
             android:layout_width="45dp"
@@ -23,12 +34,12 @@
             <ImageView
                 android:id="@+id/teamA_flag_imageView"
                 style="@style/team_flag_imageview"
-                android:src="@android:drawable/stat_notify_sync_noanim" />
+                />
 
             <ImageView
                 android:id="@+id/teamB_flag_imageView"
                 style="@style/team_flag_imageview"
-                android:src="@android:drawable/stat_notify_sync_noanim" />
+                  />
         </LinearLayout>
 
         <LinearLayout

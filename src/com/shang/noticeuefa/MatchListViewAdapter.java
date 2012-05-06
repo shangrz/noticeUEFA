@@ -4,7 +4,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.zip.Inflater;
 
+import android.R.array;
 import android.R.integer;
 import android.app.Activity;
 import android.text.format.Time;
@@ -13,11 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
+import com.androidquery.AQuery;
 import com.shang.noticeuefa.database.DatabaseHelper;
 import com.shang.noticeuefa.model2.Match;
 import com.shang.noticeuefa.model2.Notification;
 import com.shang.noticeuefa.model2.Team;
 import com.shang.noticeuefa.model2.Tour;
+import com.shang.noticeuefa.util.Constants;
 import com.srz.androidtools.util.TimeTools;
 
 class MatchListViewAdapter   extends ArrayAdapter< Match> {
@@ -89,11 +93,12 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
  
     Activity activity ;
     DatabaseHelper helper;
+    AQuery aQuery;
     public MatchListViewAdapter(Activity activity,  List<Match> matchs,DatabaseHelper helper) {
       
         super(activity, 0,matchs );
         this.mInflater = LayoutInflater.from(activity.getBaseContext());
-        
+        aQuery = new AQuery(activity);
         this.matchs =matchs;
         this.activity= activity;
         this.helper = helper;
@@ -161,12 +166,10 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         holder.teamA_Name_TextView.setText(match.getTeamA().getTeamName());
         holder.teamB_Name_TextView.setText(match.getTeamB().getTeamName());
         
-        int teamFlagResId =this.activity.getResources().getIdentifier(match.getTeamA().getTeamShortName(), "drawable",this.activity.getPackageName());
-         holder.teamA_ImageView.setImageResource(teamFlagResId);
-         
-         teamFlagResId =this.activity.getResources().getIdentifier(match.getTeamB().getTeamShortName(), "drawable",this.activity.getPackageName());
-         holder.teamB_ImageView.setImageResource(teamFlagResId);
         
+        setHolderImageview(convertView,holder.teamA_ImageView,match.getTeamA().getTeamShortName(),R.id.progress1);
+        setHolderImageview(convertView,holder.teamB_ImageView,match.getTeamB().getTeamShortName(),R.id.progress2);
+      
         
        // 时间输入时均为GMT+8的时间，输出时按手机local时区
          
@@ -191,6 +194,21 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         
     //    holder.highlightView.setBackgroundColor(getContext().getResources().getColor(holder.checkBox.isChecked()?R.color.red:R.color.taggray));
         return convertView;
+    }
+    
+    private void setHolderImageview( View convertView,ImageView v, String shortName,int progressid) {
+         
+        int teamFlagResId =this.activity.getResources().getIdentifier(shortName, "drawable",this.activity.getPackageName());
+        if(teamFlagResId ==0){
+          
+            aQuery.recycle(convertView).progress(progressid).id(v).image(Constants.MATCHPICURLHEADER+shortName);
+           
+           
+          //   aQuery.id(v).image(Constants.MATCHPICURLHEADER+shortName,true,true,0,android.R.drawable.stat_notify_sync_noanim);
+             
+        }else
+            v.setImageResource(teamFlagResId);
+        
     }
  
     public static class ViewHolder  {
