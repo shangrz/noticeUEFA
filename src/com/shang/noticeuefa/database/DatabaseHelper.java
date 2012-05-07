@@ -46,6 +46,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Tour.class);
             TableUtils.createTable(connectionSource, TeamGroup.class);
             TableUtils.createTable(connectionSource, Notification.class);
+            TableUtils.createTable(connectionSource, ContentVersion.class);
+
 //			// here we try inserting data in the on-create as a test
 //
         } catch (SQLException e) {

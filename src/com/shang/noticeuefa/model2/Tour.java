@@ -14,7 +14,7 @@ import com.j256.ormlite.table.DatabaseTable;
 public class Tour {
     public static final String TOUR_NAME = "name";
 
-    @DatabaseField(generatedId = true)
+    @DatabaseField(generatedId = true,allowGeneratedIdInsert = true)
     private int id;
 
     @DatabaseField

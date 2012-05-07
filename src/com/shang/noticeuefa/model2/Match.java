@@ -16,7 +16,7 @@ import java.util.Date;
  */
 @DatabaseTable(tableName = "match")
 public class Match {
-    @DatabaseField(generatedId = true)
+    @DatabaseField(generatedId = true,allowGeneratedIdInsert = true)
     private int id;
     @DatabaseField(canBeNull = false, foreign = true,columnName = "teamA")
     private Team teamA;
@@ -26,6 +26,7 @@ public class Match {
     private Date matchTime;//比赛时间
     @DatabaseField
     private String comment;//备注栏，如果比赛时间更改过，可以在这里显示比赛原定时间地点等信息
+
 
     public int getId() {
         return id;
@@ -144,4 +145,32 @@ public class Match {
 
     @DatabaseField(foreign = true,foreignAutoRefresh=true)
     Notification notifications;
+
+    private int teamAId;
+    private int teamBId;
+    private int tourId;
+
+    public int getTeamAId() {
+        return teamAId;
+    }
+
+    public void setTeamAId(int teamAId) {
+        this.teamAId = teamAId;
+    }
+
+    public int getTeamBId() {
+        return teamBId;
+    }
+
+    public void setTeamBId(int teamBId) {
+        this.teamBId = teamBId;
+    }
+
+    public int getTourId() {
+        return tourId;
+    }
+
+    public void setTourId(int tourId) {
+        this.tourId = tourId;
+    }
 }

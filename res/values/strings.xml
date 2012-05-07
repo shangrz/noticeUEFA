@@ -36,5 +36,10 @@
     <string name="todayandafter">明后天</string>
     <string name="thisweek">本周</string>
     <string name="nextweek">下周</string>
-    <string name="umeng_kanqiu_key">kanqiu</string>
+    <string name="umeng_kanqiu_key">content</string>
+    <string name="umeng_kanqiu_version_key">content_version</string>
+    <string name="umeng_match_key">match</string>
+    <string name="umeng_match_version_key">match_version</string>
+    <string name="umeng_host_key">host</string>
+    <string name="key_host">host</string>
 </resources>

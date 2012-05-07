@@ -14,10 +14,12 @@ import com.androidquery.AQuery;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
+import com.mobclick.android.MobclickAgent;
 import com.shang.noticeuefa.database.DatabaseHelper;
 import com.shang.noticeuefa.model2.Group;
 import com.shang.noticeuefa.model2.Team;
 import com.shang.noticeuefa.model2.TeamGroup;
+import com.shang.noticeuefa.util.HostSetter;
 import com.shang.noticeuefa.view.OptionMenuCreator;
 import com.shang.noticeuefa.view.TeamFollowedListener;
 import com.shang.noticeuefa.view.TeamGridAdapter;
@@ -37,7 +39,6 @@ import java.util.List;
  */
 public class FollowActivity extends SherlockActivity implements TeamFollowedListener {
     private int numberOfSelected;
-    private List<String> titles;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -54,14 +55,17 @@ public class FollowActivity extends SherlockActivity implements TeamFollowedList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_MyStyle); //Used for theme switching in samples
-        DatabaseHelper helper = getHelper();
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.follow);
+        String host = new HostSetter(this).getHost();
+        new UpdateManager(this).checkUpdate(true);
 
         List<GridView> gridViews = new ArrayList<GridView>();
         List<String> titles = new ArrayList<String>();
         try {
+            DatabaseHelper helper = getHelper();
             int followedCount = helper.getTeamDao().queryForEq(Team.FOLLOWED, true).size();
             setTitle(numberOfSelected = followedCount);
 
@@ -146,5 +150,14 @@ public class FollowActivity extends SherlockActivity implements TeamFollowedList
                     OpenHelperManager.getHelper(this, DatabaseHelper.class);
         }
         return databaseHelper;
+    }
+
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

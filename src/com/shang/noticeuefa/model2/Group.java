@@ -16,7 +16,7 @@ import com.j256.ormlite.table.DatabaseTable;
 public class Group {
     public static final String GROUP_NAME = "name";
 
-    @DatabaseField(generatedId = true)
+    @DatabaseField(generatedId = true, allowGeneratedIdInsert = true)
     private int id;
 
     @DatabaseField

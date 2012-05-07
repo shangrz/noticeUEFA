@@ -9,7 +9,9 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
+import com.mobclick.android.MobclickAgent;
 import com.shang.noticeuefa.database.DatabaseHelper;
+import com.shang.noticeuefa.model2.ContentVersion;
 import com.shang.noticeuefa.model2.Group;
 import com.shang.noticeuefa.model2.Team;
 import com.shang.noticeuefa.model2.TeamGroup;
@@ -48,8 +50,6 @@ public class CoverActivity extends SherlockActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_MyStyle); //Used for theme switching in samples
         super.onCreate(savedInstanceState);
-
-
 //        if (!DBManager.initialized(this, DATABASE_NAME))
 //
 //        {
@@ -95,10 +95,10 @@ public class CoverActivity extends SherlockActivity {
 //        }
 
         if (PreferenceUtil.isFirstTimeBoot(this)) {
-            init();
             setContentView(R.layout.cover);
         } else {
-            //goto time table
+//            Intent intent = new Intent(CoverActivity.this, MatchActivity.class);
+//            startActivity(intent);
         }
     }
 
@@ -190,6 +190,18 @@ public class CoverActivity extends SherlockActivity {
             dao.create(tg5);
             dao.create(tg6);
 
+            ContentVersion contentVersion = new ContentVersion();
+            contentVersion.setType(ContentVersion.CONTENT);
+            contentVersion.setVersion(-1);
+
+            ContentVersion matchVersion = new ContentVersion();
+            matchVersion.setType(ContentVersion.MATCH);
+            matchVersion.setVersion(-1);
+
+            Dao cvd = databaseHelper.getDao(ContentVersion.class);
+            cvd.create(contentVersion);
+            cvd.create(matchVersion);
+
             PreferenceUtil.setFirstTimeBoot(this, false);
         } catch (SQLException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -213,5 +225,14 @@ public class CoverActivity extends SherlockActivity {
                     OpenHelperManager.getHelper(this, DatabaseHelper.class);
         }
         return databaseHelper;
+    }
+
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }
