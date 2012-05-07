@@ -1,15 +1,24 @@
 package com.shang.noticeuefa;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import android.R.integer;
 import android.app.Activity;
+import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import com.shang.noticeuefa.model.Match;
-import com.shang.noticeuefa.model.Tour;
+
+import com.shang.noticeuefa.database.DatabaseHelper;
+import com.shang.noticeuefa.model2.Match;
+import com.shang.noticeuefa.model2.Notification;
+import com.shang.noticeuefa.model2.Team;
+import com.shang.noticeuefa.model2.Tour;
+import com.srz.androidtools.util.TimeTools;
 
 class MatchListViewAdapter   extends ArrayAdapter< Match> {
     
@@ -52,7 +61,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         
         
         MULTI_MODE = false;
-        for(int i=0; i<tour.size(); i++) 
+        for(int i=0; i<matchs.size(); i++) 
             m_selects.setElementAt(false,i);
         
         notifyDataSetChanged();     //通知适配器进行更新 
@@ -74,19 +83,21 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
 
     private ListView listView;
     private LayoutInflater mInflater;
-    Tour tour ;
+    
+    List<Match> matchs;
     private int listItemViewResourceId = R.layout.match_listitem;
  
-   
-    public MatchListViewAdapter(Activity activity, Tour tour) {
-          
-        super(activity, 0,tour );
+    Activity activity ;
+    DatabaseHelper helper;
+    public MatchListViewAdapter(Activity activity,  List<Match> matchs,DatabaseHelper helper) {
+      
+        super(activity, 0,matchs );
         this.mInflater = LayoutInflater.from(activity.getBaseContext());
         
-        this.tour =tour;
-         
-        
-        for(int i=0; i<tour.size(); i++) 
+        this.matchs =matchs;
+        this.activity= activity;
+        this.helper = helper;
+        for(int i=0; i<matchs.size(); i++) 
             m_selects.add(false); 
      
     }
@@ -105,7 +116,14 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                 boolean isChecked) {
          //   holder.highlightView.setBackgroundColor(getContext().getResources().getColor(isChecked?R.color.red:R.color.taggray));
           //  listItem.get(position).put(ViewHolder.CHECKED, isChecked);
-            match.setNotice(isChecked);
+           // match.setNotice(isChecked);
+            match.getNotifications().setAlarm(isChecked);
+            try {
+                helper.getDao(Notification.class).update(match.getNotifications());
+            } catch (SQLException e) {
+                
+                e.printStackTrace();
+            }
         }
     };
     
@@ -135,19 +153,29 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             holder = (ViewHolder) convertView.getTag();
         }
         
-        Match match = tour.get(position); 
-        holder.teamA_Name_TextView.setText(match.teamA.getTeamName());
-        holder.teamB_Name_TextView.setText(match.teamB.getTeamName());
-        holder.teamA_ImageView.setImageResource(match.teamA.getTeamFlagResId());
-        holder.teamB_ImageView.setImageResource(match.teamB.getTeamFlagResId());
+        Match match = matchs.get(position); 
+        
+        System.out.println("#############");
+        System.out.println(match.getTeamA().getTeamName());
+        
+        holder.teamA_Name_TextView.setText(match.getTeamA().getTeamName());
+        holder.teamB_Name_TextView.setText(match.getTeamB().getTeamName());
+        
+        int teamFlagResId =this.activity.getResources().getIdentifier(match.getTeamA().getTeamShortName(), "drawable",this.activity.getPackageName());
+         holder.teamA_ImageView.setImageResource(teamFlagResId);
+         
+         teamFlagResId =this.activity.getResources().getIdentifier(match.getTeamB().getTeamShortName(), "drawable",this.activity.getPackageName());
+         holder.teamB_ImageView.setImageResource(teamFlagResId);
         
         
        // 时间输入时均为GMT+8的时间，输出时按手机local时区
-        holder.matchdatetimeTextView.setText(match.getMatchDatetimeLocal());
+         
+        holder.matchdatetimeTextView.setText(TimeTools.handleTimeWithTimezone(match.getMatchTime()) );
         
         holder.checkBox.setOnCheckedChangeListener( new MyOnCheckedChangeListener(holder, position,match));
         
-        holder.checkBox.setChecked(match.isNotice()); 
+        holder.checkBox.setChecked(match.getNotifications().isAlarm()); 
+      //  holder.checkBox.setChecked(false); 
         if (MULTI_MODE)
             if(m_selects.get(position)){
                 convertView.setBackgroundResource(R.color.red2);
@@ -182,7 +210,8 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
     public void setAllSelectedNotice(boolean isNotice) {
        for(int i = 0;i<m_selects.size();i++) {
            if(m_selects.get(i) ) {
-               tour.get(i).setNotice(isNotice);
+              // matchs.get(i).setNotice(isNotice);
+               matchs.get(i).getNotifications().setAlarm(isNotice);
            }
        }
     }
@@ -190,7 +219,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
     public void selectAll(boolean b) {
         if(b) {
             MULTI_MODE = b;
-            for(int i=0; i<tour.size(); i++) 
+            for(int i=0; i< matchs.size(); i++) 
                 m_selects.setElementAt(true,i);
             notifyDataSetChanged();   
         }

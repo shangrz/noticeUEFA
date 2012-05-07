@@ -67,6 +67,7 @@ public class FollowActivity extends SherlockActivity implements TeamFollowedList
         try {
             DatabaseHelper helper = getHelper();
             int followedCount = helper.getTeamDao().queryForEq(Team.FOLLOWED, true).size();
+            
             setTitle(numberOfSelected = followedCount);
 
             Dao<Group, Integer> groupDao = helper.getDao(Group.class);

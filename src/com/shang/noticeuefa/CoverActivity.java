@@ -13,12 +13,16 @@ import com.mobclick.android.MobclickAgent;
 import com.shang.noticeuefa.database.DatabaseHelper;
 import com.shang.noticeuefa.model2.ContentVersion;
 import com.shang.noticeuefa.model2.Group;
+import com.shang.noticeuefa.model2.Match;
+import com.shang.noticeuefa.model2.Notification;
 import com.shang.noticeuefa.model2.Team;
 import com.shang.noticeuefa.model2.TeamGroup;
+import com.shang.noticeuefa.model2.Tour;
 import com.shang.noticeuefa.view.OptionMenuCreator;
 import com.srz.androidtools.util.PreferenceUtil;
 
 import java.sql.SQLException;
+import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
@@ -173,6 +177,10 @@ public class CoverActivity extends SherlockActivity {
             TeamGroup tg6 = new TeamGroup();
             tg6.setGroup(group2);
             tg6.setTeam(team6);
+            
+            
+            
+            
 
             databaseHelper.getTeamDao().create(team);
             databaseHelper.getTeamDao().create(team2);
@@ -183,6 +191,51 @@ public class CoverActivity extends SherlockActivity {
 
             databaseHelper.getDao(Group.class).create(group);
             databaseHelper.getDao(Group.class).create(group2);
+            
+            
+            
+            Notification n1 = new Notification();
+            n1.setAlarm(false);
+            n1.setFollow(true);
+            
+            Notification n2 = new Notification(); 
+            n2.setAlarm(false);
+            n2.setFollow(true);
+            
+            databaseHelper.getDao(Notification.class).create(n1);
+            databaseHelper.getDao(Notification.class).create(n2); 
+            
+            Tour tour =new Tour();
+            tour.setName("欧锦赛");
+            tour.setShortName("euro");
+            tour.setId(1);
+            Date  d1 = new Date(System.currentTimeMillis());
+            Match m1 = new Match();
+       
+            
+            m1.setTeamA(databaseHelper.getTeamDao().queryForAll().get(0));
+            m1.setTeamB(databaseHelper.getTeamDao().queryForAll().get(1));
+            m1.setMatchTime(d1);
+            m1.setLastModified(d1);
+            m1.setTour(tour);
+            n1.setMatch(m1);
+            m1.setNotifications(n1); 
+            
+            Match m2 = new Match();
+            m2.setTeamA(databaseHelper.getTeamDao().queryForAll().get(2));
+            m2.setTeamB(databaseHelper.getTeamDao().queryForAll().get(3));
+            m2.setMatchTime(d1);
+            m2.setLastModified(d1);
+            m2.setTour(tour);
+            n2.setMatch(m2);
+            m2.setNotifications(n2);
+            
+            databaseHelper.getTourDao().create(tour);
+            
+            databaseHelper.getMatchDao().create(m1);
+            databaseHelper.getMatchDao().create(m2);
+              
+            
             dao.create(tg);
             dao.create(tg2);
             dao.create(tg3);
