@@ -3,6 +3,8 @@ package com.shang.noticeuefa.model2;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.security.PrivateKey;
+
 /**
  * Created with IntelliJ IDEA.
  * User: jleo
@@ -18,6 +20,26 @@ public class TeamGroup {
     private Team team;
     @DatabaseField(foreign = true,foreignAutoRefresh = true)
     private Group group;
+
+    private int teamId;
+
+    private int groupId;
+
+    public int getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
+    }
+
+    public int getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
+    }
 
     public int getId() {
         return id;
