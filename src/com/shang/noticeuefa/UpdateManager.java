@@ -248,7 +248,7 @@ public class UpdateManager {
                         databaseHelper.truncate(Match.class);
                         for (Match m : matches) {
                             m.setMatchTime(TimeTools.fixTimeWithTimezone(m.getMatchTime()));
-                            
+                             
                             Team ta = teamDao.queryForId(m.getTeamAId());
                             Team tb = teamDao.queryForId(m.getTeamBId());
                             Tour t = tourDao.queryForId(m.getTourId());
