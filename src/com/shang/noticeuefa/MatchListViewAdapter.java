@@ -122,12 +122,26 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
          //   holder.highlightView.setBackgroundColor(getContext().getResources().getColor(isChecked?R.color.red:R.color.taggray));
           //  listItem.get(position).put(ViewHolder.CHECKED, isChecked);
            // match.setNotice(isChecked);
-            match.getNotifications().setAlarm(isChecked);
-            try {
-                helper.getDao(Notification.class).update(match.getNotifications());
-            } catch (SQLException e) {
+            if(match.getNotifications() != null) {
+                match.getNotifications().setAlarm(isChecked);
+                try {
+                    helper.getDao(Notification.class).update(match.getNotifications());
+                } catch (SQLException e) {
+                    
+                    e.printStackTrace();
+                }
+            }else {
+                Notification n1 = new Notification();
+                n1.setAlarm(isChecked);
+                n1.setFollow(true);
+                try {
+                 helper.getDao(Notification.class).create(n1);
+                 match.setNotifications(n1);
+                 helper.getMatchDao().update( match);
+                    } catch (SQLException e) {
+                 e.printStackTrace();
+             }
                 
-                e.printStackTrace();
             }
         }
     };
@@ -177,8 +191,10 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         
         holder.checkBox.setOnCheckedChangeListener( new MyOnCheckedChangeListener(holder, position,match));
         
-        holder.checkBox.setChecked(match.getNotifications().isAlarm()); 
-      //  holder.checkBox.setChecked(false); 
+        
+        
+         holder.checkBox.setChecked(match.getNotifications() == null?false:match.getNotifications().isAlarm()); 
+         
         if (MULTI_MODE)
             if(m_selects.get(position)){
                 convertView.setBackgroundResource(R.color.red2);
@@ -229,7 +245,28 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
        for(int i = 0;i<m_selects.size();i++) {
            if(m_selects.get(i) ) {
               // matchs.get(i).setNotice(isNotice);
-               matchs.get(i).getNotifications().setAlarm(isNotice);
+               if(matchs.get(i).getNotifications() != null) {
+                   matchs.get(i).getNotifications().setAlarm(isNotice);
+                   try {
+                    helper.getDao(Notification.class).update( matchs.get(i).getNotifications());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                   }
+               else {
+                   Notification n1 = new Notification();
+                   n1.setAlarm(isNotice);
+                   n1.setFollow(true);
+                   try {
+                    helper.getDao(Notification.class).create(n1);
+                    matchs.get(i).setNotifications(n1);
+                    helper.getMatchDao().update( matchs.get(i));
+                       } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                   
+               }
+                   
            }
        }
     }

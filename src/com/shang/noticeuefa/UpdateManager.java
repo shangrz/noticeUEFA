@@ -160,6 +160,10 @@ public class UpdateManager {
 
                     int contentVersion = versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.CONTENT).get(0).getVersion();
                     int matchVersion = versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.MATCH).get(0).getVersion();
+                    
+//                    int contentVersion = 1;
+//                    int matchVersion = 1;
+
 
                     Gson gson = new Gson();
                     Dao<Team, Integer> teamDao = databaseHelper.getDao(Team.class);

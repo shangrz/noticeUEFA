@@ -194,7 +194,7 @@ public class CoverActivity extends SherlockActivity {
             
             
             
-            Notification n1 = new Notification();
+   /*         Notification n1 = new Notification();
             n1.setAlarm(false);
             n1.setFollow(true);
             
@@ -233,7 +233,7 @@ public class CoverActivity extends SherlockActivity {
             databaseHelper.getTourDao().create(tour);
             
             databaseHelper.getMatchDao().create(m1);
-            databaseHelper.getMatchDao().create(m2);
+            databaseHelper.getMatchDao().create(m2);*/
               
             
             dao.create(tg);

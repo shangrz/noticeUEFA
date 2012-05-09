@@ -144,7 +144,9 @@ public class MatchActivity extends SherlockActivity   {
         queryBuilder.where().in("notifications", helper.getDao(Notification.class).queryForEq("follow", true));
          
         PreparedQuery<Match> preparedQuery = queryBuilder.prepare();
-        matchs = helper.getMatchDao().query(preparedQuery);
+        //matchs = helper.getMatchDao().query(preparedQuery);
+        matchs = helper.getMatchDao().queryForAll();
+        System.out.println(matchs.size());
     } catch (SQLException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -201,8 +203,8 @@ public class MatchActivity extends SherlockActivity   {
             }
         });
         
-       mGestureDetector = new GestureDetector(new GestureListener());  
-       listView.setOnTouchListener(new TouhListener());  
+//       mGestureDetector = new GestureDetector(new GestureListener());  
+//       listView.setOnTouchListener(new TouhListener());  
    
         
 
