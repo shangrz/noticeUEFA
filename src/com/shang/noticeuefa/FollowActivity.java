@@ -59,8 +59,7 @@ public class FollowActivity extends SherlockActivity implements TeamFollowedList
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.follow);
-        String host = new HostSetter(this).getHost();
-        new UpdateManager(this).checkUpdate(true);
+
 
         List<GridView> gridViews = new ArrayList<GridView>();
         List<String> titles = new ArrayList<String>();
