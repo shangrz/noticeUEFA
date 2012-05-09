@@ -8,14 +8,14 @@
 <ProgressBar                
         style="@style/team_flag_imageview"
         android:id="@+id/progress1" 
-          
+          android:visibility="invisible"
         />
 
 <ProgressBar                
         style="@style/team_flag_imageview"
         android:id="@+id/progress2" 
         android:layout_below="@id/progress1"
-      
+      android:visibility="invisible"
          
         />
     <LinearLayout

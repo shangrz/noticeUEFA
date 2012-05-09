@@ -217,7 +217,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         int teamFlagResId =this.activity.getResources().getIdentifier(shortName, "drawable",this.activity.getPackageName());
         if(teamFlagResId ==0){
           
-            aQuery.recycle(convertView).progress(progressid).id(v).image(Constants.MATCHPICURLHEADER+shortName);
+            aQuery.recycle(convertView).id(v).image(Constants.MATCHPICURLHEADER+shortName,true,true,0,android.R.drawable.stat_notify_sync_noanim);
            
            
           //   aQuery.id(v).image(Constants.MATCHPICURLHEADER+shortName,true,true,0,android.R.drawable.stat_notify_sync_noanim);
