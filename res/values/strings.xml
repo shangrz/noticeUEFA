@@ -33,6 +33,8 @@
     <string name="cover_main_text">不错过一场必看比赛</string>
     <string name="cover_subtitle_text">开场哨根据您所喜爱的球队，及时推荐、提醒球赛。</string>
     <string name="today_push_match">今日推荐比赛</string>
+    <string name="push_match">推荐比赛</string>
+    <string name="today">今天</string>
     <string name="todayandafter">明后天</string>
     <string name="thisweek">本周</string>
     <string name="nextweek">下周</string>
@@ -42,4 +44,5 @@
     <string name="umeng_match_version_key">match_version</string>
     <string name="umeng_host_key">host</string>
     <string name="key_host">host</string>
+    <string name="all">全部</string>
 </resources>

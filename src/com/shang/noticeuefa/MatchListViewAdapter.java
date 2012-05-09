@@ -2,29 +2,37 @@ package com.shang.noticeuefa;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
+import java.util.zip.Inflater;
 
+import android.R.array;
 import android.R.integer;
 import android.app.Activity;
+import android.content.Context;
 import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
+import com.androidquery.AQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.shang.noticeuefa.database.DatabaseHelper;
 import com.shang.noticeuefa.model2.Match;
 import com.shang.noticeuefa.model2.Notification;
 import com.shang.noticeuefa.model2.Team;
 import com.shang.noticeuefa.model2.Tour;
+import com.shang.noticeuefa.util.Constants;
 import com.srz.androidtools.util.TimeTools;
 
 class MatchListViewAdapter   extends ArrayAdapter< Match> {
     
     @Override
     public int getCount() {
-        
         return super.getCount();
     }
 
@@ -61,7 +69,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         
         
         MULTI_MODE = false;
-        for(int i=0; i<matchs.size(); i++) 
+        for(int i=0; i<this.getCount(); i++) 
             m_selects.setElementAt(false,i);
         
         notifyDataSetChanged();     //通知适配器进行更新 
@@ -79,27 +87,38 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
  
    public static boolean MULTI_MODE = false;
 
- 
+   private boolean NEEDQUERYFOLLOW= false;
 
-    private ListView listView;
+   
     private LayoutInflater mInflater;
     
-    List<Match> matchs;
+    
     private int listItemViewResourceId = R.layout.match_listitem;
  
-    Activity activity ;
+    Context context ;
     DatabaseHelper helper;
-    public MatchListViewAdapter(Activity activity,  List<Match> matchs,DatabaseHelper helper) {
-      
-        super(activity, 0,matchs );
-        this.mInflater = LayoutInflater.from(activity.getBaseContext());
-        
-        this.matchs =matchs;
-        this.activity= activity;
+    AQuery aQuery;
+    
+//    public MatchListViewAdapter(Context context,  List<Match> matchs,DatabaseHelper helper) {
+//      
+//        super(context, 0,matchs );
+//        this.mInflater = LayoutInflater.from(context);
+//        aQuery = new AQuery(context);
+//        this.matchs =matchs;
+//        this.context= context;
+//        this.helper = helper;
+//        for(int i=0; i<matchs.size(); i++) 
+//            m_selects.add(false); 
+//     
+//    }
+    
+    
+    public MatchListViewAdapter(Context context,DatabaseHelper helper) {
+        super(context, 0 );
+        this.mInflater = LayoutInflater.from(context);
+        aQuery = new AQuery(context);
         this.helper = helper;
-        for(int i=0; i<matchs.size(); i++) 
-            m_selects.add(false); 
-     
+        this.context= context;
     }
 
     class MyOnCheckedChangeListener implements CompoundButton.OnCheckedChangeListener {
@@ -117,12 +136,26 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
          //   holder.highlightView.setBackgroundColor(getContext().getResources().getColor(isChecked?R.color.red:R.color.taggray));
           //  listItem.get(position).put(ViewHolder.CHECKED, isChecked);
            // match.setNotice(isChecked);
-            match.getNotifications().setAlarm(isChecked);
-            try {
-                helper.getDao(Notification.class).update(match.getNotifications());
-            } catch (SQLException e) {
+            if(match.getNotifications() != null) {
+                match.getNotifications().setAlarm(isChecked);
+                try {
+                    helper.getDao(Notification.class).update(match.getNotifications());
+                } catch (SQLException e) {
+                    
+                    e.printStackTrace();
+                }
+            }else {
+                Notification n1 = new Notification();
+                n1.setAlarm(isChecked);
+                n1.setFollow(true);
+                try {
+                 helper.getDao(Notification.class).create(n1);
+                 match.setNotifications(n1);
+                 helper.getMatchDao().update( match);
+                    } catch (SQLException e) {
+                 e.printStackTrace();
+             }
                 
-                e.printStackTrace();
             }
         }
     };
@@ -153,20 +186,16 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             holder = (ViewHolder) convertView.getTag();
         }
         
-        Match match = matchs.get(position); 
-        
-        System.out.println("#############");
-        System.out.println(match.getTeamA().getTeamName());
+        //Match match = matchs.get(position); 
+        Match match = this.getItem(position);
         
         holder.teamA_Name_TextView.setText(match.getTeamA().getTeamName());
         holder.teamB_Name_TextView.setText(match.getTeamB().getTeamName());
         
-        int teamFlagResId =this.activity.getResources().getIdentifier(match.getTeamA().getTeamShortName(), "drawable",this.activity.getPackageName());
-         holder.teamA_ImageView.setImageResource(teamFlagResId);
-         
-         teamFlagResId =this.activity.getResources().getIdentifier(match.getTeamB().getTeamShortName(), "drawable",this.activity.getPackageName());
-         holder.teamB_ImageView.setImageResource(teamFlagResId);
         
+        setHolderImageview(convertView,holder.teamA_ImageView,match.getTeamA().getTeamShortName(),R.id.progress1);
+        setHolderImageview(convertView,holder.teamB_ImageView,match.getTeamB().getTeamShortName(),R.id.progress2);
+      
         
        // 时间输入时均为GMT+8的时间，输出时按手机local时区
          
@@ -174,8 +203,10 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         
         holder.checkBox.setOnCheckedChangeListener( new MyOnCheckedChangeListener(holder, position,match));
         
-        holder.checkBox.setChecked(match.getNotifications().isAlarm()); 
-      //  holder.checkBox.setChecked(false); 
+        
+        
+         holder.checkBox.setChecked(match.getNotifications() == null?false:match.getNotifications().isAlarm()); 
+         
         if (MULTI_MODE)
             if(m_selects.get(position)){
                 convertView.setBackgroundResource(R.color.red2);
@@ -191,6 +222,21 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         
     //    holder.highlightView.setBackgroundColor(getContext().getResources().getColor(holder.checkBox.isChecked()?R.color.red:R.color.taggray));
         return convertView;
+    }
+    
+    private void setHolderImageview( View convertView,ImageView v, String shortName,int progressid) {
+         
+        int teamFlagResId =context.getResources().getIdentifier(shortName, "drawable",context.getPackageName());
+        if(teamFlagResId ==0){
+          
+            aQuery.recycle(convertView).id(v).image(Constants.MATCHPICURLHEADER+shortName,true,true,0,android.R.drawable.stat_notify_sync_noanim);
+           
+           
+          //   aQuery.id(v).image(Constants.MATCHPICURLHEADER+shortName,true,true,0,android.R.drawable.stat_notify_sync_noanim);
+             
+        }else
+            v.setImageResource(teamFlagResId);
+        
     }
  
     public static class ViewHolder  {
@@ -208,21 +254,140 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
     }
 
     public void setAllSelectedNotice(boolean isNotice) {
+        System.out.println("setAllSelectedNotice  "+isNotice);
+        System.out.println("m_selects.size();  "+m_selects.size());
        for(int i = 0;i<m_selects.size();i++) {
            if(m_selects.get(i) ) {
               // matchs.get(i).setNotice(isNotice);
-               matchs.get(i).getNotifications().setAlarm(isNotice);
+               if(this.getItem(i).getNotifications() != null) {
+                   this.getItem(i).getNotifications().setAlarm(isNotice);
+                   try {
+                    helper.getDao(Notification.class).update( this.getItem(i).getNotifications());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                   }
+               else {
+                   Notification n1 = new Notification();
+                   n1.setAlarm(isNotice);
+                   n1.setFollow(true);
+                   try {
+                    helper.getDao(Notification.class).create(n1);
+                    this.getItem(i).setNotifications(n1);
+                    helper.getMatchDao().update( this.getItem(i));
+                       } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                   
+               }
+                   
            }
        }
+       notifyDataSetChanged();
     }
 
     public void selectAll(boolean b) {
         if(b) {
             MULTI_MODE = b;
-            for(int i=0; i< matchs.size(); i++) 
+            for(int i=0; i< this.getCount(); i++) 
                 m_selects.setElementAt(true,i);
             notifyDataSetChanged();   
         }
         
+    }
+    
+    private void doWhenChange(List<Match> matchs) {
+        this.clear();
+        m_selects.clear();
+        this.addAll(matchs);
+        for(int i=0; i<this.getCount(); i++) 
+            m_selects.add(false); 
+        notifyDataSetChanged();
+    }
+  
+    
+    public void toAllMatch() {
+        try {
+            if(NEEDQUERYFOLLOW)
+                 doWhenChange(helper.getMatchDao().query(getQuery().prepare()));
+            else
+                doWhenChange( helper.getMatchDao().queryForAll());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            
+        }
+    }
+    
+    private Where<Match, Integer> getQuery() {
+        QueryBuilder<Match, Integer> queryBuilder;
+        try {
+            queryBuilder = helper.getMatchDao().queryBuilder();
+            if(NEEDQUERYFOLLOW)
+                return queryBuilder.where().in("notifications", helper.getDao(Notification.class).queryForEq("follow", true)).and() ;
+            else
+                return queryBuilder.where();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        } 
+         
+    }
+    public void toTodayMatch() {
+        Calendar  cal = Calendar.getInstance();
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        Date d1 = cal.getTime();
+        cal.add(Calendar.HOUR_OF_DAY, 30);
+        Date d2 = cal.getTime();
+        doWhenChange( getMatchWhen(d1,d2));
+       
+    }
+    
+    public List<Match> getMatchWhen(Date d1, Date d2) {
+        try {
+            return helper.getMatchDao().query(getQuery().between("matchTime", d1, d2).prepare());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public void toThisWeekMatch() {
+        Date[] ds  = makeDates(0);
+        doWhenChange( getMatchWhen(ds[0],ds[1]));
+    }
+    
+    public void toNextWeekMatch() {
+        Date[] ds =makeDates(7);
+        doWhenChange( getMatchWhen(ds[0],ds[1]));
+    }
+    
+    public void toAfter2DaysMatch() {
+        
+        Calendar  cal = Calendar.getInstance();
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.add(Calendar.DATE, 1);
+        Date d1 = cal.getTime();
+        cal.add(Calendar.HOUR_OF_DAY, 54);
+        Date d2 = cal.getTime();
+       
+        doWhenChange( getMatchWhen(d1,d2 ));
+    }
+    
+    private Date[] makeDates(int days) {
+        Calendar  cal = Calendar.getInstance();
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        int day_of_week = cal.get(Calendar.DAY_OF_WEEK) - 2;
+        cal.add(Calendar.DATE, days-day_of_week);
+        Date d1 = cal.getTime();
+        cal.add(Calendar.HOUR_OF_DAY, 174);
+        Date d2 = cal.getTime();
+        return   new Date[] { d1,d2};
+       
     }
 }

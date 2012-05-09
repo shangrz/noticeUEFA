@@ -3,7 +3,9 @@ package com.shang.noticeuefa;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -22,15 +24,20 @@ import com.shang.noticeuefa.model2.Group;
 import com.shang.noticeuefa.model2.Match;
 import com.shang.noticeuefa.model2.Notification;
 import com.shang.noticeuefa.model2.Tour;
+import com.srz.androidtools.util.TimeTools;
  
  
  
+import android.R.bool;
+import android.R.integer;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.format.DateUtils;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -56,12 +63,12 @@ public class MatchActivity extends SherlockActivity   {
     Context mContext;
     private ViewPager pager;
     private Handler handler = new Handler();
-    private MatchGalleryAdapter adapter;
+    private MatchGalleryAdapter galleryadapter;
     private int index = 0;
     private ListView listView;
     public static boolean MODE_NOW =false;
     Tour tour ;
-    MatchListViewAdapter adapter2;
+    private MatchListViewAdapter listAdapter;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         
@@ -72,9 +79,13 @@ public class MatchActivity extends SherlockActivity   {
          
          
          SubMenu subMenu1 = menu.addSubMenu("Collection");
-         subMenu1.add(R.string.todayandafter);
-         subMenu1.add(R.string.thisweek);
-         subMenu1.add(R.string.nextweek);
+         subMenu1.add(1,6,1,R.string.today);
+          
+         subMenu1.add(1,3,2,R.string.todayandafter);
+          
+         subMenu1.add(1,4,3,R.string.thisweek);
+         subMenu1.add(1,5,4,R.string.nextweek);
+         subMenu1.add(1,2,5,R.string.all);
           
          MenuItem subMenu1Item = subMenu1.getItem();
          subMenu1Item.setIcon(R.drawable.collections_go_to_today);
@@ -110,7 +121,7 @@ public class MatchActivity extends SherlockActivity   {
         }
         return databaseHelper;
     }
- 
+   
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,50 +131,32 @@ public class MatchActivity extends SherlockActivity   {
        // this.getWindow().setBackgroundDrawableResource(R.color.red);
         getSupportActionBar().setTitle(R.string.today_push_match);
         
-        
+         
         
         pager = (ViewPager) findViewById(R.id.image_gallery);
-        adapter = new MatchGalleryAdapter(this);
-        pager.setAdapter(adapter);
+        galleryadapter = new MatchGalleryAdapter(this);
+        pager.setAdapter(galleryadapter);
         pager.setCurrentItem(0);
        
         this.setTitle(R.string.matchname);
         listView = (ListView) findViewById(R.id.listView1); 
     //    tour =Tour.creatFromTagName("euro", getApplicationContext());
-       
-        DatabaseHelper helper = getHelper();
+        
          
-        List<Match> matchs = new ArrayList<Match>();
-        
-        
-  
-     QueryBuilder<Match, Integer> queryBuilder;
-     QueryBuilder<Notification, Integer> queryBuilder2;
-    try {
-        queryBuilder = helper.getMatchDao().queryBuilder();   
-        queryBuilder.where().in("notifications", helper.getDao(Notification.class).queryForEq("follow", true));
-         
-        PreparedQuery<Match> preparedQuery = queryBuilder.prepare();
-        matchs = helper.getMatchDao().query(preparedQuery);
-    } catch (SQLException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-    }
-     
-    
-        
-        adapter2 = new MatchListViewAdapter(MatchActivity.this, matchs,helper); 
-        listView.setAdapter(adapter2);
+      //  listView.setAdapter(new MatchListViewAdapter(MatchActivity.this,getTodayMatch(),getHelper()));
+        listAdapter = new MatchListViewAdapter(getApplicationContext(),getHelper());
+        listAdapter.toTodayMatch();
+        listView.setAdapter(listAdapter );
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if(MODE_NOW == false)  
                    mMode = startActionMode(new AnActionModeOfEpicProportions());
                    
-                adapter2.changeState(i, true);
-                if(adapter2.getSelectedCount() == 0)
+                ((MatchListViewAdapter) listView.getAdapter()).changeState(i, true);
+                if(((MatchListViewAdapter) listView.getAdapter()).getSelectedCount() == 0)
                     mMode.finish();
-                mMode.setTitle(adapter2.getSelectedCount()+" 已选择");
+                mMode.setTitle(((MatchListViewAdapter) listView.getAdapter()).getSelectedCount()+" 已选择");
                 
                 
               //     view.setBackgroundResource(R.color.red2);
@@ -201,8 +194,8 @@ public class MatchActivity extends SherlockActivity   {
             }
         });
         
-       mGestureDetector = new GestureDetector(new GestureListener());  
-       listView.setOnTouchListener(new TouhListener());  
+//       mGestureDetector = new GestureDetector(new GestureListener());  
+//       listView.setOnTouchListener(new TouhListener());  
    
         
 
@@ -210,25 +203,47 @@ public class MatchActivity extends SherlockActivity   {
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        
+        if(item.getGroupId() == 1)
+            getSupportActionBar().setTitle(item.getTitle()+getString(R.string.push_match) );
         switch(item.getItemId()) {
         case 1:
             
             mMode = startActionMode(new AnActionModeOfEpicProportions());
             
-            adapter2.selectAll( true);
-            if(adapter2.getSelectedCount() == 0)
+            ((MatchListViewAdapter) listView.getAdapter()).selectAll( true);
+            if( ((MatchListViewAdapter) listView.getAdapter()).getSelectedCount() == 0)
                 mMode.finish();
-            mMode.setTitle(adapter2.getSelectedCount()+" 已选择");
+            mMode.setTitle( ((MatchListViewAdapter) listView.getAdapter()).getSelectedCount()+" 已选择");
             break;
         case 2:
-           
+            listAdapter.toAllMatch();
+          //  listView.setAdapter(new MatchListViewAdapter(getApplicationContext(), getAllMatch(),getHelper()));
+            break;
+        case 3:
+         //   listView.setAdapter(new MatchListViewAdapter(getApplicationContext(), getAfter2DaysMatch(),getHelper())); 
+            listAdapter.toAfter2DaysMatch();
+             break;
+        case 4:
+          //   listView.setAdapter(new MatchListViewAdapter(getApplicationContext(), getThisWeekMatch(),getHelper())); 
+            listAdapter.toThisWeekMatch();
+             break;
+        case 5:
+          //   listView.setAdapter(new MatchListViewAdapter(getApplicationContext(), getNextWeekMatch(),getHelper())); 
+            listAdapter.toNextWeekMatch();
+             break;
+        case 6:
+            listAdapter.toTodayMatch();
+         //   listView.setAdapter(new MatchListViewAdapter(getApplicationContext(), getTodayMatch(),getHelper())); 
             break;
        
         
         }
         return false;
     }
+    
+  
+    
+ 
  
     class TouhListener implements OnTouchListener{  
         @Override  
@@ -330,11 +345,11 @@ public class MatchActivity extends SherlockActivity   {
                 case 1:
                     break;
                 case 2:
-                    adapter2.setAllSelectedNotice(true);
+                    ((MatchListViewAdapter) listView.getAdapter()).setAllSelectedNotice(true);
                      
                     break;
                 case 3:
-                    adapter2.setAllSelectedNotice(false);
+                    ((MatchListViewAdapter) listView.getAdapter()).setAllSelectedNotice(false);
                     
                     break;
                 
@@ -348,7 +363,7 @@ public class MatchActivity extends SherlockActivity   {
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             MODE_NOW = false;
-            adapter2.endActionMode();
+            ((MatchListViewAdapter) listView.getAdapter()).endActionMode();
         }
     }    
      
