@@ -10,6 +10,7 @@ import java.util.zip.Inflater;
 
 import android.R.array;
 import android.R.integer;
+import android.R.xml;
 import android.app.Activity;
 import android.content.Context;
 import android.text.format.Time;
@@ -20,6 +21,7 @@ import android.widget.*;
 
 import com.androidquery.AQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.shang.noticeuefa.database.DatabaseHelper;
 import com.shang.noticeuefa.model2.Match;
@@ -254,19 +256,32 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
     }
 
     public void setAllSelectedNotice(boolean isNotice) {
-        System.out.println("setAllSelectedNotice  "+isNotice);
-        System.out.println("m_selects.size();  "+m_selects.size());
+        new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                
+            }
+        }).start();
+       List<Integer> ids = new ArrayList<Integer>();
+       List<Integer> ids2 = new ArrayList<Integer>();
        for(int i = 0;i<m_selects.size();i++) {
            if(m_selects.get(i) ) {
               // matchs.get(i).setNotice(isNotice);
-               if(this.getItem(i).getNotifications() != null) {
-                   this.getItem(i).getNotifications().setAlarm(isNotice);
-                   try {
-                    helper.getDao(Notification.class).update( this.getItem(i).getNotifications());
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                if (this.getItem(i).getNotifications() != null) {
+                    if (this.getItem(i).getNotifications().isAlarm() != isNotice) {
+                        this.getItem(i).getNotifications().setAlarm(isNotice);
+                         ids.add( this.getItem(i).getNotifications().getId());
+//                         try {
+//                             helper.getDao(Notification.class).update(
+//                                     this.getItem(i).getNotifications());
+//                             
+//                         } catch (SQLException e) {
+//                             e.printStackTrace();
+//                         }
+                    }
                 }
-                   }
                else {
                    Notification n1 = new Notification();
                    n1.setAlarm(isNotice);
@@ -274,7 +289,8 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                    try {
                     helper.getDao(Notification.class).create(n1);
                     this.getItem(i).setNotifications(n1);
-                    helper.getMatchDao().update( this.getItem(i));
+                    ids2.add(this.getItem(i).getId());
+                   // helper.getMatchDao().update( this.getItem(i));
                        } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -283,6 +299,22 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                    
            }
        }
+       
+        try {
+
+            UpdateBuilder<Notification, ?> updateBuilder = helper.getDao(
+                    Notification.class).updateBuilder();
+            updateBuilder.updateColumnValue("alarm", isNotice);
+            updateBuilder.where().in("id", ids);
+            helper.getDao(Notification.class).update(updateBuilder.prepare());
+            
+            UpdateBuilder<Match, Integer> matchUpdateBuilder = helper.getMatchDao().updateBuilder();
+            matchUpdateBuilder.where().in("id", ids2);
+            helper.getMatchDao().update(matchUpdateBuilder.prepare());
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
        notifyDataSetChanged();
     }
 
