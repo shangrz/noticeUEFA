@@ -7,7 +7,7 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.shang.noticeuefa.database.DatabaseHelper;
 import com.shang.noticeuefa.model2.*;
-import com.srz.androidtools.util.TimeTools;
+import com.srz.androidtools.util.StringQuery;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -141,16 +141,21 @@ public class UpdateManager {
         System.out.println(matchUpdateStr);
     }
 
-    public void checkUpdate(boolean block) {
+    public void checkUpdate(final String host, boolean block) {
 
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-//                String updateContentVersion = MobclickAgent.getConfigParams(activity, activity.getString(R.string.umeng_kanqiu_version_key));
-//                String matchJSONVersion = MobclickAgent.getConfigParams(activity, activity.getString(R.string.umeng_match_version_key));
+                StringQuery squery = new StringQuery(activity, "http://" + host + "/match-version?type=content");
+                String updateContentVersion = squery.invoke();
+                if (updateContentVersion == null) {
+                    return;
+                }
 
-                String updateContentVersion = "2";
-                String matchJSONVersion = "2";
+                squery = new StringQuery(activity, "http://" + host + "/match-version?type=match");
+                String matchJSONVersion = squery.invoke();
+                if (matchJSONVersion == null)
+                    return;
 
                 int serverContentVersion = Integer.valueOf(updateContentVersion.trim());
                 int serverMatchVersion = Integer.valueOf(matchJSONVersion.trim());
@@ -158,18 +163,19 @@ public class UpdateManager {
                 try {
                     databaseHelper = OpenHelperManager.getHelper(activity, DatabaseHelper.class);
                     Dao<ContentVersion, Integer> versionDao = databaseHelper.getDao(ContentVersion.class);
-                    
-                    int contentVersion = versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.CONTENT).size() ==0  
-                            ? 1 : versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.CONTENT).get(0).getVersion();
-                    int matchVersion = versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.MATCH).size() ==0
-                            ? 1 : versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.MATCH).get(0).getVersion();
- 
+
+                    int contentVersion = versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.CONTENT).get(0).getVersion();
+                    int matchVersion = versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.MATCH).get(0).getVersion();
 
                     Gson gson = new Gson();
                     Dao<Team, Integer> teamDao = databaseHelper.getDao(Team.class);
                     if (contentVersion < serverContentVersion) {
-//                        String updateContent = MobclickAgent.getConfigParams(activity, activity.getString(R.string.umeng_kanqiu_key));
-                        String updateContent = "{\"teams\":\"[{\\\"id\\\":1,\\\"teamName\\\":\\\"波兰\\\",\\\"teamShortName\\\":\\\"pol\\\",\\\"followed\\\":false},{\\\"id\\\":2,\\\"teamName\\\":\\\"希腊\\\",\\\"teamShortName\\\":\\\"gre\\\",\\\"followed\\\":false},{\\\"id\\\":3,\\\"teamName\\\":\\\"俄罗斯\\\",\\\"teamShortName\\\":\\\"rus\\\",\\\"followed\\\":false},{\\\"id\\\":4,\\\"teamName\\\":\\\"捷克\\\",\\\"teamShortName\\\":\\\"cze\\\",\\\"followed\\\":false},{\\\"id\\\":5,\\\"teamName\\\":\\\"荷兰\\\",\\\"teamShortName\\\":\\\"ned\\\",\\\"followed\\\":false},{\\\"id\\\":6,\\\"teamName\\\":\\\"丹麦\\\",\\\"teamShortName\\\":\\\"den\\\",\\\"followed\\\":false},{\\\"id\\\":7,\\\"teamName\\\":\\\"德国\\\",\\\"teamShortName\\\":\\\"ger\\\",\\\"followed\\\":false},{\\\"id\\\":8,\\\"teamName\\\":\\\"葡萄牙\\\",\\\"teamShortName\\\":\\\"por\\\",\\\"followed\\\":false},{\\\"id\\\":9,\\\"teamName\\\":\\\"西班牙\\\",\\\"teamShortName\\\":\\\"esp\\\",\\\"followed\\\":false},{\\\"id\\\":10,\\\"teamName\\\":\\\"意大利\\\",\\\"teamShortName\\\":\\\"ita\\\",\\\"followed\\\":false},{\\\"id\\\":11,\\\"teamName\\\":\\\"爱尔兰\\\",\\\"teamShortName\\\":\\\"irl\\\",\\\"followed\\\":false},{\\\"id\\\":12,\\\"teamName\\\":\\\"克罗地亚\\\",\\\"teamShortName\\\":\\\"cro\\\",\\\"followed\\\":false},{\\\"id\\\":13,\\\"teamName\\\":\\\"法国\\\",\\\"teamShortName\\\":\\\"fra\\\",\\\"followed\\\":false},{\\\"id\\\":14,\\\"teamName\\\":\\\"英格兰\\\",\\\"teamShortName\\\":\\\"eng\\\",\\\"followed\\\":false},{\\\"id\\\":15,\\\"teamName\\\":\\\"乌克兰\\\",\\\"teamShortName\\\":\\\"ukr\\\",\\\"followed\\\":false},{\\\"id\\\":16,\\\"teamName\\\":\\\"瑞典\\\",\\\"teamShortName\\\":\\\"swe\\\",\\\"followed\\\":false},{\\\"id\\\":17,\\\"teamName\\\":\\\"A组小组第1\\\",\\\"teamShortName\\\":\\\"unknown\\\",\\\"followed\\\":false},{\\\"id\\\":18,\\\"teamName\\\":\\\"B组小组第2\\\",\\\"teamShortName\\\":\\\"unknown\\\",\\\"followed\\\":false},{\\\"id\\\":19,\\\"teamName\\\":\\\"B组小组第1\\\",\\\"teamShortName\\\":\\\"unknown\\\",\\\"followed\\\":false},{\\\"id\\\":20,\\\"teamName\\\":\\\"A组小组第2\\\",\\\"teamShortName\\\":\\\"unknown\\\",\\\"followed\\\":false},{\\\"id\\\":21,\\\"teamName\\\":\\\"C组小组第1\\\",\\\"teamShortName\\\":\\\"unknown\\\",\\\"followed\\\":false},{\\\"id\\\":22,\\\"teamName\\\":\\\"D组小组第2\\\",\\\"teamShortName\\\":\\\"unknown\\\",\\\"followed\\\":false},{\\\"id\\\":23,\\\"teamName\\\":\\\"D组小组第1\\\",\\\"teamShortName\\\":\\\"unknown\\\",\\\"followed\\\":false},{\\\"id\\\":24,\\\"teamName\\\":\\\"C组小组第2\\\",\\\"teamShortName\\\":\\\"unknown\\\",\\\"followed\\\":false},{\\\"id\\\":25,\\\"teamName\\\":\\\"四分之一决赛第1战胜者\\\",\\\"teamShortName\\\":\\\"unknown\\\",\\\"followed\\\":false},{\\\"id\\\":26,\\\"teamName\\\":\\\"四分之一决赛第3战胜者\\\",\\\"teamShortName\\\":\\\"unknown\\\",\\\"followed\\\":false},{\\\"id\\\":27,\\\"teamName\\\":\\\"四分之一决赛第2战胜者\\\",\\\"teamShortName\\\":\\\"unknown\\\",\\\"followed\\\":false},{\\\"id\\\":28,\\\"teamName\\\":\\\"四分之一决赛第4战胜者\\\",\\\"teamShortName\\\":\\\"unknown\\\",\\\"followed\\\":false},{\\\"id\\\":29,\\\"teamName\\\":\\\"半决赛第1战胜者\\\",\\\"teamShortName\\\":\\\"unknown\\\",\\\"followed\\\":false},{\\\"id\\\":30,\\\"teamName\\\":\\\"半决赛第2战胜者\\\",\\\"teamShortName\\\":\\\"unknown\\\",\\\"followed\\\":false}]\",\"groups\":\"[{\\\"id\\\":1,\\\"name\\\":\\\"欧洲杯\\\"}]\",\"teamGroups\":\"[{\\\"id\\\":0,\\\"teamId\\\":1,\\\"groupId\\\":1},{\\\"id\\\":0,\\\"teamId\\\":2,\\\"groupId\\\":1},{\\\"id\\\":0,\\\"teamId\\\":3,\\\"groupId\\\":1},{\\\"id\\\":0,\\\"teamId\\\":4,\\\"groupId\\\":1},{\\\"id\\\":0,\\\"teamId\\\":5,\\\"groupId\\\":1},{\\\"id\\\":0,\\\"teamId\\\":6,\\\"groupId\\\":1},{\\\"id\\\":0,\\\"teamId\\\":7,\\\"groupId\\\":1},{\\\"id\\\":0,\\\"teamId\\\":8,\\\"groupId\\\":1},{\\\"id\\\":0,\\\"teamId\\\":9,\\\"groupId\\\":1},{\\\"id\\\":0,\\\"teamId\\\":10,\\\"groupId\\\":1},{\\\"id\\\":0,\\\"teamId\\\":11,\\\"groupId\\\":1},{\\\"id\\\":0,\\\"teamId\\\":12,\\\"groupId\\\":1},{\\\"id\\\":0,\\\"teamId\\\":13,\\\"groupId\\\":1},{\\\"id\\\":0,\\\"teamId\\\":14,\\\"groupId\\\":1},{\\\"id\\\":0,\\\"teamId\\\":15,\\\"groupId\\\":1},{\\\"id\\\":0,\\\"teamId\\\":16,\\\"groupId\\\":1}]\"}";
+                        squery = new StringQuery(activity, "http://" + host + "/match?type=type");
+                        String updateContent = squery.invoke();
+                        if (updateContent == null) {
+                            return;
+                        }
+
                         Dao<Group, Integer> groupDao = databaseHelper.getDao(Group.class);
                         Dao<TeamGroup, Integer> teamGroupDao = databaseHelper.getDao(TeamGroup.class);
 
@@ -247,8 +253,6 @@ public class UpdateManager {
 
                         databaseHelper.truncate(Match.class);
                         for (Match m : matches) {
-                            m.setMatchTime(TimeTools.fixTimeWithTimezone(m.getMatchTime()));
-                             
                             Team ta = teamDao.queryForId(m.getTeamAId());
                             Team tb = teamDao.queryForId(m.getTeamBId());
                             Tour t = tourDao.queryForId(m.getTourId());
@@ -279,4 +283,6 @@ public class UpdateManager {
             }
         }
     }
+
+
 }
