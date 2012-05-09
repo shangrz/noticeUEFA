@@ -289,8 +289,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                    try {
                     helper.getDao(Notification.class).create(n1);
                     this.getItem(i).setNotifications(n1);
-                    ids2.add(this.getItem(i).getId());
-                   // helper.getMatchDao().update( this.getItem(i));
+                     helper.getMatchDao().update( this.getItem(i));
                        } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -308,9 +307,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             updateBuilder.where().in("id", ids);
             helper.getDao(Notification.class).update(updateBuilder.prepare());
             
-            UpdateBuilder<Match, Integer> matchUpdateBuilder = helper.getMatchDao().updateBuilder();
-            matchUpdateBuilder.where().in("id", ids2);
-            helper.getMatchDao().update(matchUpdateBuilder.prepare());
+            
             
         } catch (SQLException e) {
             e.printStackTrace();
