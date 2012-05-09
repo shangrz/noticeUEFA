@@ -163,9 +163,11 @@ public class UpdateManager {
                 try {
                     databaseHelper = OpenHelperManager.getHelper(activity, DatabaseHelper.class);
                     Dao<ContentVersion, Integer> versionDao = databaseHelper.getDao(ContentVersion.class);
-
-                    int contentVersion = versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.CONTENT).get(0).getVersion();
-                    int matchVersion = versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.MATCH).get(0).getVersion();
+                     
+                    
+                    int contentVersion =versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.CONTENT).size()==0? -1: versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.CONTENT).get(0).getVersion();
+                    int matchVersion = versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.MATCH).size()==0? -1: 
+                        versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.MATCH).get(0).getVersion();
 
                     Gson gson = new Gson();
                     Dao<Team, Integer> teamDao = databaseHelper.getDao(Team.class);

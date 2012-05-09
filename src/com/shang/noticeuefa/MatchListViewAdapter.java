@@ -12,13 +12,19 @@ import android.R.array;
 import android.R.integer;
 import android.R.xml;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+ 
 import android.content.Context;
+import android.os.Handler;
 import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.androidquery.AQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
@@ -26,8 +32,7 @@ import com.j256.ormlite.stmt.Where;
 import com.shang.noticeuefa.database.DatabaseHelper;
 import com.shang.noticeuefa.model2.Match;
 import com.shang.noticeuefa.model2.Notification;
-import com.shang.noticeuefa.model2.Team;
-import com.shang.noticeuefa.model2.Tour;
+ 
 import com.shang.noticeuefa.util.Constants;
 import com.srz.androidtools.util.TimeTools;
 
@@ -57,6 +62,14 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
     }
     
     private Vector<Boolean> m_selects = new Vector<Boolean>(); 
+    public Vector<Boolean> getM_selects() {
+        return m_selects;
+    }
+
+    public void setM_selects(Vector<Boolean> m_selects) {
+        this.m_selects = m_selects;
+    }
+
     public void changeState(int position,boolean  multiChoose){ 
         // 多选时 
         if(multiChoose == true){     
@@ -89,7 +102,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
  
    public static boolean MULTI_MODE = false;
 
-   private boolean NEEDQUERYFOLLOW= false;
+   private boolean NEEDQUERYFOLLOW = false;
 
    
     private LayoutInflater mInflater;
@@ -100,7 +113,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
     Context context ;
     DatabaseHelper helper;
     AQuery aQuery;
-    
+    Activity activity;
 //    public MatchListViewAdapter(Context context,  List<Match> matchs,DatabaseHelper helper) {
 //      
 //        super(context, 0,matchs );
@@ -115,10 +128,11 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
 //    }
     
     
-    public MatchListViewAdapter(Context context,DatabaseHelper helper) {
+    public MatchListViewAdapter(Context context,Activity activity,DatabaseHelper helper) {
         super(context, 0 );
         this.mInflater = LayoutInflater.from(context);
-        aQuery = new AQuery(context);
+        aQuery = new AQuery(activity);
+        this.activity =activity;
         this.helper = helper;
         this.context= context;
     }
@@ -135,10 +149,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         @Override
         public void onCheckedChanged(CompoundButton buttonView,
                 boolean isChecked) {
-         //   holder.highlightView.setBackgroundColor(getContext().getResources().getColor(isChecked?R.color.red:R.color.taggray));
-          //  listItem.get(position).put(ViewHolder.CHECKED, isChecked);
-           // match.setNotice(isChecked);
-            if(match.getNotifications() != null) {
+/*            if(match.getNotifications() != null) {
                 match.getNotifications().setAlarm(isChecked);
                 try {
                     helper.getDao(Notification.class).update(match.getNotifications());
@@ -156,9 +167,9 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                  helper.getMatchDao().update( match);
                     } catch (SQLException e) {
                  e.printStackTrace();
-             }
+             } 
                 
-            }
+            }*/
         }
     };
     
@@ -254,65 +265,95 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         public CheckBox checkBox;
         public View highlightView;
     }
-
-    public void setAllSelectedNotice(boolean isNotice) {
-        new Thread(new Runnable() {
-            
+    
+    
+    Dialog dialog;
+    private Dialog getDialog() {
+        if(dialog == null) {
+            AlertDialog dialogProgress = new ProgressDialog(this.activity);
+            dialogProgress.setMessage("处理中");
+            dialogProgress.setCancelable(true);
+            ((ProgressDialog) dialogProgress).setIndeterminate(true);
+            this.dialog =dialogProgress;
+            return this.dialog;
+        }
+        else {
+            return dialog;
+        }
+    }
+    
+    
+    public void setAllSelectedNotice(final boolean isNotice) {
+       final Vector<Boolean> _selects =  (Vector<Boolean>) m_selects.clone() ;
+       getDialog().show();
+      
+        new Handler().postDelayed( new Thread(new Runnable() {
             @Override
-            public void run() {
-                // TODO Auto-generated method stub
+            public void run() { 
                 
-            }
-        }).start();
-       List<Integer> ids = new ArrayList<Integer>();
-       List<Integer> ids2 = new ArrayList<Integer>();
-       for(int i = 0;i<m_selects.size();i++) {
-           if(m_selects.get(i) ) {
-              // matchs.get(i).setNotice(isNotice);
-                if (this.getItem(i).getNotifications() != null) {
-                    if (this.getItem(i).getNotifications().isAlarm() != isNotice) {
-                        this.getItem(i).getNotifications().setAlarm(isNotice);
-                         ids.add( this.getItem(i).getNotifications().getId());
-//                         try {
-//                             helper.getDao(Notification.class).update(
-//                                     this.getItem(i).getNotifications());
-//                             
-//                         } catch (SQLException e) {
-//                             e.printStackTrace();
-//                         }
+                
+                
+                List<Integer> ids = new ArrayList<Integer>();
+                
+                for(int i = 0;i<_selects.size();i++) {
+                    
+                    if(_selects.get(i) ) {
+                        
+                       // matchs.get(i).setNotice(isNotice);
+                         if (getItem(i).getNotifications() != null) {
+                      
+                             if (getItem(i).getNotifications().isAlarm() != isNotice) {
+                                 getItem(i).getNotifications().setAlarm(isNotice);
+                                  ids.add( getItem(i).getNotifications().getId());
+//                                  try {
+//                                      helper.getDao(Notification.class).update(
+//                                              this.getItem(i).getNotifications());
+//                                      
+//                                  } catch (SQLException e) {
+//                                      e.printStackTrace();
+//                                  }
+                             }
+                         }
+                        else {
+                            Notification n1 = new Notification();
+                            n1.setAlarm(isNotice);
+                            n1.setFollow(true);
+                            try {
+                             helper.getDao(Notification.class).create(n1);
+                             getItem(i).setNotifications(n1);
+                              helper.getMatchDao().update(getItem(i));
+                                } catch (SQLException e) {
+                             e.printStackTrace();
+                         }
+                            
+                        }
+                            
                     }
                 }
-               else {
-                   Notification n1 = new Notification();
-                   n1.setAlarm(isNotice);
-                   n1.setFollow(true);
-                   try {
-                    helper.getDao(Notification.class).create(n1);
-                    this.getItem(i).setNotifications(n1);
-                     helper.getMatchDao().update( this.getItem(i));
-                       } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                   
-               }
-                   
-           }
-       }
-       
-        try {
-
-            UpdateBuilder<Notification, ?> updateBuilder = helper.getDao(
-                    Notification.class).updateBuilder();
-            updateBuilder.updateColumnValue("alarm", isNotice);
-            updateBuilder.where().in("id", ids);
-            helper.getDao(Notification.class).update(updateBuilder.prepare());
-            
-            
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-       notifyDataSetChanged();
+             try {
+                 UpdateBuilder<Notification, ?> updateBuilder = helper.getDao(
+                         Notification.class).updateBuilder();
+                 updateBuilder.updateColumnValue("alarm", isNotice);
+                 updateBuilder.where().in("id", ids);
+                 helper.getDao(Notification.class).update(updateBuilder.prepare());
+             } catch (SQLException e) {
+                 e.printStackTrace();
+             }
+                 activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyDataSetChanged();
+                        getDialog().dismiss();
+                    }
+                });
+                 
+                
+                
+             }
+         }), 10);
+ 
+        
+        
     }
 
     public void selectAll(boolean b) {

@@ -14,6 +14,8 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
+import com.actionbarsherlock.view.Window;
+import com.androidquery.AQuery;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -30,7 +32,10 @@ import com.srz.androidtools.util.TimeTools;
  
 import android.R.bool;
 import android.R.integer;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -101,8 +106,8 @@ public class MatchActivity extends SherlockActivity   {
 
         return true;
     }
-    
-    
+     
+        
     
     private DatabaseHelper databaseHelper = null;
     @Override
@@ -127,7 +132,10 @@ public class MatchActivity extends SherlockActivity   {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_MyStyle); //Used for theme switching in samples
         super.onCreate(savedInstanceState);
+       
         setContentView(R.layout.match);
+        
+     
        // this.getWindow().setBackgroundDrawableResource(R.color.red);
         getSupportActionBar().setTitle(R.string.today_push_match);
         
@@ -144,8 +152,9 @@ public class MatchActivity extends SherlockActivity   {
         
          
       //  listView.setAdapter(new MatchListViewAdapter(MatchActivity.this,getTodayMatch(),getHelper()));
-        listAdapter = new MatchListViewAdapter(getApplicationContext(),getHelper());
+        listAdapter = new MatchListViewAdapter(getApplicationContext(),this,getHelper());
         listAdapter.toTodayMatch();
+        
         listView.setAdapter(listAdapter );
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -198,11 +207,13 @@ public class MatchActivity extends SherlockActivity   {
 //       listView.setOnTouchListener(new TouhListener());  
    
         
-
+         
     }
     
+  
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        
         if(item.getGroupId() == 1)
             getSupportActionBar().setTitle(item.getTitle()+getString(R.string.push_match) );
         switch(item.getItemId()) {
@@ -217,27 +228,23 @@ public class MatchActivity extends SherlockActivity   {
             break;
         case 2:
             listAdapter.toAllMatch();
-          //  listView.setAdapter(new MatchListViewAdapter(getApplicationContext(), getAllMatch(),getHelper()));
             break;
         case 3:
-         //   listView.setAdapter(new MatchListViewAdapter(getApplicationContext(), getAfter2DaysMatch(),getHelper())); 
             listAdapter.toAfter2DaysMatch();
              break;
         case 4:
-          //   listView.setAdapter(new MatchListViewAdapter(getApplicationContext(), getThisWeekMatch(),getHelper())); 
             listAdapter.toThisWeekMatch();
              break;
         case 5:
-          //   listView.setAdapter(new MatchListViewAdapter(getApplicationContext(), getNextWeekMatch(),getHelper())); 
             listAdapter.toNextWeekMatch();
              break;
         case 6:
             listAdapter.toTodayMatch();
-         //   listView.setAdapter(new MatchListViewAdapter(getApplicationContext(), getTodayMatch(),getHelper())); 
             break;
        
         
         }
+        
         return false;
     }
     
@@ -308,7 +315,7 @@ public class MatchActivity extends SherlockActivity   {
         }  
         
     }
- 
+    
     private final class AnActionModeOfEpicProportions implements ActionMode.Callback {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -331,6 +338,7 @@ public class MatchActivity extends SherlockActivity   {
 
             return true;
         }
+     
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
@@ -339,8 +347,9 @@ public class MatchActivity extends SherlockActivity   {
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            Toast.makeText(getApplicationContext(), "" +  item.getItemId() , Toast.LENGTH_SHORT).show();
-            
+             
+             
+             
             switch(item.getItemId()) {
                 case 1:
                     break;
@@ -357,15 +366,20 @@ public class MatchActivity extends SherlockActivity   {
             
             mode.finish();
             
+            
             return true;
         }
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
+            
+                      
+           
             MODE_NOW = false;
             ((MatchListViewAdapter) listView.getAdapter()).endActionMode();
         }
     }    
+    
      
 }
 
@@ -403,6 +417,5 @@ class MatchGalleryAdapter extends PagerAdapter {
     
   
      
-    
    
 }
