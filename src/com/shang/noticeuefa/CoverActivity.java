@@ -1,5 +1,6 @@
 package com.shang.noticeuefa;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,16 +14,12 @@ import com.mobclick.android.MobclickAgent;
 import com.shang.noticeuefa.database.DatabaseHelper;
 import com.shang.noticeuefa.model2.ContentVersion;
 import com.shang.noticeuefa.model2.Group;
-import com.shang.noticeuefa.model2.Match;
-import com.shang.noticeuefa.model2.Notification;
 import com.shang.noticeuefa.model2.Team;
 import com.shang.noticeuefa.model2.TeamGroup;
-import com.shang.noticeuefa.model2.Tour;
 import com.shang.noticeuefa.view.OptionMenuCreator;
 import com.srz.androidtools.util.PreferenceUtil;
 
 import java.sql.SQLException;
-import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
@@ -284,8 +281,22 @@ public class CoverActivity extends SherlockActivity {
         super.onResume();
         MobclickAgent.onResume(this);
     }
+
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
     }
+
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case PROMPT_INPROGRESS:
+                ProgressDialog dialogProgress = new ProgressDialog(CoverActivity.this);
+                dialogProgress.setMessage(this.getString(R.string.firsttime));
+                dialogProgress.setCancelable(false);
+                this.dialog = dialogProgress;
+                break;
+        }
+        return dialog;
+    }
+
 }

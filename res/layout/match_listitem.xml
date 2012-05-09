@@ -68,7 +68,8 @@
             
         </LinearLayout>
     </LinearLayout>
-
+
+
     <CheckBox
         android:id="@+id/notice_checkBox"
         style="@style/mycheckbox"
@@ -78,7 +79,9 @@
         android:layout_centerVertical="true" 
           
         />
-
+
+
+
     <TextView
         android:id="@+id/match_datetime_textView"
         android:layout_width="wrap_content"
