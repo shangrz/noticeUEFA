@@ -165,17 +165,9 @@ public class MatchActivity extends SherlockActivity   {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if(MODE_NOW == false)  {
                    mMode = startActionMode(new AnActionModeOfEpicProportions(MatchActivity.this));
-                    
-                           View closeButton =  findViewById(R.id.abs__action_mode_close_button);
-                           if (closeButton != null) {
-                            //   closeButton.setEnabled(false);
-                               closeButton.setVisibility(View.GONE);
-                           }
-                           
-                   
-              
+                 
                 }
-                
+                pager.setCurrentItem(i, true);
                 ((MatchListViewAdapter) listView.getAdapter()).changeState(i, true);
                 if(((MatchListViewAdapter) listView.getAdapter()).getSelectedCount() == 0)
                     mMode.finish();
@@ -193,7 +185,7 @@ public class MatchActivity extends SherlockActivity   {
         });
         
         pager = (ViewPager) findViewById(R.id.image_gallery);
-        galleryadapter = new MatchGalleryAdapter(this,listAdapter ,imageCache);
+        galleryadapter = new MatchGalleryAdapter(this,listAdapter ,imageCache,handler);
         pager.setAdapter(galleryadapter);
         pager.setCurrentItem(0);
         
@@ -231,8 +223,8 @@ public class MatchActivity extends SherlockActivity   {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem,
                     int visibleItemCount, int totalItemCount) {
-               // galleryadapter.ISLOADPIC = false;
-                pager.setCurrentItem(firstVisibleItem, true);
+             //   galleryadapter.setISLOADPIC(false);
+            //    pager.setCurrentItem(firstVisibleItem, true);
                 
             }
 
@@ -240,10 +232,12 @@ public class MatchActivity extends SherlockActivity   {
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 int first = view.getFirstVisiblePosition();
               
-               // galleryadapter.ISLOADPIC = true;
+               
                 
                 if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
-                    //pager.setCurrentItem(first, true);
+                    galleryadapter.setISLOADPIC(true) ;
+                    pager.setCurrentItem(first, true);
+                 //   pager.findViewById(R.id.imageid).setVisibility(View.VISIBLE); 
                    // galleryadapter.notifyDataSetChanged();
                  
                 }
@@ -263,18 +257,7 @@ public class MatchActivity extends SherlockActivity   {
         case 1:
             
             mMode = startActionMode(new AnActionModeOfEpicProportions(this));
-            handler.postDelayed(new Runnable() {
-                
-                @Override
-                public void run() {
-                    View closeButton = findViewById(R.id.abs__action_mode_close_button);
-                    if (closeButton != null) {
-                     //   closeButton.setEnabled(false);
-                        closeButton.setVisibility(View.GONE);
-                    }
-                    
-                }
-            } , 100);
+            
             
             ((MatchListViewAdapter) listView.getAdapter()).selectAll( true);
             if( ((MatchListViewAdapter) listView.getAdapter()).getSelectedCount() == 0)
@@ -454,17 +437,27 @@ public class MatchActivity extends SherlockActivity   {
 }
 
 class MatchGalleryAdapter extends PagerAdapter {
-    public static boolean ISLOADPIC = true; 
+    public static boolean   ISLOADPIC = true; 
+    public boolean isISLOADPIC() {
+        return ISLOADPIC;
+    }
+
+    public void setISLOADPIC(boolean iSLOADPIC) {
+        ISLOADPIC = iSLOADPIC;
+    }
+
     HashMap<String, SoftReference<Drawable>> imageCache;
     private final LayoutInflater inflater;
     public static int[] homeAd = new int[]{R.drawable.match_0,R.drawable.match_0 };
     MatchListViewAdapter listAdapter;
     Context context;
-    public MatchGalleryAdapter(Context context,MatchListViewAdapter listAdapter, HashMap<String, SoftReference<Drawable>> imageCache){
+    Handler handler;
+    public MatchGalleryAdapter(Context context,MatchListViewAdapter listAdapter, HashMap<String, SoftReference<Drawable>> imageCache ,Handler handler){
         inflater = LayoutInflater.from(context);
         this.listAdapter = listAdapter;
         this.context = context;
         this.imageCache = imageCache;
+        this.handler = handler;
     }
     
     public int getCount() {
@@ -478,32 +471,35 @@ class MatchGalleryAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         View v = inflater.inflate(R.layout.rolling_image,null);
-        ImageView imageView = (ImageView) v.findViewById(R.id.imageid);
+        final ImageView imageView = (ImageView) v.findViewById(R.id.imageid);
          
         TextView textView = (TextView)v.findViewById(R.id.textView1);
         if(listAdapter.getCount()!=0) {
         int  _position =position%listAdapter.getCount() ;
         
            
-        Match match = listAdapter.getItem(_position);    
-        
+        final Match match = listAdapter.getItem(_position);    
+ 
         //imageView.setImageResource(homeAd[position%homeAd.length]);
-        if(ISLOADPIC) {
-        if(this.imageCache.get("match_"+match.getId()) != null) {
-            if (this.imageCache.get("match_"+match.getId()).get() != null)
-                imageView.setImageDrawable(this.imageCache.get("match_"+match.getId()).get());
-            else
+
+            if (imageCache.get("match_" + match.getId()) != null) {
+                if (imageCache.get("match_" + match.getId()).get() != null)
+
+                    imageView.setImageDrawable(imageCache.get(
+                            "match_" + match.getId()).get());
+
+                else
+
+                    setImage(imageView, match);
+
+            } else {
                 setImage(imageView, match);
-        }else {
-            setImage(imageView, match);
-          /*  if(ResTools.getDrawable("match_"+match.getId(),context) != 0) {
-                imageView.setImageResource(ResTools.getDrawable("match_"+match.getId(),context));
-                imageCache.put("match_"+match.getId(), new  SoftReference<Drawable>(imageView.getDrawable()) );
+
             }
-            else
-                imageView.setImageResource(R.drawable.match_0);*/
-        }
-        }
+                     
+                
+      
+         
         if(match.getDesc() != null)
             textView.setText(match.getDesc());
         else if( ResTools.getString("desc_" +match.getId(), context) != null) {
