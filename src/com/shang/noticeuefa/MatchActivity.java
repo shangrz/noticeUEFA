@@ -10,6 +10,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
+import com.actionbarsherlock.R;
 import com.actionbarsherlock.app.SherlockActivity;
    
 import com.actionbarsherlock.view.ActionMode;
@@ -35,6 +36,7 @@ import com.srz.androidtools.util.TimeTools;
  
 import android.R.bool;
 import android.R.integer;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -59,6 +61,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -75,7 +78,7 @@ public class MatchActivity extends SherlockActivity   {
     GestureDetector mGestureDetector;    
     Context mContext;
     private ViewPager pager;
-    private Handler handler = new Handler();
+    private Handler handler;
     private MatchGalleryAdapter galleryadapter;
     private int index = 0;
     private ListView listView;
@@ -142,16 +145,10 @@ public class MatchActivity extends SherlockActivity   {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_MyStyle); //Used for theme switching in samples
         super.onCreate(savedInstanceState);
-       
         setContentView(R.layout.match);
-        
-     
        // this.getWindow().setBackgroundDrawableResource(R.color.red);
         getSupportActionBar().setTitle(R.string.today_push_match);
-        
-         
-        
-       
+        handler = new Handler();
         imageCache = new  HashMap<String, SoftReference<Drawable>>(); 
         this.setTitle(R.string.matchname);
         listView = (ListView) findViewById(R.id.listView1); 
@@ -166,13 +163,27 @@ public class MatchActivity extends SherlockActivity   {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(MODE_NOW == false)  
-                   mMode = startActionMode(new AnActionModeOfEpicProportions());
+                if(MODE_NOW == false)  {
+                   mMode = startActionMode(new AnActionModeOfEpicProportions(MatchActivity.this));
+                    
+                           View closeButton =  findViewById(R.id.abs__action_mode_close_button);
+                           if (closeButton != null) {
+                            //   closeButton.setEnabled(false);
+                               closeButton.setVisibility(View.GONE);
+                           }
+                           
                    
+              
+                }
+                
                 ((MatchListViewAdapter) listView.getAdapter()).changeState(i, true);
                 if(((MatchListViewAdapter) listView.getAdapter()).getSelectedCount() == 0)
                     mMode.finish();
                 mMode.setTitle(((MatchListViewAdapter) listView.getAdapter()).getSelectedCount()+" 已选择");
+                 
+                 
+                //((mMode.getCustomView()).findViewById(R.layout.abs__action_mode_close_item)).
+              //  findViewById(R.id.abs__action_mode_close_button).setVisibility(View.INVISIBLE);
                 
                 
               //     view.setBackgroundResource(R.color.red2);
@@ -220,21 +231,29 @@ public class MatchActivity extends SherlockActivity   {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem,
                     int visibleItemCount, int totalItemCount) {
-               
+               // galleryadapter.ISLOADPIC = false;
                 pager.setCurrentItem(firstVisibleItem, true);
                 
             }
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                // TODO Auto-generated method stub
+                int first = view.getFirstVisiblePosition();
+              
+               // galleryadapter.ISLOADPIC = true;
+                
+                if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
+                    //pager.setCurrentItem(first, true);
+                   // galleryadapter.notifyDataSetChanged();
+                 
+                }
                 
             }});
         
         
          
     }
-    
+   
   
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -243,7 +262,19 @@ public class MatchActivity extends SherlockActivity   {
         switch(item.getItemId()) {
         case 1:
             
-            mMode = startActionMode(new AnActionModeOfEpicProportions());
+            mMode = startActionMode(new AnActionModeOfEpicProportions(this));
+            handler.postDelayed(new Runnable() {
+                
+                @Override
+                public void run() {
+                    View closeButton = findViewById(R.id.abs__action_mode_close_button);
+                    if (closeButton != null) {
+                     //   closeButton.setEnabled(false);
+                        closeButton.setVisibility(View.GONE);
+                    }
+                    
+                }
+            } , 100);
             
             ((MatchListViewAdapter) listView.getAdapter()).selectAll( true);
             if( ((MatchListViewAdapter) listView.getAdapter()).getSelectedCount() == 0)
@@ -271,7 +302,7 @@ public class MatchActivity extends SherlockActivity   {
         if(item.getGroupId() == 1) {
             getSupportActionBar().setTitle(item.getTitle()+getString(R.string.push_match) );
             galleryadapter.notifyDataSetChanged();
-            pager.setCurrentItem(0, true);
+            pager.setCurrentItem(0, false);
         }
         
         return false;
@@ -347,14 +378,23 @@ public class MatchActivity extends SherlockActivity   {
     }
     
     private final class AnActionModeOfEpicProportions implements ActionMode.Callback {
+        
+        private MatchActivity activity;
+
+        AnActionModeOfEpicProportions(MatchActivity  activity) {
+            this.activity = activity;
+        }
+
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MODE_NOW = true;
-              
+
 //            menu.add(0,1,0,"Follow")
 //            .setIcon(R.drawable.rating_important)
 //            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-            
+           
+           
+   
             menu.add(0,2,0,"Alarm")
             .setIcon(R.drawable.device_access_add_alarm)
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
@@ -362,7 +402,7 @@ public class MatchActivity extends SherlockActivity   {
              menu.add(0,3,0,"Del")
              .setIcon(R.drawable.content_discard)
              .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-           
+          
 
          
 
@@ -414,6 +454,7 @@ public class MatchActivity extends SherlockActivity   {
 }
 
 class MatchGalleryAdapter extends PagerAdapter {
+    public static boolean ISLOADPIC = true; 
     HashMap<String, SoftReference<Drawable>> imageCache;
     private final LayoutInflater inflater;
     public static int[] homeAd = new int[]{R.drawable.match_0,R.drawable.match_0 };
@@ -440,13 +481,14 @@ class MatchGalleryAdapter extends PagerAdapter {
         ImageView imageView = (ImageView) v.findViewById(R.id.imageid);
          
         TextView textView = (TextView)v.findViewById(R.id.textView1);
-        
-        int  _position =position%(listAdapter.getCount()==0?1:listAdapter.getCount());
+        if(listAdapter.getCount()!=0) {
+        int  _position =position%listAdapter.getCount() ;
         
            
         Match match = listAdapter.getItem(_position);    
         
         //imageView.setImageResource(homeAd[position%homeAd.length]);
+        if(ISLOADPIC) {
         if(this.imageCache.get("match_"+match.getId()) != null) {
             if (this.imageCache.get("match_"+match.getId()).get() != null)
                 imageView.setImageDrawable(this.imageCache.get("match_"+match.getId()).get());
@@ -461,13 +503,18 @@ class MatchGalleryAdapter extends PagerAdapter {
             else
                 imageView.setImageResource(R.drawable.match_0);*/
         }
+        }
         if(match.getDesc() != null)
             textView.setText(match.getDesc());
         else if( ResTools.getString("desc_" +match.getId(), context) != null) {
             textView.setText(ResTools.getString("desc_" +match.getId(), context));
         }else
             textView.setText(match.getTeamA().getTeamName()+ " VS "+ match.getTeamB().getTeamName());
-        
+        }
+        else {
+            textView.setText(R.string.app_name);
+            imageView.setImageResource(R.drawable.match_0);
+        }
         container.addView(v,0);
         return v;
     }
