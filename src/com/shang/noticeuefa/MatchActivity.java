@@ -1,11 +1,13 @@
 package com.shang.noticeuefa;
  
 
+import java.lang.ref.SoftReference;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -26,6 +28,7 @@ import com.shang.noticeuefa.model2.Group;
 import com.shang.noticeuefa.model2.Match;
 import com.shang.noticeuefa.model2.Notification;
 import com.shang.noticeuefa.model2.Tour;
+import com.srz.androidtools.util.ResTools;
 import com.srz.androidtools.util.TimeTools;
  
  
@@ -38,6 +41,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
@@ -51,10 +55,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.View.OnTouchListener;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AbsListView.OnScrollListener;
  
 
  
@@ -74,6 +82,8 @@ public class MatchActivity extends SherlockActivity   {
     public static boolean MODE_NOW =false;
     Tour tour ;
     private MatchListViewAdapter listAdapter;
+    
+    HashMap<String, SoftReference<Drawable>> imageCache; 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         
@@ -141,11 +151,8 @@ public class MatchActivity extends SherlockActivity   {
         
          
         
-        pager = (ViewPager) findViewById(R.id.image_gallery);
-        galleryadapter = new MatchGalleryAdapter(this);
-        pager.setAdapter(galleryadapter);
-        pager.setCurrentItem(0);
        
+        imageCache = new  HashMap<String, SoftReference<Drawable>>(); 
         this.setTitle(R.string.matchname);
         listView = (ListView) findViewById(R.id.listView1); 
     //    tour =Tour.creatFromTagName("euro", getApplicationContext());
@@ -174,7 +181,10 @@ public class MatchActivity extends SherlockActivity   {
             }
         });
         
-        
+        pager = (ViewPager) findViewById(R.id.image_gallery);
+        galleryadapter = new MatchGalleryAdapter(this,listAdapter ,imageCache);
+        pager.setAdapter(galleryadapter);
+        pager.setCurrentItem(0);
         
         pager.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -205,7 +215,22 @@ public class MatchActivity extends SherlockActivity   {
         
 //       mGestureDetector = new GestureDetector(new GestureListener());  
 //       listView.setOnTouchListener(new TouhListener());  
-   
+        listView.setOnScrollListener(new OnScrollListener() {
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                    int visibleItemCount, int totalItemCount) {
+               
+                pager.setCurrentItem(firstVisibleItem, true);
+                
+            }
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                // TODO Auto-generated method stub
+                
+            }});
+        
         
          
     }
@@ -214,8 +239,7 @@ public class MatchActivity extends SherlockActivity   {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         
-        if(item.getGroupId() == 1)
-            getSupportActionBar().setTitle(item.getTitle()+getString(R.string.push_match) );
+         
         switch(item.getItemId()) {
         case 1:
             
@@ -244,8 +268,14 @@ public class MatchActivity extends SherlockActivity   {
        
         
         }
+        if(item.getGroupId() == 1) {
+            getSupportActionBar().setTitle(item.getTitle()+getString(R.string.push_match) );
+            galleryadapter.notifyDataSetChanged();
+            pager.setCurrentItem(0, true);
+        }
         
         return false;
+        
     }
     
   
@@ -384,12 +414,16 @@ public class MatchActivity extends SherlockActivity   {
 }
 
 class MatchGalleryAdapter extends PagerAdapter {
-
+    HashMap<String, SoftReference<Drawable>> imageCache;
     private final LayoutInflater inflater;
     public static int[] homeAd = new int[]{R.drawable.match_0,R.drawable.match_0 };
-
-    public MatchGalleryAdapter(Context context){
+    MatchListViewAdapter listAdapter;
+    Context context;
+    public MatchGalleryAdapter(Context context,MatchListViewAdapter listAdapter, HashMap<String, SoftReference<Drawable>> imageCache){
         inflater = LayoutInflater.from(context);
+        this.listAdapter = listAdapter;
+        this.context = context;
+        this.imageCache = imageCache;
     }
     
     public int getCount() {
@@ -399,12 +433,40 @@ class MatchGalleryAdapter extends PagerAdapter {
     public boolean isViewFromObject(View view, Object o) {
         return view==o;   
     }
-
+    
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         View v = inflater.inflate(R.layout.rolling_image,null);
         ImageView imageView = (ImageView) v.findViewById(R.id.imageid);
-        imageView.setImageResource(homeAd[position%homeAd.length]);
+         
+        TextView textView = (TextView)v.findViewById(R.id.textView1);
+        int  _position =position%listAdapter.getCount();
+        
+           
+        Match match = listAdapter.getItem(_position);    
+        
+        //imageView.setImageResource(homeAd[position%homeAd.length]);
+        if(this.imageCache.get("match_"+match.getId()) != null) {
+            if (this.imageCache.get("match_"+match.getId()).get() != null)
+                imageView.setImageDrawable(this.imageCache.get("match_"+match.getId()).get());
+            else
+                setImage(imageView, match);
+        }else {
+            setImage(imageView, match);
+          /*  if(ResTools.getDrawable("match_"+match.getId(),context) != 0) {
+                imageView.setImageResource(ResTools.getDrawable("match_"+match.getId(),context));
+                imageCache.put("match_"+match.getId(), new  SoftReference<Drawable>(imageView.getDrawable()) );
+            }
+            else
+                imageView.setImageResource(R.drawable.match_0);*/
+        }
+        if(match.getDesc() != null)
+            textView.setText(match.getDesc());
+        else if( ResTools.getString("desc_" +match.getId(), context) != null) {
+            textView.setText(ResTools.getString("desc_" +match.getId(), context));
+        }else
+            textView.setText(match.getTeamA().getTeamName()+ " VS "+ match.getTeamB().getTeamName());
+        
         container.addView(v,0);
         return v;
     }
@@ -413,6 +475,15 @@ class MatchGalleryAdapter extends PagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object object) {
         (container).removeView((View) object);
 
+    }
+    
+    private void setImage(ImageView imageView, Match match) {
+        if(ResTools.getDrawable("match_"+match.getId(),context) != 0) {
+            imageView.setImageResource(ResTools.getDrawable("match_"+match.getId(),context));
+            imageCache.put("match_"+match.getId(), new  SoftReference<Drawable>(imageView.getDrawable()) );
+        }
+        else
+            imageView.setImageResource(R.drawable.match_0);
     }
     
   
