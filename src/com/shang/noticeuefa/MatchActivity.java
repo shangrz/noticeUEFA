@@ -440,7 +440,8 @@ class MatchGalleryAdapter extends PagerAdapter {
         ImageView imageView = (ImageView) v.findViewById(R.id.imageid);
          
         TextView textView = (TextView)v.findViewById(R.id.textView1);
-        int  _position =position%listAdapter.getCount();
+        
+        int  _position =position%(listAdapter.getCount()==0?1:listAdapter.getCount());
         
            
         Match match = listAdapter.getItem(_position);    
