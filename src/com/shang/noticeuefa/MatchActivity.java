@@ -139,8 +139,9 @@ public class MatchActivity extends SherlockActivity   {
         }
         return databaseHelper;
     }
-   
-    
+    boolean listInScorll = false;
+    boolean pageInScorll = false;
+  
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_MyStyle); //Used for theme switching in samples
@@ -202,17 +203,27 @@ public class MatchActivity extends SherlockActivity   {
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
-                //To change body of implemented methods use File | Settings | File Templates.
+                pageInScorll = true;
+                 
             }
 
             @Override
             public void onPageSelected(int i) {
                 index = i;
+                System.out.println(":: "+i);   
             }
 
             @Override
             public void onPageScrollStateChanged(int i) {
-                //To change body of implemented methods use File | Settings | File Templates.
+                System.out.println("::xx  "+i);
+                if(i==0 && listInScorll == false) {
+                    pageInScorll = true; 
+                    listView.smoothScrollToPosition(index);
+                     
+                }
+                if(i==0)
+                    listInScorll = false;
+                //pageInScorll = false;
             }
         });
         
@@ -225,18 +236,26 @@ public class MatchActivity extends SherlockActivity   {
                     int visibleItemCount, int totalItemCount) {
              //   galleryadapter.setISLOADPIC(false);
             //    pager.setCurrentItem(firstVisibleItem, true);
+                  listInScorll = true;
                 
             }
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 int first = view.getFirstVisiblePosition();
+                
               
-               
                 
                 if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
                     galleryadapter.setISLOADPIC(true) ;
-                    pager.setCurrentItem(first, true);
+                    
+                    if(!pageInScorll ) {
+                        listInScorll = true;
+                        pager.setCurrentItem(first, true);
+                    }
+                    
+                    
+                    pageInScorll = false;
                  //   pager.findViewById(R.id.imageid).setVisibility(View.VISIBLE); 
                    // galleryadapter.notifyDataSetChanged();
                  
