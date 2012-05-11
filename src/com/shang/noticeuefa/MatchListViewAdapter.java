@@ -502,8 +502,13 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         QueryBuilder<Match, Integer> queryBuilder;
         try {
             queryBuilder = helper.getMatchDao().queryBuilder();
-            if(NEEDQUERYFOLLOW)
-                return queryBuilder.where().in("notifications", helper.getDao(Notification.class).queryForEq("follow", true)).and() ;
+            if(NEEDQUERYFOLLOW) {
+                return queryBuilder.where().in("teamA", helper.getTeamDao().queryForEq("followed", true))
+                .or().in("teamB", helper.getTeamDao().queryForEq("followed", true)).and();
+                
+                //return queryBuilder.where().in("notifications", helper.getDao(Notification.class).queryForEq("follow", true)).and() ;
+                
+            }
             else
                 return queryBuilder.where();
         } catch (SQLException e) {

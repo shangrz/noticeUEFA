@@ -147,8 +147,8 @@ public class MatchActivity extends SherlockActivity   {
          
       //  listView.setAdapter(new MatchListViewAdapter(MatchActivity.this,getTodayMatch(),getHelper()));
         listAdapter = new MatchListViewAdapter(getApplicationContext(),this,getHelper());
-        listAdapter.toTodayMatch();
-        
+        listAdapter.toTodayMatch(); 
+        lastOptionsItemSelected =6;
         listView.setAdapter(listAdapter );
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -308,10 +308,14 @@ public class MatchActivity extends SherlockActivity   {
         if(item.getGroupId() == 1) {
             lastOptionsItemSelected = item.getItemId();
             getSupportActionBar().setTitle(item.getTitle()+getString(listAdapter.NEEDQUERYFOLLOW?R.string.push_match:R.string.all_match) );
-            galleryadapter.notifyDataSetChanged();
-            pager.setCurrentItem(0, false);
         }
+        if(item.getItemId()==1) {
+            String s= getSupportActionBar().getTitle().subSequence(0, getSupportActionBar().getTitle().length()-getString(R.string.push_match).length()).toString();
+            getSupportActionBar().setTitle(s+getString(listAdapter.NEEDQUERYFOLLOW?R.string.push_match:R.string.all_match));
+            }
         
+        galleryadapter.notifyDataSetChanged();
+        pager.setCurrentItem(0, false);
         return false;
         
     }
