@@ -33,6 +33,8 @@ import com.shang.noticeuefa.model2.Tour;
 import com.shang.noticeuefa.util.MyGestureListener;
 import com.shang.noticeuefa.weibo.SinaTrendActivity;
 import com.srz.androidtools.util.ResTools;
+
+import android.R.integer;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -77,7 +79,7 @@ public class MatchActivity extends SherlockActivity   {
     public boolean onCreateOptionsMenu(Menu menu) {
         
  
-         menu.add(0,1,0,"SelectAll")
+         menu.add(0,1,0,"isFollow")
          .setIcon(  R.drawable.content_select_all)
          .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT); 
          
@@ -258,19 +260,31 @@ public class MatchActivity extends SherlockActivity   {
             }});
     }
    
-  
+    private int lastOptionsItemSelected =0;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
         case 1:
-            
-            mMode = startActionMode(new AnActionModeOfEpicProportions(this));
-            
-            
+            /*
+            mMode = startActionMode(new AnActionModeOfEpicProportions(this));  
             ((MatchListViewAdapter) listView.getAdapter()).selectAll( true);
             if( ((MatchListViewAdapter) listView.getAdapter()).getSelectedCount() == 0)
                 mMode.finish();
-            mMode.setTitle( ((MatchListViewAdapter) listView.getAdapter()).getSelectedCount()+" 已选择");
+            mMode.setTitle( ((MatchListViewAdapter) listView.getAdapter()).getSelectedCount()+" 已选择");*/
+            listAdapter.NEEDQUERYFOLLOW = !listAdapter.NEEDQUERYFOLLOW;
+            if(lastOptionsItemSelected == 2) 
+                listAdapter.toAllMatch();
+            else if(lastOptionsItemSelected==3)
+                listAdapter.toAfter2DaysMatch();
+            else if(lastOptionsItemSelected==4)
+                listAdapter.toThisWeekMatch();
+            else if(lastOptionsItemSelected==5)
+                listAdapter.toNextWeekMatch();
+            else if(lastOptionsItemSelected==6)
+                listAdapter.toTodayMatch();
+            
+            
+            
             break;
         case 2:
             listAdapter.toAllMatch();
@@ -288,10 +302,12 @@ public class MatchActivity extends SherlockActivity   {
             listAdapter.toTodayMatch();
             break;
        
-        
+         
         }
+        
         if(item.getGroupId() == 1) {
-            getSupportActionBar().setTitle(item.getTitle()+getString(R.string.push_match) );
+            lastOptionsItemSelected = item.getItemId();
+            getSupportActionBar().setTitle(item.getTitle()+getString(listAdapter.NEEDQUERYFOLLOW?R.string.push_match:R.string.all_match) );
             galleryadapter.notifyDataSetChanged();
             pager.setCurrentItem(0, false);
         }
@@ -456,9 +472,6 @@ class MatchGalleryAdapter extends PagerAdapter {
                 setImage(imageView, match);
 
             }
-                     
-                
-      
          
         if(match.getDesc() != null)
             textView.setText(match.getDesc());

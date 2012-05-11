@@ -120,7 +120,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
  
    public static boolean MULTI_MODE = false;
 
-   private boolean NEEDQUERYFOLLOW = false;
+   public boolean NEEDQUERYFOLLOW = true;
 
    
     private LayoutInflater mInflater;
@@ -484,7 +484,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
      
         notifyDataSetChanged();
     }
-  
+ 
     
     public void toAllMatch() {
         try {
