@@ -148,7 +148,7 @@ public class MatchActivity extends SherlockActivity   {
       //  listView.setAdapter(new MatchListViewAdapter(MatchActivity.this,getTodayMatch(),getHelper()));
         listAdapter = new MatchListViewAdapter(getApplicationContext(),this,getHelper());
         listAdapter.toTodayMatch(); 
-        lastOptionsItemSelected =6;
+     //   lastOptionsItemSelected =6;
         listView.setAdapter(listAdapter );
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -260,7 +260,7 @@ public class MatchActivity extends SherlockActivity   {
             }});
     }
    
-    private int lastOptionsItemSelected =0;
+    //private int lastOptionsItemSelected =0;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
@@ -272,7 +272,8 @@ public class MatchActivity extends SherlockActivity   {
                 mMode.finish();
             mMode.setTitle( ((MatchListViewAdapter) listView.getAdapter()).getSelectedCount()+" 已选择");*/
             listAdapter.NEEDQUERYFOLLOW = !listAdapter.NEEDQUERYFOLLOW;
-            if(lastOptionsItemSelected == 2) 
+            listAdapter.doWhenChangeIsFollow();
+/*            if(lastOptionsItemSelected == 2) 
                 listAdapter.toAllMatch();
             else if(lastOptionsItemSelected==3)
                 listAdapter.toAfter2DaysMatch();
@@ -281,7 +282,7 @@ public class MatchActivity extends SherlockActivity   {
             else if(lastOptionsItemSelected==5)
                 listAdapter.toNextWeekMatch();
             else if(lastOptionsItemSelected==6)
-                listAdapter.toTodayMatch();
+                listAdapter.toTodayMatch();*/
             
             
             
@@ -306,7 +307,7 @@ public class MatchActivity extends SherlockActivity   {
         }
         
         if(item.getGroupId() == 1) {
-            lastOptionsItemSelected = item.getItemId();
+            //lastOptionsItemSelected = item.getItemId();
             getSupportActionBar().setTitle(item.getTitle()+getString(listAdapter.NEEDQUERYFOLLOW?R.string.push_match:R.string.all_match) );
         }
         if(item.getItemId()==1) {
