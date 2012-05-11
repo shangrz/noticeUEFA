@@ -4,7 +4,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.zip.Inflater;
 
@@ -22,10 +24,16 @@ import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.*;
 
+import com.actionbarsherlock.R;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.androidquery.AQuery;
+ 
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.stmt.Where;
@@ -70,7 +78,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         this.m_selects = m_selects;
     }
 
-    public void changeState(int position,boolean  multiChoose){ 
+    public boolean changeState(int position,boolean  multiChoose){ 
         // 多选时 
         if(multiChoose == true){     
             m_selects.setElementAt(!m_selects.elementAt(position), position);   //直接取反即可     
@@ -78,6 +86,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         MULTI_MODE = multiChoose;
         
         notifyDataSetChanged();     //通知适配器进行更新 
+        return m_selects.get(position);
     } 
     
     public void endActionMode(){ 
@@ -86,7 +95,8 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         MULTI_MODE = false;
         for(int i=0; i<this.getCount(); i++) 
             m_selects.setElementAt(false,i);
-        
+       
+       clearAllAnim();
         notifyDataSetChanged();     //通知适配器进行更新 
     } 
     
@@ -202,6 +212,11 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         //Match match = matchs.get(position); 
         Match match = this.getItem(position);
         
+        
+      //  convertView.findViewById(R.id.animImageView).setVisibility(4);
+     
+ 
+        
         holder.teamA_Name_TextView.setText(match.getTeamA().getTeamName());
         holder.teamB_Name_TextView.setText(match.getTeamB().getTeamName());
         
@@ -232,7 +247,11 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             convertView.setBackgroundResource(R.color.black);
         }
           
-        
+        if( convertView.findViewById(R.id.animImageView).getAnimation() != null) 
+            convertView.findViewById(R.id.animImageView).getAnimation().cancel();
+        if(m_selects.get(position))
+            startAnim(convertView, position);
+   
     //    holder.highlightView.setBackgroundColor(getContext().getResources().getColor(holder.checkBox.isChecked()?R.color.red:R.color.taggray));
         return convertView;
     }
@@ -369,9 +388,13 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
     private void doWhenChange(List<Match> matchs) {
         this.clear();
         m_selects.clear();
+        clearAllAnim();
+        
+        
         this.addAll(matchs);
         for(int i=0; i<this.getCount(); i++) 
             m_selects.add(false); 
+     
         notifyDataSetChanged();
     }
   
@@ -460,4 +483,63 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         return   new Date[] { d1,d2};
        
     }
+    
+    public Map<Integer , Animation> animMap = new HashMap<Integer , Animation>();
+    public void startAnim(View view , int i) {
+        if(animMap.containsKey(i)) {
+            animMap.get(i).cancel();
+            animMap.remove(i);
+  
+        }
+        
+        final View target = view.findViewById(R.id.animImageView);
+        final View targetParent = (View) target.getParent();
+    
+        Animation a = new TranslateAnimation( 
+                targetParent.getWidth() -targetParent.getPaddingRight(), targetParent.getWidth()/2,0.0f, 0.0f);
+        a.setAnimationListener(new AnimationListener() {
+            
+            @Override
+            public void onAnimationStart(Animation animation) {
+                target.setVisibility(View.VISIBLE);
+            }
+            
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+            
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                target.setVisibility(View.INVISIBLE);
+                System.out.println("onAnimationEnd");
+                
+            }
+        });
+        a.setDuration(1000);
+        a.setStartOffset(0);
+        a.setRepeatMode(Animation.RESTART);
+        a.setRepeatCount(Animation.INFINITE);
+          
+//        a.setInterpolator(AnimationUtils.loadInterpolator(view.getContext(),
+//                android.R.anim.accelerate_interpolator));
+        target.startAnimation(a);
+        
+        if(!animMap.containsKey(i))
+            animMap.put(i, a);
+    }
+    
+    public void stopAnim(  int i ) {
+        if(animMap.containsKey(i)) {
+            animMap.get(i).cancel();
+            animMap.remove(i);
+        }
+    }
+    
+    public void clearAllAnim() {
+        for(Integer i:animMap.keySet()) {
+            animMap.get(i).cancel();
+        }
+        animMap.clear();
+    }
+     
 }

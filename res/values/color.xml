@@ -25,4 +25,8 @@
      <color name="matchpic_desc_bg">#96000000</color>
     <color name="pager_frame_color">@color/matchpic_desc_bg</color>
     <color name="pager_background_color">#5fa707</color>
+    
+    <color name="transparent">#00000000</color>
+    <color name="text_num_gray">#333</color>
+    <color name="dialog_title_blue">#9CCCF7</color>
 </resources>

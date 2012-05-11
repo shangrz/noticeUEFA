@@ -19,6 +19,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.actionbarsherlock.view.Window;
 import com.androidquery.AQuery;
+ 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -29,6 +30,8 @@ import com.shang.noticeuefa.model2.Group;
 import com.shang.noticeuefa.model2.Match;
 import com.shang.noticeuefa.model2.Notification;
 import com.shang.noticeuefa.model2.Tour;
+import com.shang.noticeuefa.util.MyGestureListener;
+import com.shang.noticeuefa.weibo.SinaTrendActivity;
 import com.srz.androidtools.util.ResTools;
 import com.srz.androidtools.util.TimeTools;
  
@@ -57,6 +60,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.View.OnTouchListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -73,7 +79,7 @@ import android.widget.AbsListView.OnScrollListener;
 
 public class MatchActivity extends SherlockActivity   {
     
-    
+    private int listview_click_position;
     ActionMode mMode;
     GestureDetector mGestureDetector;    
     Context mContext;
@@ -141,7 +147,8 @@ public class MatchActivity extends SherlockActivity   {
     }
     boolean listInScorll = false;
     boolean pageInScorll = false;
-  
+   
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_MyStyle); //Used for theme switching in samples
@@ -166,14 +173,23 @@ public class MatchActivity extends SherlockActivity   {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if(MODE_NOW == false)  {
                    mMode = startActionMode(new AnActionModeOfEpicProportions(MatchActivity.this));
-                 
                 }
+                
+                
+                listview_click_position = i;
                 pager.setCurrentItem(i, true);
-                ((MatchListViewAdapter) listView.getAdapter()).changeState(i, true);
-                if(((MatchListViewAdapter) listView.getAdapter()).getSelectedCount() == 0)
-                    mMode.finish();
-                mMode.setTitle(((MatchListViewAdapter) listView.getAdapter()).getSelectedCount()+" 已选择");
+                boolean  startOrStop= ((MatchListViewAdapter) listView.getAdapter()).changeState(i, true);
+                if(startOrStop) {
+                    listAdapter.startAnim(view,i);
+                }else {
+                    listAdapter.stopAnim(i);
+                }
                  
+                if(((MatchListViewAdapter) listView.getAdapter()).getSelectedCount() == 0) {
+                    mMode.finish();
+                } 
+                mMode.setTitle(((MatchListViewAdapter) listView.getAdapter()).getSelectedCount()+" 已选择");
+                
                  
                 //((mMode.getCustomView()).findViewById(R.layout.abs__action_mode_close_item)).
               //  findViewById(R.id.abs__action_mode_close_button).setVisibility(View.INVISIBLE);
@@ -226,9 +242,38 @@ public class MatchActivity extends SherlockActivity   {
                 //pageInScorll = false;
             }
         });
+      
+        MyGestureListener myGestureListener = new MyGestureListener() {
+            @Override
+            public void runWhenToRight() {
+                if(MODE_NOW) {
+                    Intent nextIntent = new Intent();
+                    System.out.println("#### "+listView.getSelectedItemPosition());
+                  Match match =   (Match) listView.getAdapter().getItem(listview_click_position);
+                  if(match != null) {
+                     Bundle bundle = new Bundle();
+                     bundle.putString("TITLE", match.getTeamA().getTeamName()+ " Vs" + match.getTeamB().getTeamName());
+                     bundle.putString("THEKEYWORD", match.getTeamA().getTeamName()+ " " + match.getTeamB().getTeamName());
+                     nextIntent.putExtras(bundle);
+                   
+                    }
+                    nextIntent.setClass(getApplicationContext(),  SinaTrendActivity.class);
+                    startActivity(nextIntent);   
+                }
+              // overridePendingTransition(  R.anim.infromright,R.anim.out2left);  
+                
+            }
+
+            @Override
+            public void runWhenToLeft() {
+                    finish();
+            }
+            
+        };
+        myGestureListener.set(MatchActivity.this,150,0);  
         
-//       mGestureDetector = new GestureDetector(new GestureListener());  
-//       listView.setOnTouchListener(new TouhListener());  
+      mGestureDetector = new GestureDetector(myGestureListener);  
+      listView.setOnTouchListener(new TouhListener());  
         listView.setOnScrollListener(new OnScrollListener() {
 
             @Override
@@ -322,62 +367,7 @@ public class MatchActivity extends SherlockActivity   {
         }  
           
     }
-    class GestureListener implements OnGestureListener{
-        private int verticalMinDistance = 60;
-        private int minVelocity         = 0;
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return false;
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-                float velocityY) {
-            if (e1.getX() - e2.getX() > verticalMinDistance && Math.abs(velocityX) > minVelocity) {
-//                Intent nextIntent = new Intent();
-//                nextIntent.setClass(getApplicationContext(),  FollowActivity.class);
-//                startActivity(nextIntent);    
- 
-//                overridePendingTransition(  R.anim.infromright,R.anim.out2left);  
-            }
-            else if (e2.getX() - e1.getX() > verticalMinDistance && Math.abs(velocityX) > minVelocity) {
-                Intent nextIntent = new Intent();
-                nextIntent.setClass(getApplicationContext(),  FollowActivity.class);
-                startActivity(nextIntent);   
-             //   overridePendingTransition(  R.anim.infromright,R.anim.out2left);  
-                overridePendingTransition(R.anim.infromleft,R.anim.out2right); 
- 
-            }
-            return false;
-             
-        }
-
-        @Override
-        public void onLongPress(MotionEvent e) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2,
-                float distanceX, float distanceY) {
-            // TODO Auto-generated method stub
-            return false;
-        }
-
-        @Override
-        public void onShowPress(MotionEvent e) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            // TODO Auto-generated method stub
-            return false;
-        }  
-        
-    }
+     
     
     private final class AnActionModeOfEpicProportions implements ActionMode.Callback {
         
@@ -443,10 +433,7 @@ public class MatchActivity extends SherlockActivity   {
         }
 
         @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            
-                      
-           
+        public void onDestroyActionMode(ActionMode mode) { 
             MODE_NOW = false;
             ((MatchListViewAdapter) listView.getAdapter()).endActionMode();
         }
