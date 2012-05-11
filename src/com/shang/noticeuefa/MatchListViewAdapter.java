@@ -494,9 +494,12 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         
         final View target = view.findViewById(R.id.animImageView);
         final View targetParent = (View) target.getParent();
-    
-        Animation a = new TranslateAnimation( 
-                targetParent.getWidth() -targetParent.getPaddingRight(), targetParent.getWidth()/2,0.0f, 0.0f);
+        System.out.println(targetParent.getWidth()+":::"+targetParent.getPaddingRight());
+//        Animation a = new TranslateAnimation( 
+//                targetParent.getWidth()/1.5f -targetParent.getPaddingRight(), targetParent.getWidth()/2,0.0f, 0.0f);
+        Animation a = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.8f, Animation.RELATIVE_TO_SELF, 
+                0, Animation.RELATIVE_TO_SELF, 0 );
+                
         a.setAnimationListener(new AnimationListener() {
             
             @Override
@@ -517,8 +520,9 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         });
         a.setDuration(1000);
         a.setStartOffset(0);
-        a.setRepeatMode(Animation.RESTART);
-        a.setRepeatCount(Animation.INFINITE);
+         a.setRepeatMode(Animation.REVERSE);
+        
+         a.setRepeatCount(Animation.INFINITE);
           
 //        a.setInterpolator(AnimationUtils.loadInterpolator(view.getContext(),
 //                android.R.anim.accelerate_interpolator));
