@@ -33,17 +33,6 @@ import com.shang.noticeuefa.model2.Tour;
 import com.shang.noticeuefa.util.MyGestureListener;
 import com.shang.noticeuefa.weibo.SinaTrendActivity;
 import com.srz.androidtools.util.ResTools;
-import com.srz.androidtools.util.TimeTools;
- 
- 
- 
-import android.R.bool;
-import android.R.integer;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -51,26 +40,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.format.DateUtils;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.GestureDetector.OnGestureListener;
 import android.view.View.OnTouchListener;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AbsListView.OnScrollListener;
  
 
@@ -242,8 +222,8 @@ public class MatchActivity extends SherlockActivity   {
                 //pageInScorll = false;
             }
         });
-      
-        MyGestureListener myGestureListener = new MyGestureListener() {
+        
+ /*       MyGestureListener myGestureListener = new MyGestureListener() {
             @Override
             public void runWhenToRight() {
                 if(MODE_NOW) {
@@ -260,7 +240,6 @@ public class MatchActivity extends SherlockActivity   {
                     nextIntent.setClass(getApplicationContext(),  SinaTrendActivity.class);
                     startActivity(nextIntent);   
                 }
-              // overridePendingTransition(  R.anim.infromright,R.anim.out2left);  
                 
             }
 
@@ -273,7 +252,7 @@ public class MatchActivity extends SherlockActivity   {
         myGestureListener.set(MatchActivity.this,150,0);  
         
       mGestureDetector = new GestureDetector(myGestureListener);  
-      listView.setOnTouchListener(new TouhListener());  
+      listView.setOnTouchListener(new TouhListener());  */
         listView.setOnScrollListener(new OnScrollListener() {
 
             @Override
@@ -360,13 +339,26 @@ public class MatchActivity extends SherlockActivity   {
     
  
  
-    class TouhListener implements OnTouchListener{  
+/*    class TouhListener implements OnTouchListener{  
         @Override  
         public boolean onTouch(View v, MotionEvent event) {  
             return mGestureDetector.onTouchEvent(event);  
         }  
           
-    }
+    }*/
+    
+    @Override  
+    public boolean dispatchTouchEvent(MotionEvent event) {  
+        if(listAdapter!=null) {
+            if(listAdapter.gestureDetector!=null)
+              
+               if(listAdapter.gestureDetector.onTouchEvent(event)){  
+                    event.setAction(MotionEvent.ACTION_CANCEL);  
+         }
+     
+        }   
+        return super.dispatchTouchEvent(event);  
+    }  
      
     
     private final class AnActionModeOfEpicProportions implements ActionMode.Callback {
@@ -535,8 +527,6 @@ class MatchGalleryAdapter extends PagerAdapter {
         else
             imageView.setImageResource(R.drawable.match_0);
     }
-    
   
-     
    
 }

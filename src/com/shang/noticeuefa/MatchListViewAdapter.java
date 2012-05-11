@@ -19,10 +19,16 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
  
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.text.format.Time;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -42,6 +48,8 @@ import com.shang.noticeuefa.model2.Match;
 import com.shang.noticeuefa.model2.Notification;
  
 import com.shang.noticeuefa.util.Constants;
+import com.shang.noticeuefa.util.MyGestureListener;
+import com.shang.noticeuefa.weibo.SinaTrendActivity;
 import com.srz.androidtools.util.TimeTools;
 
 class MatchListViewAdapter   extends ArrayAdapter< Match> {
@@ -182,7 +190,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             }*/
         }
     };
-    
+    boolean islistviewitemTouch = false;
     public View getView(final int position, View convertView,
             ViewGroup parent) {
         
@@ -210,7 +218,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         }
         
         //Match match = matchs.get(position); 
-        Match match = this.getItem(position);
+        final Match match = this.getItem(position);
         
         
       //  convertView.findViewById(R.id.animImageView).setVisibility(4);
@@ -247,15 +255,95 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             convertView.setBackgroundResource(R.color.black);
         }
           
-        if( convertView.findViewById(R.id.animImageView).getAnimation() != null) 
-            convertView.findViewById(R.id.animImageView).getAnimation().cancel();
+/*        if( convertView.findViewById(R.id.animImageView).getAnimation() != null) 
+            convertView.findViewById(R.id.animImageView).getAnimation().cancel();*/
         if(m_selects.get(position))
             startAnim(convertView, position);
-   
+      
+        final MyGestureListener myGestureListener = new MyGestureListener() {
+            
+            
+            @Override
+            public void runWhenToRight() {
+                System.out.println("xxxxxxxxxxxxxxx");
+                if(!islistviewitemTouch) {
+                     
+                    return;
+                }
+                
+                
+                    final Intent nextIntent = new Intent();
+                  if(match != null) {
+                     Bundle bundle = new Bundle();
+                     bundle.putString("TITLE", match.getTeamA().getTeamName()+ " Vs" + match.getTeamB().getTeamName());
+                     bundle.putString("THEKEYWORD", match.getTeamA().getTeamName()+ " " + match.getTeamB().getTeamName());
+                     nextIntent.putExtras(bundle);
+                    }
+                    nextIntent.setClass(context,  SinaTrendActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    activity.runOnUiThread(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            context.startActivity(nextIntent);   
+                            
+                        }
+                    });
+                   // context.startActivity(nextIntent);   
+                    islistviewitemTouch = false;
+            }
+
+            @Override
+            public void runWhenToLeft() {
+                 
+            }
+            
+             
+            
+        };
+        myGestureListener.set(activity,100,0);  
+        
+        convertView.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                islistviewitemTouch = true;
+                System.out.println("###111touch");
+                final View target = v.findViewById(R.id.animImageView);
+                Animation a = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.7f, Animation.RELATIVE_TO_SELF, 
+                        0, Animation.RELATIVE_TO_SELF, 0 );
+                a.setAnimationListener(new AnimationListener() {
+                    
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        target.setVisibility(View.VISIBLE);
+                    }
+                    
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                    
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        target.setVisibility(View.INVISIBLE);
+                        System.out.println("onAnimationEndxxx");
+                        
+                    }
+                });
+                a.setDuration(1000);
+                a.setStartOffset(0);
+ 
+                 a.setRepeatCount(1);
+                 a.setInterpolator(AnimationUtils.loadInterpolator(v.getContext(),
+                        android.R.anim.accelerate_interpolator));
+                target.startAnimation(a);
+                gestureDetector = new GestureDetector(myGestureListener);
+                return  gestureDetector.onTouchEvent(event); 
+               // return false;
+            }
+        });
     //    holder.highlightView.setBackgroundColor(getContext().getResources().getColor(holder.checkBox.isChecked()?R.color.red:R.color.taggray));
         return convertView;
     }
-    
+    public GestureDetector gestureDetector;
     private void setHolderImageview( View convertView,ImageView v, String shortName,int progressid) {
          
         int teamFlagResId =context.getResources().getIdentifier(shortName, "drawable",context.getPackageName());
@@ -389,9 +477,10 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         this.clear();
         m_selects.clear();
         clearAllAnim();
-        
-        
-        this.addAll(matchs);
+        for(Match match :matchs) {
+            this.add(match);
+        }
+       // this.addAll(matchs);
         for(int i=0; i<this.getCount(); i++) 
             m_selects.add(false); 
      
@@ -492,7 +581,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
   
         }
         
-        final View target = view.findViewById(R.id.animImageView);
+/*        final View target = view.findViewById(R.id.animImageView);
         final View targetParent = (View) target.getParent();
         System.out.println(targetParent.getWidth()+":::"+targetParent.getPaddingRight());
 //        Animation a = new TranslateAnimation( 
@@ -530,7 +619,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         target.startAnimation(a);
         
         if(!animMap.containsKey(i))
-            animMap.put(i, a);
+            animMap.put(i, a);*/
     }
     
     public void stopAnim(  int i ) {
@@ -546,5 +635,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         }
         animMap.clear();
     }
+    
+    
      
 }
