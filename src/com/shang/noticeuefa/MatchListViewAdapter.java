@@ -262,10 +262,8 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
       
         final MyGestureListener myGestureListener = new MyGestureListener() {
             
-            
             @Override
             public void runWhenToRight() {
-                System.out.println("xxxxxxxxxxxxxxx");
                 if(!islistviewitemTouch) {
                      
                     return;

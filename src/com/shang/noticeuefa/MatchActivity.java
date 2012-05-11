@@ -222,37 +222,7 @@ public class MatchActivity extends SherlockActivity   {
                 //pageInScorll = false;
             }
         });
-        
- /*       MyGestureListener myGestureListener = new MyGestureListener() {
-            @Override
-            public void runWhenToRight() {
-                if(MODE_NOW) {
-                    Intent nextIntent = new Intent();
-                    System.out.println("#### "+listView.getSelectedItemPosition());
-                  Match match =   (Match) listView.getAdapter().getItem(listview_click_position);
-                  if(match != null) {
-                     Bundle bundle = new Bundle();
-                     bundle.putString("TITLE", match.getTeamA().getTeamName()+ " Vs" + match.getTeamB().getTeamName());
-                     bundle.putString("THEKEYWORD", match.getTeamA().getTeamName()+ " " + match.getTeamB().getTeamName());
-                     nextIntent.putExtras(bundle);
-                   
-                    }
-                    nextIntent.setClass(getApplicationContext(),  SinaTrendActivity.class);
-                    startActivity(nextIntent);   
-                }
-                
-            }
-
-            @Override
-            public void runWhenToLeft() {
-                    finish();
-            }
-            
-        };
-        myGestureListener.set(MatchActivity.this,150,0);  
-        
-      mGestureDetector = new GestureDetector(myGestureListener);  
-      listView.setOnTouchListener(new TouhListener());  */
+ 
         listView.setOnScrollListener(new OnScrollListener() {
 
             @Override
@@ -286,16 +256,11 @@ public class MatchActivity extends SherlockActivity   {
                 }
                 
             }});
-        
-        
-         
     }
    
   
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        
-         
         switch(item.getItemId()) {
         case 1:
             
@@ -335,9 +300,6 @@ public class MatchActivity extends SherlockActivity   {
         
     }
     
-  
-    
- 
  
 /*    class TouhListener implements OnTouchListener{  
         @Override  
