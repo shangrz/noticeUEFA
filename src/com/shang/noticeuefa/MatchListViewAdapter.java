@@ -569,7 +569,6 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             public void doQuery() {
                 Date[] ds  = makeDates(0);
                 doWhenChange( getMatchWhen(ds[0],ds[1]));
-                
             }
         };
         mQuery.doQuery(); 
