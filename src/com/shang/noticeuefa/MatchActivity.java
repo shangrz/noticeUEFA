@@ -1,14 +1,12 @@
 package com.shang.noticeuefa;
  
-
+/**
+ * @author shang
+ *
+ */
 import java.lang.ref.SoftReference;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.List;
+
 
 import com.actionbarsherlock.R;
 import com.actionbarsherlock.app.SherlockActivity;
@@ -59,6 +57,7 @@ import android.widget.AbsListView.OnScrollListener;
  
  
 
+ 
 public class MatchActivity extends SherlockActivity   {
     
     private int listview_click_position;
