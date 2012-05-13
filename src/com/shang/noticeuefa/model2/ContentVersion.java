@@ -23,6 +23,17 @@ public class ContentVersion
     @DatabaseField
     private String type;
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @DatabaseField(generatedId = true)
+    private int id;
+
     public int getVersion() {
         return version;
     }

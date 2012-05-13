@@ -15,6 +15,8 @@ import com.shang.noticeuefa.database.DatabaseHelper;
 import com.shang.noticeuefa.model2.*;
 import com.shang.noticeuefa.util.HostSetter;
 import com.shang.noticeuefa.view.OptionMenuCreator;
+import com.srz.androidtools.util.AlarmSender;
+import com.srz.androidtools.util.NetworkUtil;
 import com.srz.androidtools.util.PreferenceUtil;
 
 import java.sql.SQLException;
@@ -51,40 +53,106 @@ public class CoverActivity extends SherlockActivity {
         setTheme(R.style.Theme_MyStyle); //Used for theme switching in samples
         super.onCreate(savedInstanceState);
 
-//        if (PreferenceUtil.isFirstTimeBoot(this)) {
-        if(true){
+        final boolean firstTimeBoot = PreferenceUtil.isFirstTimeBoot(this);
+        if (firstTimeBoot) {
+            try {
+                databaseHelper = getHelper();
+                Dao versionDao = databaseHelper.getDao(ContentVersion.class);
+                versionDao.delete(versionDao.queryForAll());
+
+                ContentVersion contentVersion = new ContentVersion();
+                contentVersion.setType(ContentVersion.CONTENT);
+                contentVersion.setVersion(-1);
+
+                ContentVersion matchVersion = new ContentVersion();
+                matchVersion.setType(ContentVersion.MATCH);
+                matchVersion.setVersion(-1);
+
+
+                versionDao.create(contentVersion);
+                versionDao.create(matchVersion);
+
+
+            } catch (SQLException e) {
+                finish();
+            }
+
             setContentView(R.layout.cover);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        showDialog(PROMPT_INPROGRESS);
+                    }
+                });
+                if (!NetworkUtil.isNetworkAvailable(CoverActivity.this)) {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            showDialog(PROMPT_INPROGRESS);
+                            AlarmSender.sendInstantMessage("找不到网络,未更新赛程", CoverActivity.this);
                         }
                     });
-                    String host = new HostSetter(CoverActivity.this).getHost();
-
-                    try {
-                        new UpdateManager(CoverActivity.this).checkUpdate(host, true);
-                    } finally {
-
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (dialog != null)
-                                    dialog.dismiss();
-                            }
-                        });
-
-                    }
+                    return;
                 }
-            }).start();
 
-        } else {
-            Intent intent = new Intent(CoverActivity.this, MatchActivity.class);
-            startActivity(intent);
-        }
+                String host = new HostSetter(CoverActivity.this).getHost();
+
+                try {
+                    final boolean updated = new UpdateManager(CoverActivity.this).checkUpdate(host, true);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (updated) {
+                                AlarmSender.sendInstantMessage("赛程已更新", CoverActivity.this);
+                                PreferenceUtil.setFirstTimeBoot(CoverActivity.this, false);
+                            } else if (firstTimeBoot) {
+                                AlarmSender.sendInstantMessage("无法连接到赛程服务器", CoverActivity.this);
+                                finish();
+                            }
+                        }
+                    });
+                } catch (Exception e) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlarmSender.sendInstantMessage("数据错误,未更新赛程", CoverActivity.this);
+                        }
+                    });
+                } finally {
+
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dialog != null)
+                                dialog.dismiss();
+                            if (!firstTimeBoot)
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Intent intent = new Intent(CoverActivity.this, MatchActivity.class);
+                                        startActivity(intent);
+                                    }
+                                }, 2000);
+                            else
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Intent intent = new Intent(CoverActivity.this, FollowActivity.class);
+                                        startActivity(intent);
+                                    }
+                                });
+                        }
+                    });
+
+                }
+            }
+        }).start();
+
+//        if (PreferenceUtil.isFirstTimeBoot(this)) {
 
 
     }

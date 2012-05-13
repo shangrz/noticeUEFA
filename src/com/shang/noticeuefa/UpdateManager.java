@@ -141,41 +141,44 @@ public class UpdateManager {
         System.out.println(matchUpdateStr);
     }
 
-    public void checkUpdate(final String host, boolean block) {
-
+    public boolean checkUpdate(final String host, boolean block) {
+        final boolean[] updated = {false};
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 StringQuery squery = new StringQuery(activity, "http://" + host + "/match-version?type=content");
                 String updateContentVersion = squery.invoke();
                 if (updateContentVersion == null) {
+                    updated[0] = false;
                     return;
                 }
 
                 squery = new StringQuery(activity, "http://" + host + "/match-version?type=match");
                 String matchJSONVersion = squery.invoke();
-                if (matchJSONVersion == null)
+                if (matchJSONVersion == null) {
+                    updated[0] = false;
                     return;
+                }
 
                 int serverContentVersion = Integer.valueOf(updateContentVersion.trim());
                 int serverMatchVersion = Integer.valueOf(matchJSONVersion.trim());
-                System.out.println(serverContentVersion+"::"+serverMatchVersion);
 
                 try {
                     databaseHelper = OpenHelperManager.getHelper(activity, DatabaseHelper.class);
                     Dao<ContentVersion, Integer> versionDao = databaseHelper.getDao(ContentVersion.class);
-                     
-                    
-                    int contentVersion =versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.CONTENT).size()==0? -1: versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.CONTENT).get(0).getVersion();
-                    int matchVersion = versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.MATCH).size()==0? -1: 
-                        versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.MATCH).get(0).getVersion();
-                    System.out.println("222 "+contentVersion+"::"+matchVersion);
+
+
+                    int contentVersion = versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.CONTENT).size() == 0 ? -1 : versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.CONTENT).get(0).getVersion();
+                    int matchVersion = versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.MATCH).size() == 0 ? -1 :
+                            versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.MATCH).get(0).getVersion();
+                    System.out.println("222 " + contentVersion + "::" + matchVersion);
                     Gson gson = new Gson();
                     Dao<Team, Integer> teamDao = databaseHelper.getDao(Team.class);
                     if (contentVersion < serverContentVersion) {
                         squery = new StringQuery(activity, "http://" + host + "/match?type=type");
                         String updateContent = squery.invoke();
                         if (updateContent == null) {
+                            updated[0] = false;
                             return;
                         }
 
@@ -229,10 +232,23 @@ public class UpdateManager {
 
                             teamGroupDao.create(tg);
                         }
+
+
+                        ContentVersion cv = versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.CONTENT).get(0);
+
+                        cv.setVersion(serverContentVersion);
+                        versionDao.update(cv);
+
+                        updated[0] = true;
                     }
                     if (matchVersion < serverMatchVersion) {
-//                        String matchJSON = MobclickAgent.getConfigParams(activity, activity.getString(R.string.umeng_match_key));
-                        String matchJSON = "{\"matches\":\"[{\\\"id\\\":1,\\\"matchTime\\\":\\\"Jun 8, 2012 4:00:00 PM\\\",\\\"teamAId\\\":1,\\\"teamBId\\\":2,\\\"tourId\\\":1},{\\\"id\\\":2,\\\"matchTime\\\":\\\"Jun 8, 2012 6:45:00 PM\\\",\\\"teamAId\\\":3,\\\"teamBId\\\":4,\\\"tourId\\\":1},{\\\"id\\\":3,\\\"matchTime\\\":\\\"Jun 9, 2012 4:00:00 PM\\\",\\\"teamAId\\\":5,\\\"teamBId\\\":6,\\\"tourId\\\":1},{\\\"id\\\":4,\\\"matchTime\\\":\\\"Jun 9, 2012 6:45:00 PM\\\",\\\"teamAId\\\":7,\\\"teamBId\\\":8,\\\"tourId\\\":1},{\\\"id\\\":5,\\\"matchTime\\\":\\\"Jun 10, 2012 4:00:00 PM\\\",\\\"teamAId\\\":9,\\\"teamBId\\\":10,\\\"tourId\\\":1},{\\\"id\\\":6,\\\"matchTime\\\":\\\"Jun 10, 2012 6:45:00 PM\\\",\\\"teamAId\\\":11,\\\"teamBId\\\":12,\\\"tourId\\\":1},{\\\"id\\\":7,\\\"matchTime\\\":\\\"Jun 11, 2012 4:00:00 PM\\\",\\\"teamAId\\\":13,\\\"teamBId\\\":14,\\\"tourId\\\":1},{\\\"id\\\":8,\\\"matchTime\\\":\\\"Jun 11, 2012 6:45:00 PM\\\",\\\"teamAId\\\":15,\\\"teamBId\\\":16,\\\"tourId\\\":1},{\\\"id\\\":9,\\\"matchTime\\\":\\\"Jun 12, 2012 4:00:00 PM\\\",\\\"teamAId\\\":2,\\\"teamBId\\\":4,\\\"tourId\\\":1},{\\\"id\\\":10,\\\"matchTime\\\":\\\"Jun 12, 2012 6:45:00 PM\\\",\\\"teamAId\\\":1,\\\"teamBId\\\":3,\\\"tourId\\\":1},{\\\"id\\\":11,\\\"matchTime\\\":\\\"Jun 13, 2012 4:00:00 PM\\\",\\\"teamAId\\\":6,\\\"teamBId\\\":8,\\\"tourId\\\":1},{\\\"id\\\":12,\\\"matchTime\\\":\\\"Jun 13, 2012 6:45:00 PM\\\",\\\"teamAId\\\":5,\\\"teamBId\\\":7,\\\"tourId\\\":1},{\\\"id\\\":13,\\\"matchTime\\\":\\\"Jun 14, 2012 4:00:00 PM\\\",\\\"teamAId\\\":10,\\\"teamBId\\\":12,\\\"tourId\\\":1},{\\\"id\\\":14,\\\"matchTime\\\":\\\"Jun 14, 2012 6:45:00 PM\\\",\\\"teamAId\\\":9,\\\"teamBId\\\":11,\\\"tourId\\\":1},{\\\"id\\\":15,\\\"matchTime\\\":\\\"Jun 15, 2012 4:00:00 PM\\\",\\\"teamAId\\\":16,\\\"teamBId\\\":14,\\\"tourId\\\":1},{\\\"id\\\":16,\\\"matchTime\\\":\\\"Jun 15, 2012 6:45:00 PM\\\",\\\"teamAId\\\":15,\\\"teamBId\\\":13,\\\"tourId\\\":1},{\\\"id\\\":17,\\\"matchTime\\\":\\\"Jun 16, 2012 6:45:00 PM\\\",\\\"teamAId\\\":2,\\\"teamBId\\\":3,\\\"tourId\\\":1},{\\\"id\\\":18,\\\"matchTime\\\":\\\"Jun 16, 2012 6:45:00 PM\\\",\\\"teamAId\\\":4,\\\"teamBId\\\":1,\\\"tourId\\\":1},{\\\"id\\\":19,\\\"matchTime\\\":\\\"Jun 17, 2012 6:45:00 PM\\\",\\\"teamAId\\\":8,\\\"teamBId\\\":5,\\\"tourId\\\":1},{\\\"id\\\":20,\\\"matchTime\\\":\\\"Jun 17, 2012 6:45:00 PM\\\",\\\"teamAId\\\":6,\\\"teamBId\\\":7,\\\"tourId\\\":1},{\\\"id\\\":21,\\\"matchTime\\\":\\\"Jun 18, 2012 6:45:00 PM\\\",\\\"teamAId\\\":12,\\\"teamBId\\\":9,\\\"tourId\\\":1},{\\\"id\\\":22,\\\"matchTime\\\":\\\"Jun 18, 2012 6:45:00 PM\\\",\\\"teamAId\\\":10,\\\"teamBId\\\":11,\\\"tourId\\\":1},{\\\"id\\\":23,\\\"matchTime\\\":\\\"Jun 19, 2012 6:45:00 PM\\\",\\\"teamAId\\\":16,\\\"teamBId\\\":13,\\\"tourId\\\":1},{\\\"id\\\":24,\\\"matchTime\\\":\\\"Jun 19, 2012 6:45:00 PM\\\",\\\"teamAId\\\":14,\\\"teamBId\\\":15,\\\"tourId\\\":1},{\\\"id\\\":25,\\\"matchTime\\\":\\\"Jun 21, 2012 6:45:00 PM\\\",\\\"teamAId\\\":17,\\\"teamBId\\\":18,\\\"tourId\\\":1},{\\\"id\\\":26,\\\"matchTime\\\":\\\"Jun 22, 2012 6:45:00 PM\\\",\\\"teamAId\\\":19,\\\"teamBId\\\":20,\\\"tourId\\\":1},{\\\"id\\\":27,\\\"matchTime\\\":\\\"Jun 23, 2012 6:45:00 PM\\\",\\\"teamAId\\\":21,\\\"teamBId\\\":22,\\\"tourId\\\":1},{\\\"id\\\":28,\\\"matchTime\\\":\\\"Jun 24, 2012 6:45:00 PM\\\",\\\"teamAId\\\":23,\\\"teamBId\\\":24,\\\"tourId\\\":1},{\\\"id\\\":29,\\\"matchTime\\\":\\\"Jun 27, 2012 6:45:00 PM\\\",\\\"teamAId\\\":25,\\\"teamBId\\\":26,\\\"tourId\\\":1},{\\\"id\\\":30,\\\"matchTime\\\":\\\"Jun 28, 2012 6:45:00 PM\\\",\\\"teamAId\\\":27,\\\"teamBId\\\":28,\\\"tourId\\\":1},{\\\"id\\\":31,\\\"matchTime\\\":\\\"Jul 1, 2012 6:45:00 PM\\\",\\\"teamAId\\\":29,\\\"teamBId\\\":30,\\\"tourId\\\":1}]\",\"tours\":\"[{\\\"id\\\":1,\\\"name\\\":\\\"欧洲杯\\\",\\\"shortName\\\":\\\"欧洲杯\\\"}]\"}";
+                        squery = new StringQuery(activity, "http://" + host + "/match?type=match");
+                        String matchJSON = squery.invoke();
+                        if (matchJSON == null) {
+                            updated[0] = false || updated[0];
+                            return;
+                        }
+
                         Dao<Match, Integer> matchDao = databaseHelper.getDao(Match.class);
                         Dao<Tour, Integer> tourDao = databaseHelper.getDao(Tour.class);
 
@@ -266,6 +282,11 @@ public class UpdateManager {
 
                             matchDao.create(m);
                         }
+                        ContentVersion cv = versionDao.queryForEq(ContentVersion.COLUMN_TYPE, ContentVersion.MATCH).get(0);
+                        cv.setVersion(serverMatchVersion);
+                        versionDao.update(cv);
+
+                        updated[0] = true;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -285,6 +306,7 @@ public class UpdateManager {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
         }
+        return updated[0];
     }
 
 
