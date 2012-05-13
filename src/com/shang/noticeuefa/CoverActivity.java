@@ -129,11 +129,11 @@ public class CoverActivity extends SherlockActivity {
                         public void run() {
                             if (dialog != null)
                                 dialog.dismiss();
-                            if (!firstTimeBoot)
+                            if (firstTimeBoot)
                                 handler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Intent intent = new Intent(CoverActivity.this, MatchActivity.class);
+                                        Intent intent = new Intent(CoverActivity.this, FollowActivity.class);
                                         startActivity(intent);
                                     }
                                 }, 2000);
@@ -141,7 +141,7 @@ public class CoverActivity extends SherlockActivity {
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Intent intent = new Intent(CoverActivity.this, FollowActivity.class);
+                                        Intent intent = new Intent(CoverActivity.this, MatchActivity.class);
                                         startActivity(intent);
                                     }
                                 });
