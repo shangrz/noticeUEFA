@@ -40,7 +40,7 @@
         android:layout_height="wrap_content" 
          android:dividerHeight="1dip"
          android:divider="@color/black"
-         android:listSelector="@color/red2">
+          >
     </ListView>
     </LinearLayout>
 </LinearLayout>

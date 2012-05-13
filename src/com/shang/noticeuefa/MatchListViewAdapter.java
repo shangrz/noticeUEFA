@@ -53,6 +53,10 @@ import com.shang.noticeuefa.weibo.SinaTrendActivity;
 import com.srz.androidtools.util.TimeTools;
 
 class MatchListViewAdapter   extends ArrayAdapter< Match> {
+    interface IQuery{
+        void doQuery();
+    }
+    protected IQuery mQuery;
     
     @Override
     public int getCount() {
@@ -120,7 +124,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
  
    public static boolean MULTI_MODE = false;
 
-   private boolean NEEDQUERYFOLLOW = false;
+   public boolean NEEDQUERYFOLLOW = true;
 
    
     private LayoutInflater mInflater;
@@ -484,26 +488,42 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
      
         notifyDataSetChanged();
     }
-  
+ 
     
     public void toAllMatch() {
-        try {
-            if(NEEDQUERYFOLLOW)
-                 doWhenChange(helper.getMatchDao().query(getQuery().prepare()));
-            else
-                doWhenChange( helper.getMatchDao().queryForAll());
-        } catch (SQLException e) {
-            e.printStackTrace();
-            
-        }
+        mQuery = new IQuery() {
+            @Override
+            public void doQuery() {
+                try {
+                    if(NEEDQUERYFOLLOW)
+                         doWhenChange(helper.getMatchDao().query(getQuery().prepare()));
+                    else
+                        doWhenChange( helper.getMatchDao().queryForAll());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    
+                }
+                
+            }
+        };
+        mQuery.doQuery(); 
+        
+        
+        
+        
     }
     
     private Where<Match, Integer> getQuery() {
         QueryBuilder<Match, Integer> queryBuilder;
         try {
             queryBuilder = helper.getMatchDao().queryBuilder();
-            if(NEEDQUERYFOLLOW)
-                return queryBuilder.where().in("notifications", helper.getDao(Notification.class).queryForEq("follow", true)).and() ;
+            if(NEEDQUERYFOLLOW) {
+                return queryBuilder.where().in("teamA", helper.getTeamDao().queryForEq("followed", true))
+                .or().in("teamB", helper.getTeamDao().queryForEq("followed", true)).and();
+                
+                //return queryBuilder.where().in("notifications", helper.getDao(Notification.class).queryForEq("follow", true)).and() ;
+                
+            }
             else
                 return queryBuilder.where();
         } catch (SQLException e) {
@@ -513,14 +533,24 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
          
     }
     public void toTodayMatch() {
-        Calendar  cal = Calendar.getInstance();
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        Date d1 = cal.getTime();
-        cal.add(Calendar.HOUR_OF_DAY, 30);
-        Date d2 = cal.getTime();
-        doWhenChange( getMatchWhen(d1,d2));
+        
+        mQuery = new IQuery() {
+            @Override
+            public void doQuery() {
+                Calendar  cal = Calendar.getInstance();
+                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.HOUR_OF_DAY, 0);
+                Date d1 = cal.getTime();
+                cal.add(Calendar.HOUR_OF_DAY, 30);
+                Date d2 = cal.getTime();
+                doWhenChange( getMatchWhen(d1,d2));
+                
+            }
+        };
+        mQuery.doQuery(); 
+        
+         
        
     }
     
@@ -534,27 +564,49 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
     }
     
     public void toThisWeekMatch() {
-        Date[] ds  = makeDates(0);
-        doWhenChange( getMatchWhen(ds[0],ds[1]));
+        mQuery = new IQuery() {
+            @Override
+            public void doQuery() {
+                Date[] ds  = makeDates(0);
+                doWhenChange( getMatchWhen(ds[0],ds[1]));
+                
+            }
+        };
+        mQuery.doQuery(); 
     }
     
     public void toNextWeekMatch() {
-        Date[] ds =makeDates(7);
-        doWhenChange( getMatchWhen(ds[0],ds[1]));
+        mQuery = new IQuery() {
+            @Override
+            public void doQuery() {
+                Date[] ds =makeDates(7);
+                doWhenChange( getMatchWhen(ds[0],ds[1]));
+                
+            }
+        };
+        mQuery.doQuery(); 
+        
+         
     }
     
     public void toAfter2DaysMatch() {
-        
-        Calendar  cal = Calendar.getInstance();
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.add(Calendar.DATE, 1);
-        Date d1 = cal.getTime();
-        cal.add(Calendar.HOUR_OF_DAY, 54);
-        Date d2 = cal.getTime();
-       
-        doWhenChange( getMatchWhen(d1,d2 ));
+        mQuery = new IQuery() {
+            @Override
+            public void doQuery() {
+                Calendar  cal = Calendar.getInstance();
+                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.HOUR_OF_DAY, 0);
+                cal.add(Calendar.DATE, 1);
+                Date d1 = cal.getTime();
+                cal.add(Calendar.HOUR_OF_DAY, 54);
+                Date d2 = cal.getTime();
+                doWhenChange( getMatchWhen(d1,d2 ));
+                
+            }
+        };
+        mQuery.doQuery(); 
+         
     }
     
     private Date[] makeDates(int days) {
@@ -634,6 +686,14 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         animMap.clear();
     }
     
+    public void doWhenChangeIsFollow(){
+        if(mQuery!=null)
+            mQuery.doQuery();
+    }
     
+    
+    
+ 
      
+    
 }
