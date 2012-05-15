@@ -18,6 +18,7 @@ public class HostSetter {
         MobclickAgent.updateOnlineConfig(activity);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
         String host = MobclickAgent.getConfigParams(activity, activity.getString(R.string.umeng_host_key));
+        MobclickAgent.updateOnlineConfig(activity,"host");
         if (host != null && host.length() > 0) {
             preferences.edit().putString(activity.getString(R.string.key_host), host).commit();
             this.host = host;
