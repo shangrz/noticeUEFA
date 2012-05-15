@@ -38,6 +38,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.GestureDetector;
@@ -161,7 +162,10 @@ public class MatchActivity extends SherlockActivity   {
                 pager.setCurrentItem(i, true);
                 boolean  startOrStop= ((MatchListViewAdapter) listView.getAdapter()).changeState(i, true);
                 if(startOrStop) {
-                    listAdapter.startAnim(view,i);
+                     
+                        
+                         
+                        listAdapter.startAnim(view,i);
                 }else {
                     listAdapter.stopAnim(i);
                 }

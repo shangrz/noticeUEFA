@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -261,9 +262,10 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
           
 /*        if( convertView.findViewById(R.id.animImageView).getAnimation() != null) 
             convertView.findViewById(R.id.animImageView).getAnimation().cancel();*/
-        if(m_selects.get(position))
+        if(m_selects.get(position)) {
+            
             startAnim(convertView, position);
-      
+        }
         final MyGestureListener myGestureListener = new MyGestureListener() {
             
             @Override
@@ -286,6 +288,9 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                         
                         @Override
                         public void run() {
+                            
+                            PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("SHOWGOTOWEIBOANIM", false).commit();
+                            clearAllAnim();
                             context.startActivity(nextIntent);   
                             
                         }
@@ -308,35 +313,45 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 islistviewitemTouch = true;
-                System.out.println("###111touch");
+                if(PreferenceManager.getDefaultSharedPreferences(context).getBoolean("SHOWGOTOWEIBOANIM", true)) {
                 final View target = v.findViewById(R.id.animImageView);
-                Animation a = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.7f, Animation.RELATIVE_TO_SELF, 
-                        0, Animation.RELATIVE_TO_SELF, 0 );
-                a.setAnimationListener(new AnimationListener() {
-                    
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                        target.setVisibility(View.VISIBLE);
-                    }
-                    
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-                    
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        target.setVisibility(View.INVISIBLE);
-                        System.out.println("onAnimationEndxxx");
+                
+                if(animMap.containsKey(position)) {
+                    animMap.get(position).cancel();
+                    animMap.remove(position);
+          
+                }
+                    Animation a = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.7f, Animation.RELATIVE_TO_SELF, 
+                            0, Animation.RELATIVE_TO_SELF, 0 );
+                    a.setAnimationListener(new AnimationListener() {
                         
-                    }
-                });
-                a.setDuration(1000);
-                a.setStartOffset(0);
- 
-                 a.setRepeatCount(1);
-                 a.setInterpolator(AnimationUtils.loadInterpolator(v.getContext(),
-                        android.R.anim.accelerate_interpolator));
-                target.startAnimation(a);
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                            target.setVisibility(View.VISIBLE);
+                        }
+                        
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+                        }
+                        
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            target.setVisibility(View.INVISIBLE);
+                            System.out.println("onAnimationEndxxx");
+                            
+                        }
+                    });
+                    a.setDuration(1000);
+                    a.setStartOffset(0);
+     
+                     a.setRepeatCount(1);
+                     a.setInterpolator(AnimationUtils.loadInterpolator(v.getContext(),
+                            android.R.anim.accelerate_interpolator));
+                    target.startAnimation(a);
+                    
+                    if(!animMap.containsKey(position))
+                        animMap.put(position, a);
+                }
                 gestureDetector = new GestureDetector(myGestureListener);
                 return  gestureDetector.onTouchEvent(event); 
                // return false;
@@ -624,6 +639,11 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
     
     public Map<Integer , Animation> animMap = new HashMap<Integer , Animation>();
     public void startAnim(View view , int i) {
+       
+            
+            
+        
+        
         if(animMap.containsKey(i)) {
             animMap.get(i).cancel();
             animMap.remove(i);
