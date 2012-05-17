@@ -1,9 +1,11 @@
 package com.shang.noticeuefa;
 
 import android.content.Context;
+import android.graphics.EmbossMaskFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
+import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +56,7 @@ class MatchGalleryAdapter extends PagerAdapter {
         final ImageView imageView = (ImageView) v.findViewById(com.actionbarsherlock.R.id.imageid);
 
         TextView textView = (TextView)v.findViewById(com.actionbarsherlock.R.id.textView1);
+        
         if(listAdapter.getCount()!=0) {
             int  _position =position%listAdapter.getCount() ;
 
@@ -88,8 +91,28 @@ class MatchGalleryAdapter extends PagerAdapter {
             textView.setText(com.actionbarsherlock.R.string.app_name);
             imageView.setImageResource(com.actionbarsherlock.R.drawable.match_0);
         }
+        
+        
+        textSpecial(textView);
         container.addView(v,0);
         return v;
+    }
+    
+    
+    private void textSpecial(TextView textView){
+        TextPaint tp2 = textView.getPaint(); 
+        
+        tp2.setFakeBoldText(true);
+        //设置光源的方向
+        float[] direction = new float[]{ 1, 1, 1 };
+        //设置环境光亮度
+        float light = 0.4f;
+        //选择要应用的反射等级
+        float specular = 6;
+        //向mask应用一定级别的模糊
+        float blur = 3.5f;
+        EmbossMaskFilter maskfilter=new EmbossMaskFilter(direction,light,specular,blur);
+        tp2.setMaskFilter(maskfilter);
     }
 
     @Override

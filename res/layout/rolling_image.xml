@@ -10,7 +10,7 @@
         android:layout_centerInParent="true"
         android:adjustViewBounds="false"
         android:clickable="true"
-        android:scaleType="fitCenter" >
+        android:scaleType="centerCrop" >
     </ImageView>
 
             <TextView
@@ -28,6 +28,7 @@
                 android:singleLine="true"
                 android:text="Large Text"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/matchpic_desc_color" />
+                 
+                android:textColor="@color/white_true"/>
 
 </RelativeLayout>

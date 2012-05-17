@@ -143,11 +143,11 @@ public class MatchActivity extends SherlockActivity   {
         this.setTitle(R.string.matchname);
         listView = (ListView) findViewById(R.id.listView1); 
     //    tour =Tour.creatFromTagName("euro", getApplicationContext());
-        
+         
          
       //  listView.setAdapter(new MatchListViewAdapter(MatchActivity.this,getTodayMatch(),getHelper()));
         listAdapter = new MatchListViewAdapter(getApplicationContext(),this,getHelper());
-        listAdapter.toTodayMatch(); 
+        listAdapter.toAllMatch(); 
      //   lastOptionsItemSelected =6;
         listView.setAdapter(listAdapter );
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
