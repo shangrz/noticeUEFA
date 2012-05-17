@@ -23,7 +23,7 @@ public class HostSetter {
             preferences.edit().putString(activity.getString(R.string.key_host), host).commit();
             this.host = host;
         }else {
-            this.host = preferences.getString(activity.getString(R.string.key_host), "");
+            this.host = preferences.getString(activity.getString(R.string.key_host), "64.30.136.126");
         }
     }
 

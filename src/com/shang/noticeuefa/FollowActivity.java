@@ -19,11 +19,12 @@ import com.shang.noticeuefa.database.DatabaseHelper;
 import com.shang.noticeuefa.model2.Group;
 import com.shang.noticeuefa.model2.Team;
 import com.shang.noticeuefa.model2.TeamGroup;
-import com.shang.noticeuefa.util.HostSetter;
 import com.shang.noticeuefa.view.OptionMenuCreator;
 import com.shang.noticeuefa.view.TeamFollowedListener;
 import com.shang.noticeuefa.view.TeamGridAdapter;
 import com.shang.noticeuefa.view.TeamPagerViewAdapter;
+import com.srz.androidtools.util.AlarmSender;
+import com.srz.androidtools.util.PreferenceUtil;
 import com.srz.androidtools.viewpagertitle.ViewPagerTabs;
 
 import java.sql.SQLException;
@@ -45,8 +46,13 @@ public class FollowActivity extends SherlockActivity implements TeamFollowedList
         return new OptionMenuCreator().onCreateOptionsMenu(menu, new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                if(numberOfSelected == 0){
+                    AlarmSender.sendInstantMessage(R.string.atleast, FollowActivity.this);
+                    return true;
+                }
                 Intent intent = new Intent(FollowActivity.this, MatchActivity.class);
                 startActivity(intent);
+                PreferenceUtil.setFirstTimeBoot(FollowActivity.this, false);
                 return true;
             }
         });

@@ -98,7 +98,7 @@ public class CoverActivity extends SherlockActivity {
                     });
                     return;
                 }
-
+                final boolean[] goToMain = {true};
                 String host = new HostSetter(CoverActivity.this).getHost();
 
                 try {
@@ -108,10 +108,12 @@ public class CoverActivity extends SherlockActivity {
                         public void run() {
                             if (updated) {
                                 AlarmSender.sendInstantMessage("赛程已更新", CoverActivity.this);
-                                PreferenceUtil.setFirstTimeBoot(CoverActivity.this, false);
+
                             } else if (firstTimeBoot) {
                                 AlarmSender.sendInstantMessage("无法连接到赛程服务器", CoverActivity.this);
                                 finish();
+                                goToMain[0] = false;
+                                return;
                             }
                         }
                     });
@@ -129,6 +131,9 @@ public class CoverActivity extends SherlockActivity {
                         public void run() {
                             if (dialog != null)
                                 dialog.dismiss();
+                            if(!goToMain[0])
+                                return;
+
                             if (firstTimeBoot)
                                 handler.postDelayed(new Runnable() {
                                     @Override
