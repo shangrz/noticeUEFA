@@ -29,6 +29,6 @@
                 android:text="Large Text"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                  
-                android:textColor="@color/white_true"/>
+                android:textColor="@color/white"/>
 
 </RelativeLayout>
