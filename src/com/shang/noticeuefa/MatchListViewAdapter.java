@@ -514,6 +514,14 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             m_selects.add(false); 
      
         notifyDataSetChanged();
+        noticeNoMatch();
+         
+    }
+    
+    private void noticeNoMatch() {
+        if(this.getCount() == 0) {
+            Toast.makeText(activity.getApplicationContext(), com.shang.noticeuefa.R.string.nomatch, 1000).show();
+        }
     }
  
     
