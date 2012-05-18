@@ -148,6 +148,8 @@ public class MatchActivity extends SherlockActivity   {
       //  listView.setAdapter(new MatchListViewAdapter(MatchActivity.this,getTodayMatch(),getHelper()));
         listAdapter = new MatchListViewAdapter(getApplicationContext(),this,getHelper());
         listAdapter.toAllMatch(); 
+        listAdapter.NEEDQUERYFOLLOW =false;
+        getSupportActionBar().setTitle( getString(listAdapter.NEEDQUERYFOLLOW?R.string.push_match:R.string.all_match) );
      //   lastOptionsItemSelected =6;
         listView.setAdapter(listAdapter );
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -310,13 +312,15 @@ public class MatchActivity extends SherlockActivity   {
         }
         
         if(item.getGroupId() == 1) {
-            //lastOptionsItemSelected = item.getItemId();
             getSupportActionBar().setTitle(item.getTitle()+getString(listAdapter.NEEDQUERYFOLLOW?R.string.push_match:R.string.all_match) );
         }
         if(item.getItemId()==1) {
             String s= getSupportActionBar().getTitle().subSequence(0, getSupportActionBar().getTitle().length()-getString(R.string.push_match).length()).toString();
             getSupportActionBar().setTitle(s+getString(listAdapter.NEEDQUERYFOLLOW?R.string.push_match:R.string.all_match));
             }
+        String _tString =getSupportActionBar().getTitle().toString();
+        if((_tString.startsWith(getString(R.string.all)+getString(R.string.all))))
+            getSupportActionBar().setTitle(_tString.substring(getString(R.string.all).length()));
         
         galleryadapter.notifyDataSetChanged();
         pager.setCurrentItem(0, false);
@@ -332,17 +336,21 @@ public class MatchActivity extends SherlockActivity   {
         }  
           
     }*/
-    
+   
     @Override  
     public boolean dispatchTouchEvent(MotionEvent event) {  
-        if(listAdapter!=null) {
-            if(listAdapter.gestureDetector!=null)
-              
-               if(listAdapter.gestureDetector.onTouchEvent(event)){  
-                    event.setAction(MotionEvent.ACTION_CANCEL);  
-         }
+        System.out.println("note!!!12");
+        if (listAdapter != null) {
+            if (listAdapter.gestureDetector != null) { 
+               
+                    if (listAdapter.gestureDetector.onTouchEvent(event)) { 
+                        event.setAction(MotionEvent.ACTION_CANCEL); 
+                    }
+                  
+            }
      
-        }   
+        }  
+         
         return super.dispatchTouchEvent(event);  
     }  
      

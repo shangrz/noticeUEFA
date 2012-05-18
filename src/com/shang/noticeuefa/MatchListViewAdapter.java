@@ -195,7 +195,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             }*/
         }
     };
-    boolean islistviewitemTouch = false;
+    public boolean islistviewitemTouch = false;
     public View getView(final int position, View convertView,
             ViewGroup parent) {
         
@@ -267,6 +267,11 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             startAnim(convertView, position);
         }
         final MyGestureListener myGestureListener = new MyGestureListener() {
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                islistviewitemTouch = false;
+                return false;
+            }
             
             @Override
             public void runWhenToRight() {
@@ -274,7 +279,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                      
                     return;
                 }
-                
+                islistviewitemTouch = false;
                 
                     final Intent nextIntent = new Intent();
                   if(match != null) {
@@ -296,12 +301,17 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                         }
                     });
                    // context.startActivity(nextIntent);   
-                    islistviewitemTouch = false;
+                     
             }
 
             @Override
             public void runWhenToLeft() {
-                 
+                islistviewitemTouch = false;
+            }
+
+            @Override
+            public void doSomething() {
+                islistviewitemTouch = false;
             }
             
              
@@ -312,6 +322,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         convertView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                System.out.println("convertView onTouch");
                 islistviewitemTouch = true;
                 if(PreferenceManager.getDefaultSharedPreferences(context).getBoolean("SHOWGOTOWEIBOANIM", true)) {
                 final View target = v.findViewById(R.id.animImageView);
@@ -352,7 +363,8 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                     if(!animMap.containsKey(position))
                         animMap.put(position, a);
                 }
-                gestureDetector = new GestureDetector(myGestureListener);
+                if(gestureDetector == null)
+                    gestureDetector = new GestureDetector(myGestureListener);
                 return  gestureDetector.onTouchEvent(event); 
                // return false;
             }

@@ -267,6 +267,12 @@ public class SinaTrendActivity extends SherlockActivity {
             public void runWhenToLeft() {
                     finish();
             }
+
+            @Override
+            public void doSomething() {
+                // TODO Auto-generated method stub
+                
+            }
             
         };
         myGestureListener.set(SinaTrendActivity.this,150,0);
