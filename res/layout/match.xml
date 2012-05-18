@@ -4,7 +4,7 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:weightSum="100"
-        android:background="@color/black"
+        android:background="@color/activity_bg_color"
         android:id="@+id/main1">
     <FrameLayout android:layout_weight="40"
                  android:layout_width="match_parent"
@@ -30,17 +30,25 @@
     </FrameLayout>
 
 
-    <LinearLayout android:id="@+id/index_container" android:orientation="vertical" android:layout_weight="60"
+    <RelativeLayout android:id="@+id/index_container" android:orientation="vertical" android:layout_weight="60"
                   android:layout_width="match_parent"
                   android:layout_height="0dip" android:weightSum="100">
 <ListView
-        android:id="@+id/listView1"
-         
+        android:id="@+id/listView1" 
         android:layout_width="match_parent"
         android:layout_height="wrap_content" 
          android:dividerHeight="1dip"
-         android:divider="@color/black"
+         android:divider="@color/listview_divider_color"
           >
     </ListView>
-    </LinearLayout>
+
+<ImageView
+    android:id="@+id/nomatch_imageview"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:src="@drawable/nomatch_pic" 
+    android:layout_centerInParent="true"
+    android:visibility="invisible"/>
+
+    </RelativeLayout>
 </LinearLayout>

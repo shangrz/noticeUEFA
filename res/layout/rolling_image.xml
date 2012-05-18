@@ -29,6 +29,6 @@
                 android:text="Large Text"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                  
-                android:textColor="@color/white"/>
+                android:textColor="@color/rolling_text_color"/>
 
 </RelativeLayout>

@@ -30,6 +30,7 @@ import com.shang.noticeuefa.model2.Notification;
 import com.shang.noticeuefa.model2.Tour;
 import com.shang.noticeuefa.util.MyGestureListener;
 import com.shang.noticeuefa.weibo.SinaTrendActivity;
+import com.srz.androidtools.util.PreferenceUtil;
 import com.srz.androidtools.util.ResTools;
 
 import android.R.integer;
@@ -136,6 +137,7 @@ public class MatchActivity extends SherlockActivity   {
         setTheme(R.style.Theme_MyStyle); //Used for theme switching in samples
         super.onCreate(savedInstanceState);
         setContentView(R.layout.match);
+        PreferenceUtil.setFirstTimeBoot(getApplicationContext(), false);
        // this.getWindow().setBackgroundDrawableResource(R.color.red);
         getSupportActionBar().setTitle(R.string.today_push_match);
         handler = new Handler();
@@ -175,7 +177,8 @@ public class MatchActivity extends SherlockActivity   {
                 if(((MatchListViewAdapter) listView.getAdapter()).getSelectedCount() == 0) {
                     mMode.finish();
                 } 
-                mMode.setTitle(((MatchListViewAdapter) listView.getAdapter()).getSelectedCount()+" 已选择");
+                if(listView.getAdapter()!=null)
+                    mMode.setTitle(((MatchListViewAdapter) listView.getAdapter()).getSelectedCount()+" 已选择");
                 
                  
                 //((mMode.getCustomView()).findViewById(R.layout.abs__action_mode_close_item)).
@@ -276,8 +279,8 @@ public class MatchActivity extends SherlockActivity   {
             if( ((MatchListViewAdapter) listView.getAdapter()).getSelectedCount() == 0)
                 mMode.finish();
             mMode.setTitle( ((MatchListViewAdapter) listView.getAdapter()).getSelectedCount()+" 已选择");*/
-            listAdapter.NEEDQUERYFOLLOW = !listAdapter.NEEDQUERYFOLLOW;
-            listAdapter.doWhenChangeIsFollow();
+            //listAdapter.NEEDQUERYFOLLOW = !listAdapter.NEEDQUERYFOLLOW;
+            //listAdapter.doWhenChangeIsFollow();
 /*            if(lastOptionsItemSelected == 2) 
                 listAdapter.toAllMatch();
             else if(lastOptionsItemSelected==3)

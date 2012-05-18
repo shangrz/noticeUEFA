@@ -521,6 +521,10 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
     private void noticeNoMatch() {
         if(this.getCount() == 0) {
             Toast.makeText(activity.getApplicationContext(), com.shang.noticeuefa.R.string.nomatch, 1000).show();
+            aQuery.id(R.id.nomatch_imageview).visible();
+        }
+        else {
+            aQuery.id(R.id.nomatch_imageview).invisible();
         }
     }
  
@@ -572,11 +576,11 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         mQuery = new IQuery() {
             @Override
             public void doQuery() {
-                Calendar  cal = Calendar.getInstance();
+                Calendar  cal = Calendar.getInstance(); 
+                Date d1 = cal.getTime();
                 cal.set(Calendar.MINUTE, 0);
                 cal.set(Calendar.SECOND, 0);
                 cal.set(Calendar.HOUR_OF_DAY, 0);
-                Date d1 = cal.getTime();
                 cal.add(Calendar.HOUR_OF_DAY, 30);
                 Date d2 = cal.getTime();
                 doWhenChange( getMatchWhen(d1,d2));
@@ -603,7 +607,10 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             @Override
             public void doQuery() {
                 Date[] ds  = makeDates(0);
-                doWhenChange( getMatchWhen(ds[0],ds[1]));
+               
+                
+                Date d1 = new Date(System.currentTimeMillis());
+                doWhenChange( getMatchWhen(d1,ds[1]));
             }
         };
         mQuery.doQuery(); 

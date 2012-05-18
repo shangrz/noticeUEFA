@@ -11,6 +11,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.mobclick.android.MobclickAgent;
+import com.mobclick.android.f;
 import com.shang.noticeuefa.database.DatabaseHelper;
 import com.shang.noticeuefa.model2.*;
 import com.shang.noticeuefa.util.HostSetter;
@@ -133,8 +134,8 @@ public class CoverActivity extends SherlockActivity {
                                 dialog.dismiss();
                             if(!goToMain[0])
                                 return;
-
-                            if (firstTimeBoot)
+                            
+/*                            if (firstTimeBoot)
                                 handler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -142,7 +143,7 @@ public class CoverActivity extends SherlockActivity {
                                         startActivity(intent);
                                     }
                                 }, 2000);
-                            else
+                            else*/
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
