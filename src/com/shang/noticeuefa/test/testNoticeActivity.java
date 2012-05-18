@@ -129,14 +129,13 @@ public class testNoticeActivity extends Activity {
         c = Calendar.getInstance();  
         c.setTimeInMillis(System.currentTimeMillis()); 
         System.out.println(c.get(Calendar.SECOND));
-        c.set(Calendar.SECOND,c.get(Calendar.SECOND)+10);
+        c.set(Calendar.SECOND,c.get(Calendar.SECOND)+2);
         
         Intent intent = new Intent(testNoticeActivity.this,AlamrReceiver.class);  
          
         intent.putExtra("match_id", 2);
       
-        PendingIntent pi = PendingIntent.getBroadcast(testNoticeActivity.this, 0, intent, 0);  
-      
+        PendingIntent pi = PendingIntent.getBroadcast(testNoticeActivity.this, 2, intent, 0);  
         AlarmManager am = (AlarmManager) getSystemService(Activity.ALARM_SERVICE);  
         am.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pi);//设置闹钟  
      //   am.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), (5*1000), pi);//重复设置  
@@ -145,7 +144,7 @@ public class testNoticeActivity extends Activity {
     
     public void TestCancelClockButtonOnClick(View v) {
         Intent intent = new Intent(testNoticeActivity.this,AlamrReceiver.class);  
-        PendingIntent pi = PendingIntent.getBroadcast(testNoticeActivity.this, 0, intent, 0);  
+        PendingIntent pi = PendingIntent.getBroadcast(testNoticeActivity.this, 2, intent, 0);  
         AlarmManager am = (AlarmManager) getSystemService(Activity.ALARM_SERVICE);  
         am.cancel(pi);  
         Toast.makeText(testNoticeActivity.this, "闹钟取消", Toast.LENGTH_LONG).show();  

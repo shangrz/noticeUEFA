@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+ 
+
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -34,7 +36,7 @@ public class CoverActivity extends SherlockActivity {
     private ProgressDialog dialog;
     public static final String DATABASE_NAME = "notice.sqlite";
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return new OptionMenuCreator().onCreateOptionsMenu(menu, new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -45,7 +47,7 @@ public class CoverActivity extends SherlockActivity {
             }
         });
     }
-
+*/
     private static final int PROMPT_INPROGRESS = 1;
     private Handler handler = new Handler();
 
@@ -147,8 +149,12 @@ public class CoverActivity extends SherlockActivity {
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
+                                        
                                         Intent intent = new Intent(CoverActivity.this, MatchActivity.class);
+                                         
+                                       // intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
                                         startActivity(intent);
+                                        CoverActivity.this.finish();
                                     }
                                 });
                         }

@@ -80,11 +80,9 @@ public class MatchActivity extends SherlockActivity   {
     public boolean onCreateOptionsMenu(Menu menu) {
         
  
-         menu.add(0,1,0,"isFollow")
-         .setIcon(  R.drawable.content_select_all)
-         .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT); 
-         
-         
+//         menu.add(0,1,0,"isFollow")
+//         .setIcon(  R.drawable.content_select_all)
+//         .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);  
          SubMenu subMenu1 = menu.addSubMenu("Collection");
          subMenu1.add(1,6,1,R.string.today);
           
@@ -151,7 +149,7 @@ public class MatchActivity extends SherlockActivity   {
         listAdapter = new MatchListViewAdapter(getApplicationContext(),this,getHelper());
         listAdapter.toAllMatch(); 
         listAdapter.NEEDQUERYFOLLOW =false;
-        getSupportActionBar().setTitle( getString(listAdapter.NEEDQUERYFOLLOW?R.string.push_match:R.string.all_match) );
+        getSupportActionBar().setTitle( getString(listAdapter.NEEDQUERYFOLLOW?R.string.push_match:R.string.all_match) +"("+listAdapter.getCount()+")");
      //   lastOptionsItemSelected =6;
         listView.setAdapter(listAdapter );
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -315,11 +313,11 @@ public class MatchActivity extends SherlockActivity   {
         }
         
         if(item.getGroupId() == 1) {
-            getSupportActionBar().setTitle(item.getTitle()+getString(listAdapter.NEEDQUERYFOLLOW?R.string.push_match:R.string.all_match) );
+            getSupportActionBar().setTitle(item.getTitle()+getString(listAdapter.NEEDQUERYFOLLOW?R.string.push_match:R.string.all_match)+"("+listAdapter.getCount()+")");
         }
         if(item.getItemId()==1) {
             String s= getSupportActionBar().getTitle().subSequence(0, getSupportActionBar().getTitle().length()-getString(R.string.push_match).length()).toString();
-            getSupportActionBar().setTitle(s+getString(listAdapter.NEEDQUERYFOLLOW?R.string.push_match:R.string.all_match));
+            getSupportActionBar().setTitle(s+getString(listAdapter.NEEDQUERYFOLLOW?R.string.push_match:R.string.all_match)+"("+listAdapter.getCount()+")");
             }
         String _tString =getSupportActionBar().getTitle().toString();
         if((_tString.startsWith(getString(R.string.all)+getString(R.string.all))))

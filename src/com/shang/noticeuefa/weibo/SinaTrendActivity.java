@@ -82,8 +82,8 @@ public class SinaTrendActivity extends SherlockActivity {
     SharedPreferences sp;
     public static final String ID = "id";
     private boolean isBack = false; 
-    private String thekeyword = "荷兰 VS 德国";
-    private String title = "荷兰 VS 德国";
+    private String thekeyword = "欧锦赛 足球";
+    private String title = "欧锦赛";
     protected static final String REDUIRECT_URL = "http://www.sina.com";  
     protected static final String CONSUMER_KEY = "3678962516"; 
     protected static final String CONSUMER_SECRET = "5df334c1e4e2c4dce174a070ada58b8b"; 
