@@ -74,8 +74,8 @@ public class AlamrReceiver extends BroadcastReceiver {
         bundle.putInt("MATCH_ID", theid);
         
         bundle.putLong("MATCH_TIME", match.getMatchTime().getTime());
-        bundle.putString("TITLE", match.getTeamA().getTeamName()+ " Vs" + match.getTeamB().getTeamName());
-        bundle.putString("THEKEYWORD", match.getTeamA().getTeamName()+ " " + match.getTeamB().getTeamName());
+        bundle.putString("TITLE", match.getTeamA().getTeamName()+ " Vs " + match.getTeamB().getTeamName());
+        bundle.putString("THEKEYWORD", match.getTeamA().getTeamName()+ " " + match.getTeamB().getTeamName() + " 足球");
         notificationIntent.putExtras(bundle);
     } catch (SQLException e) {
         // TODO Auto-generated catch block

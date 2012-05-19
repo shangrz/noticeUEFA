@@ -97,7 +97,16 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
 
     public boolean changeState(int position,boolean  multiChoose){ 
         // 多选时 
+        
+        //改变模式为单选，这里只是为了改了方便，内部其实还是多选，只是 有选第2个时候把前一个去掉
+        for (int i=0; i<m_selects.size();i++) {
+            if(position != i)
+                m_selects.setElementAt(false, i); 
+        }
+        
+        
         if(multiChoose == true){     
+            
             m_selects.setElementAt(!m_selects.elementAt(position), position);   //直接取反即可     
         } 
         MULTI_MODE = multiChoose;
@@ -292,8 +301,8 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                     final Intent nextIntent = new Intent();
                   if(match != null) {
                      Bundle bundle = new Bundle();
-                     bundle.putString("TITLE", match.getTeamA().getTeamName()+ " Vs" + match.getTeamB().getTeamName());
-                     bundle.putString("THEKEYWORD", match.getTeamA().getTeamName()+ " " + match.getTeamB().getTeamName());
+                     bundle.putString("TITLE", match.getTeamA().getTeamName()+ " Vs " + match.getTeamB().getTeamName());
+                     bundle.putString("THEKEYWORD",  match.getTeamA().getTeamName() + match.getTeamB().getTeamName()+" 足球");
                      nextIntent.putExtras(bundle);
                     }
                     nextIntent.setClass(context,  SinaTrendActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -371,8 +380,8 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                     if(!animMap.containsKey(position))
                         animMap.put(position, a);
                 }
-                if(gestureDetector == null)
-                    gestureDetector = new GestureDetector(myGestureListener);
+                 
+                gestureDetector = new GestureDetector(myGestureListener);
                 return  gestureDetector.onTouchEvent(event); 
                // return false;
             }
