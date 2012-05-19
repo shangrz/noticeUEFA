@@ -88,12 +88,15 @@
 
     <style name="Theme.MyStyle" parent="Theme.Sherlock.ForceOverflow">
     
-  
+    
+        <item name="android:actionModeCloseDrawable">@drawable/undo</item>
         <item name="actionBarStyle">@style/Widget.MyStyle.ActionBar</item>
         <item name="android:actionBarStyle">@style/Widget.MyStyle.ActionBar</item> 
     </style>
     <style name="Widget.MyStyle.ActionBar" parent="Widget.Sherlock.ActionBar">
-      
+        
+        
+        
         <item name="background">@drawable/my_abs__ab_transparent_dark_holo</item>
         <item name="backgroundStacked">@drawable/my_abs__ab_stacked_transparent_dark_holo</item>
         <item name="backgroundSplit">@drawable/my_abs__ab_bottom_transparent_dark_holo</item>
