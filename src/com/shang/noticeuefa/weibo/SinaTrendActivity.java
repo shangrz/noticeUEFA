@@ -42,6 +42,7 @@ import com.weibo.net.WeiboParameters;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -76,7 +77,8 @@ import android.widget.AbsListView.OnScrollListener;
  */
 public class SinaTrendActivity extends SherlockActivity {
     
-
+    private int match_id = 0;
+    private long match_time = 0;
     private   static int PAGECOUNT = 20;
     private   static boolean notLoading = true;
     SharedPreferences sp;
@@ -221,8 +223,12 @@ public class SinaTrendActivity extends SherlockActivity {
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         Bundle bundle = this.getIntent().getExtras();
         if (bundle != null) {
+             
+                match_id = bundle.getInt("MATCH_ID");
+                match_time = bundle.getLong("MATCH_TIME");
                 title = bundle.getString("TITLE");
                 thekeyword = bundle.getString("THEKEYWORD");
+                
         }
      
         Log.d("sinatenderactivity", "creat over!!!!!!!");
@@ -231,6 +237,18 @@ public class SinaTrendActivity extends SherlockActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        
+        if(match_id != 0) {
+            if(match_time!=0) {
+                 if(System.currentTimeMillis()>match_time+1000*120*60) {
+                    NotificationManager nm = (NotificationManager)getSystemService("notification");
+                    nm.cancel(match_id);
+                 }
+            }
+            
+        }
+        
+        
         getSupportActionBar().setTitle(title); 
         
         if(isBack) 

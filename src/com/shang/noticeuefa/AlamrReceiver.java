@@ -34,6 +34,10 @@ public class AlamrReceiver extends BroadcastReceiver {
     
     @Override  
     public void onReceive(Context context, Intent intent) {  
+        if(intent.getStringExtra("delnotice")!=null) {
+            System.out.println(intent.getStringExtra("delnotice"));
+            return;    
+        }
         aQuery = new AQuery(context);
         nm=(NotificationManager)context.getSystemService("notification");
         System.out.println("闹钟时间到");
@@ -44,9 +48,13 @@ public class AlamrReceiver extends BroadcastReceiver {
         notification=new Notification(R.drawable.icon,"比赛即将开始",System.currentTimeMillis());
         
         int theid =0;
-        if (intent.getIntExtra("match_id", 0)!= 0) {
-            System.out.println(intent.getIntExtra("match_id", 0));
-            theid = intent.getIntExtra("match_id", 0);
+        if (intent.getExtras()!=null) {
+            System.out.println(intent.getExtras());
+            System.out.println("xxx:"+intent.getExtras().getInt("match_id", 0));
+            theid = intent.getExtras().getInt("match_id", 0);
+        }
+        else {
+            System.out.println("no bundle");
         }
         notification.contentView = adapterNoticeView(context,theid);
       
@@ -60,7 +68,12 @@ public class AlamrReceiver extends BroadcastReceiver {
            .putExtras(bundle) ;
       Match match;
     try {
+        System.out.println("########"+theid+"***");
         match = getHelper(context).getMatchDao().queryForId(theid);
+        System.out.println("########"+theid+"***"+match.getMatchTime().getTime());
+        bundle.putInt("MATCH_ID", theid);
+        
+        bundle.putLong("MATCH_TIME", match.getMatchTime().getTime());
         bundle.putString("TITLE", match.getTeamA().getTeamName()+ " Vs" + match.getTeamB().getTeamName());
         bundle.putString("THEKEYWORD", match.getTeamA().getTeamName()+ " " + match.getTeamB().getTeamName());
         notificationIntent.putExtras(bundle);
@@ -72,12 +85,12 @@ public class AlamrReceiver extends BroadcastReceiver {
       
        PendingIntent contentIntent = PendingIntent.getActivity(context, theid, notificationIntent,   0);  //request match_id
        notification.contentIntent = contentIntent;  
-        
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-
+         
+        notification.flags |= Notification.FLAG_ONGOING_EVENT; 
       //  notification.defaults = Notification.DEFAULT_SOUND; 
-        
+       
         notification.sound = Uri.parse("android.resource://" + context.getPackageName() + "/" +R.raw.customsound); 
+      //  notification.vibrate = new long[] { 1000, 1000, 1000, 1000, 1000 }; 
         nm.notify(theid, notification);  
          
     }

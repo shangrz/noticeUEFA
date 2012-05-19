@@ -427,6 +427,38 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
     }
     
     
+    private void setAlarm(boolean isNotice,int i) {
+        int _match_id = getItem(i).getId(); 
+        
+        System.out.println("_match_id");
+        System.out.println("_match_id"+_match_id);
+        Intent intent = new Intent(context,AlamrReceiver.class); 
+        System.out.println("match9d:"+i+" time "+new Date(getItem(i).getMatchTime().getTime() - 15*60*1000));
+       
+        Bundle bundle =new Bundle();
+         
+        bundle.putInt("match_id", _match_id);
+        intent.putExtras(bundle);
+        if(isNotice ) { 
+            if(getItem(i).getMatchTime().getTime() > System.currentTimeMillis()) {
+       
+                PendingIntent pi = PendingIntent.getBroadcast(context, _match_id, intent, 0);  
+                AlarmManager am = (AlarmManager) context.getSystemService(Activity.ALARM_SERVICE);  
+                am.set(AlarmManager.RTC_WAKEUP, getItem(i).getMatchTime().getTime() - 15*60*1000, pi);
+                AlarmSender.sendInstantMessage(com.shang.noticeuefa.R.string.noticematchbefore15m, context);
+              
+            }
+        }else {
+            intent.putExtra("delnotice", "delnotice");
+            PendingIntent pi = PendingIntent.getBroadcast(context, _match_id, intent, 0);  
+            AlarmManager am = (AlarmManager)context.getSystemService(Activity.ALARM_SERVICE);  
+            am.cancel(pi);  
+            
+            
+            Toast.makeText(context, "闹钟取消", Toast.LENGTH_LONG).show();  
+        }
+    }
+    
     public void setAllSelectedNotice(final boolean isNotice) {
        final Vector<Boolean> _selects =  (Vector<Boolean>) m_selects.clone() ;
        getDialog().show();
@@ -445,28 +477,12 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                         
                        // matchs.get(i).setNotice(isNotice);
                          if (getItem(i).getNotifications() != null) {
-                      
+                             
                              if (getItem(i).getNotifications().isAlarm() != isNotice) {
                                  getItem(i).getNotifications().setAlarm(isNotice);
                                  
-                                 int _match_id = getItem(i).getId(); 
-                                 Intent intent = new Intent(context,AlamrReceiver.class); 
-                                 if(isNotice) { 
-                                     if(getItem(i).getMatchTime().getTime() > System.currentTimeMillis()) {
-                                         System.out.println("match9d:"+i+" time "+new Date(getItem(i).getMatchTime().getTime() - 15*60*1000));
-                                         intent.putExtra("match_id", _match_id);
-                                         PendingIntent pi = PendingIntent.getBroadcast(context, _match_id, intent, 0);  
-                                         AlarmManager am = (AlarmManager) context.getSystemService(Activity.ALARM_SERVICE);  
-                                         am.set(AlarmManager.RTC_WAKEUP, getItem(i).getMatchTime().getTime() - 15*60*1000, pi);
-                                         AlarmSender.sendInstantMessage(com.shang.noticeuefa.R.string.noticematchbefore15m, context);
-                                     }
-                                 }else {
-                                      
-                                     PendingIntent pi = PendingIntent.getBroadcast(context, _match_id, intent, 0);  
-                                     AlarmManager am = (AlarmManager)context.getSystemService(Activity.ALARM_SERVICE);  
-                                     am.cancel(pi);  
-                                     Toast.makeText(context, "闹钟取消", Toast.LENGTH_LONG).show();  
-                                 }
+                                 setAlarm( isNotice, i);
+                                  
                     
                                  ids.add( getItem(i).getNotifications().getId());
 //                                  try {
@@ -482,10 +498,14 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                             Notification n1 = new Notification();
                             n1.setAlarm(isNotice);
                             n1.setFollow(true);
+                            
+                            
                             try {
                              helper.getDao(Notification.class).create(n1);
                              getItem(i).setNotifications(n1);
                               helper.getMatchDao().update(getItem(i));
+                              
+                              setAlarm( isNotice, i);
                                 } catch (SQLException e) {
                              e.printStackTrace();
                          }
@@ -548,7 +568,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
     
     private void noticeNoMatch() {
         if(this.getCount() == 0) {
-            Toast.makeText(activity.getApplicationContext(), com.shang.noticeuefa.R.string.nomatch, 1000).show();
+           // Toast.makeText(activity.getApplicationContext(), com.shang.noticeuefa.R.string.nomatch, 1000).show();
             aQuery.id(R.id.nomatch_imageview).visible();
         }
         else {
