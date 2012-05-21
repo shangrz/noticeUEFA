@@ -93,7 +93,7 @@ class MatchGalleryAdapter extends PagerAdapter {
         }
         
         
-        textSpecial(textView);
+        //textSpecial(textView);
         container.addView(v,0);
         return v;
     }

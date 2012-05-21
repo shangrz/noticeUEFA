@@ -14,8 +14,10 @@ import android.R.array;
 import android.R.integer;
 import android.R.xml;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
  
 import android.content.Context;
@@ -48,9 +50,11 @@ import com.shang.noticeuefa.database.DatabaseHelper;
 import com.shang.noticeuefa.model2.Match;
 import com.shang.noticeuefa.model2.Notification;
  
+import com.shang.noticeuefa.test.testNoticeActivity;
 import com.shang.noticeuefa.util.Constants;
 import com.shang.noticeuefa.util.MyGestureListener;
 import com.shang.noticeuefa.weibo.SinaTrendActivity;
+import com.srz.androidtools.util.AlarmSender;
 import com.srz.androidtools.util.TimeTools;
 
 class MatchListViewAdapter   extends ArrayAdapter< Match> {
@@ -125,7 +129,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
  
    public static boolean MULTI_MODE = false;
 
-   public boolean NEEDQUERYFOLLOW = true;
+   public boolean NEEDQUERYFOLLOW = false;
 
    
     private LayoutInflater mInflater;
@@ -172,6 +176,10 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         @Override
         public void onCheckedChanged(CompoundButton buttonView,
                 boolean isChecked) {
+            
+              
+            
+            
 /*            if(match.getNotifications() != null) {
                 match.getNotifications().setAlarm(isChecked);
                 try {
@@ -195,7 +203,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             }*/
         }
     };
-    boolean islistviewitemTouch = false;
+    public boolean islistviewitemTouch = false;
     public View getView(final int position, View convertView,
             ViewGroup parent) {
         
@@ -267,6 +275,11 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             startAnim(convertView, position);
         }
         final MyGestureListener myGestureListener = new MyGestureListener() {
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                islistviewitemTouch = false;
+                return false;
+            }
             
             @Override
             public void runWhenToRight() {
@@ -274,7 +287,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                      
                     return;
                 }
-                
+                islistviewitemTouch = false;
                 
                     final Intent nextIntent = new Intent();
                   if(match != null) {
@@ -296,12 +309,17 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                         }
                     });
                    // context.startActivity(nextIntent);   
-                    islistviewitemTouch = false;
+                     
             }
 
             @Override
             public void runWhenToLeft() {
-                 
+                islistviewitemTouch = false;
+            }
+
+            @Override
+            public void doSomething() {
+                islistviewitemTouch = false;
             }
             
              
@@ -312,6 +330,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         convertView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                System.out.println("convertView onTouch");
                 islistviewitemTouch = true;
                 if(PreferenceManager.getDefaultSharedPreferences(context).getBoolean("SHOWGOTOWEIBOANIM", true)) {
                 final View target = v.findViewById(R.id.animImageView);
@@ -352,7 +371,8 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                     if(!animMap.containsKey(position))
                         animMap.put(position, a);
                 }
-                gestureDetector = new GestureDetector(myGestureListener);
+                if(gestureDetector == null)
+                    gestureDetector = new GestureDetector(myGestureListener);
                 return  gestureDetector.onTouchEvent(event); 
                // return false;
             }
@@ -428,7 +448,27 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                       
                              if (getItem(i).getNotifications().isAlarm() != isNotice) {
                                  getItem(i).getNotifications().setAlarm(isNotice);
-                                  ids.add( getItem(i).getNotifications().getId());
+                                 
+                                 int _match_id = getItem(i).getId(); 
+                                 Intent intent = new Intent(context,AlamrReceiver.class); 
+                                 if(isNotice) { 
+                                     if(getItem(i).getMatchTime().getTime() > System.currentTimeMillis()) {
+                                         System.out.println("match9d:"+i+" time "+new Date(getItem(i).getMatchTime().getTime() - 15*60*1000));
+                                         intent.putExtra("match_id", _match_id);
+                                         PendingIntent pi = PendingIntent.getBroadcast(context, _match_id, intent, 0);  
+                                         AlarmManager am = (AlarmManager) context.getSystemService(Activity.ALARM_SERVICE);  
+                                         am.set(AlarmManager.RTC_WAKEUP, getItem(i).getMatchTime().getTime() - 15*60*1000, pi);
+                                         AlarmSender.sendInstantMessage(com.shang.noticeuefa.R.string.noticematchbefore15m, context);
+                                     }
+                                 }else {
+                                      
+                                     PendingIntent pi = PendingIntent.getBroadcast(context, _match_id, intent, 0);  
+                                     AlarmManager am = (AlarmManager)context.getSystemService(Activity.ALARM_SERVICE);  
+                                     am.cancel(pi);  
+                                     Toast.makeText(context, "闹钟取消", Toast.LENGTH_LONG).show();  
+                                 }
+                    
+                                 ids.add( getItem(i).getNotifications().getId());
 //                                  try {
 //                                      helper.getDao(Notification.class).update(
 //                                              this.getItem(i).getNotifications());
@@ -502,6 +542,18 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             m_selects.add(false); 
      
         notifyDataSetChanged();
+        noticeNoMatch();
+         
+    }
+    
+    private void noticeNoMatch() {
+        if(this.getCount() == 0) {
+            Toast.makeText(activity.getApplicationContext(), com.shang.noticeuefa.R.string.nomatch, 1000).show();
+            aQuery.id(R.id.nomatch_imageview).visible();
+        }
+        else {
+            aQuery.id(R.id.nomatch_imageview).invisible();
+        }
     }
  
     
@@ -512,8 +564,19 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                 try {
                     if(NEEDQUERYFOLLOW)
                          doWhenChange(helper.getMatchDao().query(getQuery().prepare()));
-                    else
-                        doWhenChange( helper.getMatchDao().queryForAll());
+                    else {
+                        Calendar  cal = Calendar.getInstance();
+                        cal.set(Calendar.MINUTE, 0);
+                        cal.set(Calendar.SECOND, 0);
+                        cal.set(Calendar.HOUR_OF_DAY, 0); 
+                        Date d1 = cal.getTime();
+                        
+                        
+                        doWhenChange(helper.getMatchDao().query(getQuery().gt("matchTime", getTodayDate()).prepare() ));
+                         
+                    }
+                       // doWhenChange( helper.getMatchDao().queryForAll());
+                       
                 } catch (SQLException e) {
                     e.printStackTrace();
                     
@@ -552,11 +615,12 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         mQuery = new IQuery() {
             @Override
             public void doQuery() {
-                Calendar  cal = Calendar.getInstance();
+                Calendar  cal = Calendar.getInstance(); 
                 cal.set(Calendar.MINUTE, 0);
                 cal.set(Calendar.SECOND, 0);
                 cal.set(Calendar.HOUR_OF_DAY, 0);
                 Date d1 = cal.getTime();
+                 
                 cal.add(Calendar.HOUR_OF_DAY, 30);
                 Date d2 = cal.getTime();
                 doWhenChange( getMatchWhen(d1,d2));
@@ -583,7 +647,8 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             @Override
             public void doQuery() {
                 Date[] ds  = makeDates(0);
-                doWhenChange( getMatchWhen(ds[0],ds[1]));
+ 
+                doWhenChange( getMatchWhen(getTodayDate(),ds[1]));
             }
         };
         mQuery.doQuery(); 
@@ -710,7 +775,13 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             mQuery.doQuery();
     }
     
-    
+    private Date getTodayDate() {
+        Calendar  cal = Calendar.getInstance();
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.HOUR_OF_DAY, 0); 
+        return cal.getTime();
+    }
     
  
      

@@ -1,12 +1,18 @@
 package com.shang.noticeuefa.test;
  
+import java.util.Calendar;
+
+import com.shang.noticeuefa.AlamrReceiver;
 import com.shang.noticeuefa.R;
 import com.shang.noticeuefa.model.Match;
  
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -99,7 +105,7 @@ public class testNoticeActivity extends Activity {
         notification.flags = Notification.FLAG_AUTO_CANCEL;   
         
       //  notification.defaults = Notification.DEFAULT_SOUND; 
-        notification.sound = Uri.parse("android.resource://" + getPackageName() + "/" +R.raw.customsound); 
+        //notification.sound = Uri.parse("android.resource://" + getPackageName() + "/" +R.raw.customsound); 
         nm.notify(theid, notification);  
         isss =true;
         
@@ -117,9 +123,32 @@ public class testNoticeActivity extends Activity {
         return contentView;
         
     }
-    
+    Calendar c ; 
     public void TestAlarmClockButtonOnClick(View v) {
+          
+        c = Calendar.getInstance();  
+        c.setTimeInMillis(System.currentTimeMillis()); 
+        System.out.println(c.get(Calendar.SECOND));
+        c.set(Calendar.SECOND,c.get(Calendar.SECOND)+2);
         
+        Intent intent = new Intent(testNoticeActivity.this,AlamrReceiver.class);  
+         
+        intent.putExtra("match_id", 2);
+      
+        PendingIntent pi = PendingIntent.getBroadcast(testNoticeActivity.this, 2, intent, 0);  
+        AlarmManager am = (AlarmManager) getSystemService(Activity.ALARM_SERVICE);  
+        am.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pi);//设置闹钟  
+     //   am.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), (5*1000), pi);//重复设置  
+        
+    }
+    
+    public void TestCancelClockButtonOnClick(View v) {
+        Intent intent = new Intent(testNoticeActivity.this,AlamrReceiver.class);  
+        PendingIntent pi = PendingIntent.getBroadcast(testNoticeActivity.this, 2, intent, 0);  
+        AlarmManager am = (AlarmManager) getSystemService(Activity.ALARM_SERVICE);  
+        am.cancel(pi);  
+        Toast.makeText(testNoticeActivity.this, "闹钟取消", Toast.LENGTH_LONG).show();  
+         
     }
     
     @Override  
@@ -129,5 +158,5 @@ public class testNoticeActivity extends Activity {
            Toast.makeText(this, "123", 1000).show();
   
     }   
-
+ 
 }

@@ -1,12 +1,9 @@
 package com.shang.noticeuefa.util;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.view.MotionEvent;
 
 import com.actionbarsherlock.R;
-import com.shang.noticeuefa.weibo.SinaTrendActivity;
 import android.view.GestureDetector.OnGestureListener;
 
  
@@ -20,6 +17,9 @@ public  abstract class MyGestureListener implements OnGestureListener {
     
     public abstract void runWhenToRight();
     public abstract void runWhenToLeft();
+    public abstract void doSomething();
+    
+    
     
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
@@ -42,6 +42,7 @@ public  abstract class MyGestureListener implements OnGestureListener {
                  activity.overridePendingTransition(R.anim.infromleft,R.anim.out2right); 
 
         }
+        doSomething();
         return false;
          
     }

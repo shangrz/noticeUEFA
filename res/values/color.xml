@@ -1,4 +1,5 @@
 <resources>
+    <color name="t1">#00000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
     <color name="blacktran">#80000000</color>
@@ -29,4 +30,8 @@
     <color name="transparent">#00000000</color>
     <color name="text_num_gray">#333</color>
     <color name="dialog_title_blue">#9CCCF7</color>
+    <color name="activity_bg_color">@color/black</color>
+     <color name="rolling_text_color">@color/white</color>
+     <color name="listview_divider_color">@color/black</color>
+   
 </resources>

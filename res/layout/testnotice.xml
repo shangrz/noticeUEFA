@@ -25,4 +25,12 @@
         android:layout_height="wrap_content"
         android:text="TestAlarmClock"
         android:onClick="TestAlarmClockButtonOnClick"  />
+                <Button
+        android:id="@+id/testCancelClock_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TestCancelClock"
+        android:onClick="TestCancelClockButtonOnClick"  />
+         
+
 </LinearLayout>

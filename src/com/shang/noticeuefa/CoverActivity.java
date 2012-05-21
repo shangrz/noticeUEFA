@@ -6,15 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.mobclick.android.MobclickAgent;
 import com.shang.noticeuefa.database.DatabaseHelper;
 import com.shang.noticeuefa.model2.*;
 import com.shang.noticeuefa.util.HostSetter;
-import com.shang.noticeuefa.view.OptionMenuCreator;
 import com.srz.androidtools.util.AlarmSender;
 import com.srz.androidtools.util.NetworkUtil;
 import com.srz.androidtools.util.PreferenceUtil;
@@ -33,7 +30,7 @@ public class CoverActivity extends SherlockActivity {
     private ProgressDialog dialog;
     public static final String DATABASE_NAME = "notice.sqlite";
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return new OptionMenuCreator().onCreateOptionsMenu(menu, new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -44,7 +41,7 @@ public class CoverActivity extends SherlockActivity {
             }
         });
     }
-
+*/
     private static final int PROMPT_INPROGRESS = 1;
     private Handler handler = new Handler();
 
@@ -133,8 +130,8 @@ public class CoverActivity extends SherlockActivity {
                                 dialog.dismiss();
                             if(!goToMain[0])
                                 return;
-
-                            if (firstTimeBoot)
+                            
+/*                            if (firstTimeBoot)
                                 handler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -142,12 +139,16 @@ public class CoverActivity extends SherlockActivity {
                                         startActivity(intent);
                                     }
                                 }, 2000);
-                            else
+                            else*/
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
+                                        
                                         Intent intent = new Intent(CoverActivity.this, MatchActivity.class);
+                                         
+                                       // intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
                                         startActivity(intent);
+                                        CoverActivity.this.finish();
                                     }
                                 });
                         }

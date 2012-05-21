@@ -8,6 +8,7 @@ import com.j256.ormlite.dao.Dao;
 import com.shang.noticeuefa.database.DatabaseHelper;
 import com.shang.noticeuefa.model2.*;
 import com.srz.androidtools.util.StringQuery;
+import com.srz.androidtools.util.TimeTools;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -275,7 +276,7 @@ public class UpdateManager {
                             Team ta = teamDao.queryForId(m.getTeamAId());
                             Team tb = teamDao.queryForId(m.getTeamBId());
                             Tour t = tourDao.queryForId(m.getTourId());
-
+                            m.setMatchTime(TimeTools.fixTimeWithTimezone(m.getMatchTime()));
                             m.setTeamA(ta);
                             m.setTeamB(tb);
                             m.setTour(t);
