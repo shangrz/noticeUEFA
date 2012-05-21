@@ -17,7 +17,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
  
- 
+   
+
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -33,6 +34,7 @@ import com.shang.noticeuefa.util.MyGestureListener;
 import com.shang.noticeuefa.weibo.SinaTrendAdapter.ViewHolder;
 import com.weibo.net.Weibo;
  
+import com.weibo.net.ShareActivity;
 import com.weibo.net.WeiboException;
 import com.weibo.net.WeiboParameters;
 
@@ -58,6 +60,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message; 
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log; 
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -358,32 +361,18 @@ public class SinaTrendActivity extends SherlockActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View view, int position,
                     long id) {
- /* 
-                ViewHolder holder = (ViewHolder) view.getTag();
-                 
-                Intent intent =  new Intent(view.getContext(), SinaContentActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString(SinaContentActivity.SCREEN_NAME, holder.tvname.getText().toString());
-                bundle.putString(SinaContentActivity.CREATED_AT, holder.tvdate.getText().toString());
-                bundle.putString(SinaContentActivity.WEIBOTEXT,holder.tvcomment.getText().toString());
-                 
-               // bundle.putParcelable(SinaContentActivity.PROFILE_IMAGE_BITMAP, holder.image.getDrawingCache());
-                bundle.putLong(SinaContentActivity.ID, (Long) listItems.get(position).get(SinaContentActivity.ID));
-                if (listItems.get(position).containsKey(SinaContentActivity.BMIDDLE_PIC))
-                    bundle.putString(SinaContentActivity.BMIDDLE_PIC, listItems.get(position).get(SinaContentActivity.BMIDDLE_PIC).toString());
-                if (listItems.get(position).containsKey(SinaContentActivity.PROFILE_IMAGE_URL))
-                    bundle.putString(SinaContentActivity.PROFILE_IMAGE_URL, String.valueOf(listItems.get(position).get(SinaContentActivity.PROFILE_IMAGE_URL)));
-                bundle.putString(SinaContentActivity.REPOSTS_COUNT, String.valueOf(listItems.get(position).get(SinaContentActivity.REPOSTS_COUNT)));
-                bundle.putString(SinaContentActivity.COMMENTS_COUNT, String.valueOf(listItems.get(position).get(SinaContentActivity.COMMENTS_COUNT)));
-                bundle.putString(SinaContentActivity.KEYWORD, thekeyword);
+                long weiboId =(Long) listItems.get(position).get("id") ;
+                try {
+                    weibo.repost2weibo(SinaTrendActivity.this, Weibo
+                            .getInstance().getAccessToken().getToken(),
+                            Weibo.getInstance().getAccessToken()
+                                    .getSecret(), "#" + thekeyword + "#",
+                            weiboId);
+                } catch (WeiboException e) {
                 
-                intent.putExtras(bundle);
-                 
-             
-                isBack = true;
-                startActivity(intent);*/
-          
-                 
+                    e.printStackTrace();
+                }
+               
                 
             }
             
@@ -616,4 +605,7 @@ public class SinaTrendActivity extends SherlockActivity {
             return mGestureDetector.onTouchEvent(event);  
         }  
     }
+    
+    
+ 
 }

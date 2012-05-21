@@ -16,7 +16,7 @@
      <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <application
             android:icon="@drawable/icon"
-            android:label="@string/app_name">
+            android:label="@string/app_name_euro">
         <activity
                 android:name=".CoverActivity"
                 android:label="@string/app_name"

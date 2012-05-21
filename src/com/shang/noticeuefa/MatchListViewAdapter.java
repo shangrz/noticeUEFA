@@ -437,6 +437,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
     
     
     private void setAlarm(boolean isNotice,int i) {
+        AlarmSender.layoutResid = R.layout.toast;
         int _match_id = getItem(i).getId(); 
         
         System.out.println("_match_id");
@@ -462,9 +463,8 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
             PendingIntent pi = PendingIntent.getBroadcast(context, _match_id, intent, 0);  
             AlarmManager am = (AlarmManager)context.getSystemService(Activity.ALARM_SERVICE);  
             am.cancel(pi);  
+            AlarmSender.sendInstantMessage(com.shang.noticeuefa.R.string.cancelalarm, context);
             
-            
-            Toast.makeText(context, "闹钟取消", Toast.LENGTH_LONG).show();  
         }
     }
     
