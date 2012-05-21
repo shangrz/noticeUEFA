@@ -80,25 +80,29 @@ public class CoverActivity extends SherlockActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        showDialog(PROMPT_INPROGRESS);
-                    }
-                });
-                if (!NetworkUtil.isNetworkAvailable(CoverActivity.this)) {
+                final boolean[] goToMain = {true};
+                try {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            AlarmSender.sendInstantMessage("找不到网络,未更新赛程", CoverActivity.this);
+                            showDialog(PROMPT_INPROGRESS);
                         }
                     });
-                    return;
-                }
-                final boolean[] goToMain = {true};
-                String host = new HostSetter(CoverActivity.this).getHost();
+                    if (!PreferenceUtil.isFirstTimeBoot(CoverActivity.this.getApplicationContext())) {
+                        if (!NetworkUtil.isNetworkAvailable(CoverActivity.this)) {
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    AlarmSender.sendInstantMessage("找不到网络,未更新赛程", CoverActivity.this);
+                                }
+                            });
+                            return;
+                        }
+                    }
 
-                try {
+                    String host = new HostSetter(CoverActivity.this).getHost();
+
+
                     final boolean updated = new UpdateManager(CoverActivity.this).checkUpdate(host, true);
                     handler.post(new Runnable() {
                         @Override
@@ -128,29 +132,29 @@ public class CoverActivity extends SherlockActivity {
                         public void run() {
                             if (dialog != null)
                                 dialog.dismiss();
-                            if(!goToMain[0])
+                            if (!goToMain[0])
                                 return;
-                            
+
 /*                            if (firstTimeBoot)
-                                handler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Intent intent = new Intent(CoverActivity.this, FollowActivity.class);
-                                        startActivity(intent);
-                                    }
-                                }, 2000);
-                            else*/
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        
-                                        Intent intent = new Intent(CoverActivity.this, MatchActivity.class);
-                                         
-                                       // intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-                                        startActivity(intent);
-                                        CoverActivity.this.finish();
-                                    }
-                                });
+    handler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+            Intent intent = new Intent(CoverActivity.this, FollowActivity.class);
+            startActivity(intent);
+        }
+    }, 2000);
+else*/
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    Intent intent = new Intent(CoverActivity.this, MatchActivity.class);
+
+                                    // intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+                                    startActivity(intent);
+                                    CoverActivity.this.finish();
+                                }
+                            });
                         }
                     });
 
@@ -347,7 +351,11 @@ public class CoverActivity extends SherlockActivity {
         switch (id) {
             case PROMPT_INPROGRESS:
                 ProgressDialog dialogProgress = new ProgressDialog(CoverActivity.this);
-                dialogProgress.setMessage(this.getString(R.string.firsttime));
+                if(PreferenceUtil.isFirstTimeBoot(this))
+                    dialogProgress.setMessage(this.getString(R.string.firsttime));
+                else
+                    dialogProgress.setMessage(this.getString(R.string.updating));
+
                 dialogProgress.setCancelable(false);
                 this.dialog = dialogProgress;
                 break;

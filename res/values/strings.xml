@@ -48,7 +48,8 @@
     <string name="umeng_host_key">host</string>
     <string name="key_host">host</string>
     <string name="all">全部</string>
-  
+    <string name="updating">更新赛程中</string>
+
     
     <string name="attention">注意</string>
     <string name="delete_all">是否要删除这条微博？</string>
