@@ -10,32 +10,28 @@ import java.util.HashMap;
 
 import com.actionbarsherlock.R;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.internal.widget.ActionBarContextView;
+import com.actionbarsherlock.internal.widget.ActionBarView;
    
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
-import com.actionbarsherlock.view.Window;
-import com.androidquery.AQuery;
+ 
  
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
+ 
 import com.shang.noticeuefa.database.DatabaseHelper;
-import com.shang.noticeuefa.model2.Group;
-import com.shang.noticeuefa.model2.Match;
-import com.shang.noticeuefa.model2.Notification;
+ 
 import com.shang.noticeuefa.model2.Tour;
-import com.shang.noticeuefa.util.MyGestureListener;
-import com.shang.noticeuefa.weibo.SinaTrendActivity;
+ 
 import com.srz.androidtools.util.PreferenceUtil;
-import com.srz.androidtools.util.ResTools;
+ 
 
 import android.R.integer;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.AvoidXfermode;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -50,7 +46,9 @@ import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AbsListView.OnScrollListener;
@@ -72,6 +70,7 @@ public class MatchActivity extends SherlockActivity   {
     private int index = 0;
     private ListView listView;
     public static boolean MODE_NOW =false;
+    private boolean ISADDALARM = true;
     Tour tour ;
     private MatchListViewAdapter listAdapter;
     
@@ -155,30 +154,45 @@ public class MatchActivity extends SherlockActivity   {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                 
+                    if(mMode != null) {
+                        if(((MatchListViewAdapter) listView.getAdapter()).getM_selects().get(i) ) {
+                            mMode.finish();
+                            return;
+                        }
+                        else
+                            mMode.finish();
+                             
+                    }
+                
+                ISADDALARM = ((CheckBox)view.findViewById(R.id.notice_checkBox)).isChecked();
                 if(MODE_NOW == false)  {
                    mMode = startActionMode(new AnActionModeOfEpicProportions(MatchActivity.this));
-                }
+                } 
+                 
                 
                 
                 listview_click_position = i;
                 pager.setCurrentItem(i, true);
                 boolean  startOrStop= ((MatchListViewAdapter) listView.getAdapter()).changeState(i, true);
-                if(startOrStop) {
-                     
-                        
-                         
+                if(startOrStop) {   
                         listAdapter.startAnim(view,i);
                 }else {
                     listAdapter.stopAnim(i);
                 }
                  
-                if(((MatchListViewAdapter) listView.getAdapter()).getSelectedCount() == 0) {
-                    mMode.finish();
-                } 
-                if(listView.getAdapter()!=null)
-                    mMode.setTitle(((MatchListViewAdapter) listView.getAdapter()).getSelectedCount()+" 已选择");
+//                if(((MatchListViewAdapter) listView.getAdapter()).getSelectedCount() == 0) {
+//                    mMode.finish();
+//                } 
+/*                if(listView.getAdapter()!=null)
+                    mMode.setTitle(((MatchListViewAdapter) listView.getAdapter()).getSelectedCount()+" 已选择");*/
+                mMode.setTitle(ISADDALARM?  "取消闹钟": "添加闹钟" );
+                mMode.setSubtitle(ISADDALARM? null: "提前15分钟");
                 
-                 
+                
+             
+                //  wActionBar = (ActionBarView)mDecor.findViewById(R.id.abs__action_bar);
+                //MatchActivity.this.findViewById(R.id.abs__action_mode_bar_stub).setVisibility(View.INVISIBLE);
                 //((mMode.getCustomView()).findViewById(R.layout.abs__action_mode_close_item)).
               //  findViewById(R.id.abs__action_mode_close_button).setVisibility(View.INVISIBLE);
                 
@@ -379,7 +393,7 @@ public class MatchActivity extends SherlockActivity   {
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
              
              menu.add(0,3,0,"Del")
-             .setIcon(R.drawable.content_discard)
+             .setIcon(R.drawable.device_access_del_alarm)
              .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
           
 
@@ -387,10 +401,19 @@ public class MatchActivity extends SherlockActivity   {
 
             return true;
         }
-     
+         
 
         @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) { 
+           
+
+           if(ISADDALARM) {
+               menu.findItem(2).setVisible(false);
+           }
+           else {
+               menu.findItem(3).setVisible(false);
+           }
+           
             return false;
         }
 
@@ -421,6 +444,7 @@ public class MatchActivity extends SherlockActivity   {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) { 
+           
             MODE_NOW = false;
             ((MatchListViewAdapter) listView.getAdapter()).endActionMode();
         }
