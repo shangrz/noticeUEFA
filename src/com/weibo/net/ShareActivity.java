@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -65,17 +66,21 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
     private Button mSend;
     private EditText mEdit;
     private FrameLayout mPiclayout;
-
+    private long weiboId;
     private String mPicPath = "";
     private String mContent = "";
     private String mAccessToken = "";
     private String mTokenSecret = "";
-
+    private int currentMode = 0;
     public static final String EXTRA_WEIBO_CONTENT = "com.weibo.android.content";
     public static final String EXTRA_PIC_URI = "com.weibo.android.pic.uri";
     public static final String EXTRA_ACCESS_TOKEN = "com.weibo.android.accesstoken";
     public static final String EXTRA_TOKEN_SECRET = "com.weibo.android.token.secret";
-
+    
+    public static final String EXTRA_WEIBO_ID = "com.weibo.android.weiboid";
+    public static final String EXTRA_MODE = "mode";
+    public static final int REPOST_MODE = 1;
+    
     public static final int WEIBO_MAX_LENGTH = 140;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -87,7 +92,8 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
         mContent = in.getStringExtra(EXTRA_WEIBO_CONTENT);
         mAccessToken = in.getStringExtra(EXTRA_ACCESS_TOKEN);
         mTokenSecret = in.getStringExtra(EXTRA_TOKEN_SECRET);
-
+        weiboId = in.getLongExtra(EXTRA_WEIBO_ID, 0);
+        currentMode = in.getIntExtra(EXTRA_MODE, 0);
         AccessToken accessToken = new AccessToken(mAccessToken, mTokenSecret);
         Weibo weibo = Weibo.getInstance();
         weibo.setAccessToken(accessToken);
@@ -157,13 +163,36 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
             try {
                 if (!TextUtils.isEmpty((String) (weibo.getAccessToken().getToken()))) {
                     this.mContent = mEdit.getText().toString();
-                    if (!TextUtils.isEmpty(mPicPath)) {
-                        upload(weibo, Weibo.getAppKey(), this.mPicPath, this.mContent, "", "");
+                    
+                    switch(currentMode) {
+                    case 0:
+             
+                        if (!TextUtils.isEmpty(mPicPath) )  {
+                            
+                            upload(weibo, Weibo.getAppKey(), this.mPicPath, this.mContent, "", "");
+                           
+                        } else {
 
-                    } else {
-                        // Just update a text weibo!
-                        update(weibo, Weibo.getAppKey(), mContent, "", "");
+                            update(weibo, Weibo.getAppKey(), mContent, "", "");
+                         
+                        }
+                        
+                        break;
+                    case REPOST_MODE:
+                        if(weiboId != 0) {
+                            repost(weibo, Weibo.getAppKey(), this.mContent, weiboId);
+                        }
+                        break;
+  
                     }
+                    
+//                    if (!TextUtils.isEmpty(mPicPath)) {
+//                        
+//                        upload(weibo, Weibo.getAppKey(), this.mPicPath, this.mContent, "", "");
+//                    } else {
+//                        // Just update a text weibo!
+//                        update(weibo, Weibo.getAppKey(), mContent, "", "");
+//                    }
                 } else {
                     Toast.makeText(this, this.getString(R.string.please_login), Toast.LENGTH_LONG);
                 }
@@ -266,5 +295,19 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
         });
 
     }
-
+    
+    
+    private String repost(Weibo weibo, String source, String status,
+            long weiboId) throws MalformedURLException, IOException,
+             WeiboException { 
+         WeiboParameters bundle = new WeiboParameters();
+         bundle.add("source", source);
+         bundle.add("status", status);
+         bundle.add("id", String.valueOf(weiboId));  
+         String rlt = "";
+         String url = Weibo.SERVER + "statuses/repost.json";     
+        AsyncWeiboRunner weiboRunner = new AsyncWeiboRunner(weibo);
+        weiboRunner.request(this, url, bundle, Utility.HTTPMETHOD_POST, this); 
+        return rlt;
+     }
 }
