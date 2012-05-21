@@ -134,6 +134,7 @@ public class MatchActivity extends SherlockActivity   {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_MyStyle); //Used for theme switching in samples
         super.onCreate(savedInstanceState);
+        MobclickAgent.onError(this);
         setContentView(R.layout.match);
         PreferenceUtil.setFirstTimeBoot(getApplicationContext(), false);
        // this.getWindow().setBackgroundDrawableResource(R.color.red);

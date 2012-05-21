@@ -47,6 +47,7 @@ import android.widget.Toast;
  
  
 
+import com.mobclick.android.MobclickAgent;
 import com.shang.noticeuefa.R;
 import com.weibo.net.AsyncWeiboRunner.RequestListener;
 
@@ -85,6 +86,7 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MobclickAgent.onError(this);
         this.setContentView(R.layout.share_mblog_view);
 
         Intent in = this.getIntent();

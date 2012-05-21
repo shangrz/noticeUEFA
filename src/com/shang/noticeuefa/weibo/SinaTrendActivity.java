@@ -218,6 +218,7 @@ public class SinaTrendActivity extends SherlockActivity {
         
         setTheme(R.style.Theme_MyStyle); 
         super.onCreate(savedInstanceState);
+        MobclickAgent.onError(this);
         setContentView(R.layout.sinatrend);
  
         
