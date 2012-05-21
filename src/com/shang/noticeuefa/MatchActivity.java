@@ -20,6 +20,7 @@ import com.actionbarsherlock.view.SubMenu;
  
  
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.mobclick.android.MobclickAgent;
  
 import com.shang.noticeuefa.database.DatabaseHelper;
  
@@ -450,6 +451,14 @@ public class MatchActivity extends SherlockActivity   {
         }
     }    
     
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
      
 }
 

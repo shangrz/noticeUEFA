@@ -38,14 +38,17 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.*;
+ 
 
 import com.actionbarsherlock.R;
+import com.actionbarsherlock.R.string;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.androidquery.AQuery;
  
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.stmt.Where;
+import com.mobclick.android.MobclickAgent;
 import com.shang.noticeuefa.database.DatabaseHelper;
 import com.shang.noticeuefa.model2.Match;
 import com.shang.noticeuefa.model2.Notification;
@@ -58,6 +61,7 @@ import com.srz.androidtools.util.AlarmSender;
 import com.srz.androidtools.util.TimeTools;
 
 class MatchListViewAdapter   extends ArrayAdapter< Match> {
+    public static String UMENG_EVENT_TAG = "alarm_which_match";
     interface IQuery{
         void doQuery();
     }
@@ -451,7 +455,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
         intent.putExtras(bundle);
         if(isNotice ) { 
             if(getItem(i).getMatchTime().getTime() > System.currentTimeMillis()) {
-       
+                MobclickAgent.onEvent(this.getContext(), UMENG_EVENT_TAG,String.valueOf(_match_id));
                 PendingIntent pi = PendingIntent.getBroadcast(context, _match_id, intent, 0);  
                 AlarmManager am = (AlarmManager) context.getSystemService(Activity.ALARM_SERVICE);  
                 am.set(AlarmManager.RTC_WAKEUP, getItem(i).getMatchTime().getTime() - 15*60*1000, pi);
