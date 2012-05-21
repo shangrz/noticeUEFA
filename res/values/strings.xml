@@ -3,6 +3,7 @@
 
     <string name="hello">Hello World, MainActivity!</string>
     <string name="app_name">开场哨</string>
+    <string name="app_name_euro">开场哨 - 欧洲杯</string>
     <string name="matchname">欧洲杯</string>
     <string name="next">开始</string>
     <string name="empty"> </string>
@@ -93,6 +94,7 @@
     <string name="desc_24">舍瓦最后的战役？</string>
     <string name="nomatch">没有相关比赛</string>
     <string name="noticematchbefore15m">将于比赛15分钟前提醒</string>
+    <string name="cancelalarm">取消闹钟</string>
     
  
 
