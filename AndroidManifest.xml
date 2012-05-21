@@ -21,7 +21,8 @@
         <activity
                 android:name=".CoverActivity"
                 android:label="@string/app_name_euro"
-                android:uiOptions="splitActionBarWhenNarrow">
+                android:uiOptions="splitActionBarWhenNarrow"
+                android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -31,7 +32,8 @@
         <activity
                 android:name=".FollowActivity"
                 android:label="@string/app_name"
-                android:uiOptions="splitActionBarWhenNarrow">
+                android:uiOptions="splitActionBarWhenNarrow"
+                android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 
@@ -53,7 +55,7 @@
             </intent-filter>
         </activity>
 
-        <activity
+  <!--       <activity
                 android:name=".test.testAQUERYActivity"
                 android:configChanges="keyboardHidden|orientation"
                 android:label="@string/app_name"
@@ -79,7 +81,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </activity>
+        </activity> -->
         
         
          <activity
