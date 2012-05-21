@@ -302,7 +302,7 @@ class MatchListViewAdapter   extends ArrayAdapter< Match> {
                   if(match != null) {
                      Bundle bundle = new Bundle();
                      bundle.putString("TITLE", match.getTeamA().getTeamName()+ " Vs " + match.getTeamB().getTeamName());
-                     bundle.putString("THEKEYWORD",  match.getTeamA().getTeamName() + match.getTeamB().getTeamName()+" 足球");
+                     bundle.putString("THEKEYWORD",  match.getTeamA().getTeamName()+" "+ match.getTeamB().getTeamName()+" 足球");
                      nextIntent.putExtras(bundle);
                     }
                     nextIntent.setClass(context,  SinaTrendActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

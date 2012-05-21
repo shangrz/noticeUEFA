@@ -90,8 +90,8 @@ public class SinaTrendActivity extends SherlockActivity {
     private String thekeyword = "欧锦赛 足球";
     private String title = "欧锦赛";
     protected static final String REDUIRECT_URL = "http://www.sina.com";  
-    protected static final String CONSUMER_KEY = "3678962516"; 
-    protected static final String CONSUMER_SECRET = "5df334c1e4e2c4dce174a070ada58b8b"; 
+    protected static final String CONSUMER_KEY = "3616744610"; 
+    protected static final String CONSUMER_SECRET = "e083f8556e3b1f080cb56166ec83fdbb"; 
 
     Weibo weibo = Weibo.getInstance(); 
     private int total_number; 
